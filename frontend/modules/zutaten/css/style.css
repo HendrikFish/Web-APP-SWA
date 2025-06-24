@@ -1,0 +1,54 @@
+@import '@shared/styles/layout.css';
+
+/**
+ * Importiert globale Variablen (Farben, Schriftgrößen etc.) aus dem @shared-Alias.
+ * Dieser Alias wird in der vite.config.js konfiguriert.
+ */
+
+/*
+ * Spezifische Styles für das Zutaten-Modul.
+ * Alle Klassen sollten das Präfix "zutaten--" haben, um Konflikte zu vermeiden.
+ */
+
+.zutaten--card {
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+
+.zutaten--card-body {
+    font-size: 0.9rem;
+}
+
+#allergene-container {
+    display: grid;
+    /* Erstellt so viele Spalten wie möglich, die mindestens 120px breit sind. */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.25rem; /* Reduzierter Abstand für Kompaktheit */
+    align-items: center;
+}
+
+/* Stellt sicher, dass die Checkbox-Wrapper sich gut in das Grid einfügen. */
+#allergene-container .form-check {
+    padding-left: 1.5em; /* Standard-Bootstrap-Padding beibehalten */
+    margin-bottom: 0; /* Bootstrap-Standard-Margin entfernen */
+}
+
+/* Stellt sicher, dass die Buttons sich gut in das Grid einfügen. */
+#allergene-container .allergen-button {
+    /* Lässt den Text umbrechen, falls er zu lang ist */
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0.3rem 0.2rem; /* Kompaktes Padding */
+    font-size: 0.8rem; /* Kleinere Schriftgröße */
+}
+
+/* Visuelles Feedback für den aktiven Zustand */
+#allergene-container .allergen-button.active {
+    background-color: var(--bs-primary);
+    color: white;
+    border-color: var(--bs-primary);
+} 

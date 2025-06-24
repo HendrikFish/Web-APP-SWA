@@ -1,0 +1,61 @@
+[
+    {
+        "id": "admin-dashboard",
+        "name": "Admin Dashboard",
+        "description": "Zentrale Verwaltung von Benutzern, Einstellungen und System-Benachrichtigungen.",
+        "icon": "bi-gear-fill",
+        "path": "/core/admin-dashboard/index.html",
+        "roles": [
+            "admin",
+            "co-admin"
+        ]
+    },
+    {
+        "id": "zutaten",
+        "name": "Zutaten",
+        "description": "Verwaltung der Zutaten für die Rezept- und Menüerstellung.",
+        "icon": "bi-egg-fried",
+        "path": "/modules/zutaten/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch"
+        ]
+    },
+    {
+        "id": "rezept",
+        "name": "Rezepte",
+        "description": "Erstellung und Verwaltung von Rezepten.",
+        "icon": "bi-journal-richtext",
+        "path": "/modules/rezept/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch"
+        ]
+    },
+    {
+        "id": "einrichtung",
+        "name": "Einrichtungsverwaltung",
+        "description": "Verwalten Sie alle zu beliefernden Einrichtungen und deren Speisepläne.",
+        "icon": "bi-building",
+        "path": "/modules/einrichtung/index.html",
+        "roles": [
+            "admin",
+            "Koch",
+            "Service"
+        ]
+    },
+    {
+        "id": "menueplan",
+        "name": "Menüplan",
+        "description": "Erstellung und Verwaltung von wöchentlichen Menüplänen.",
+        "icon": "bi-calendar-week",
+        "path": "/modules/menueplan/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch"
+        ]
+    }
+]

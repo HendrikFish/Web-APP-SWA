@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menüplan</title>
+    <!-- CSS wird im JavaScript importiert (Blueprint-konform) -->
+</head>
+<body>
+    <div id="main-header"></div>
+
+    <!-- Die Kontrollleiste AUSSERHALB des App-Containers für korrektes Sticky-Verhalten -->
+    <div class="menueplan-controls">
+        <div class="container-fluid">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-auto d-flex justify-content-center">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary" id="menueplan-prev-week" aria-label="Letzte Woche"><i class="bi bi-chevron-left"></i></button>
+                                <button class="btn btn-outline-secondary" id="menueplan-today">Heute</button>
+                                <button class="btn btn-outline-secondary" id="menueplan-next-week" aria-label="Nächste Woche"><i class="bi bi-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg text-center">
+                            <h2 id="menueplan-title" class="h4 mb-0"></h2>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="position-relative">
+                                <input type="search" id="menueplan-suche" class="form-control" placeholder="Rezept suchen..." autocomplete="off">
+                                <div id="menueplan-suche-ergebnisse" class="position-absolute w-100" style="z-index: 1000;"></div>
+                            </div>
+                        </div>
+                         <div id="action-buttons-column" class="col-12 col-lg-auto d-flex justify-content-center align-items-center">
+                            <div class="btn-group">
+                                 <button class="btn btn-secondary" id="menueplan-load-7-weeks-ago" title="Lädt den Plan von vor 7 Wochen als Vorlage. Achtung: Überschreibt aktuelle Änderungen!"><i class="bi bi-download"></i> Vorlage</button>
+                                 <button class="btn btn-danger" id="menueplan-clear" title="Löscht alle Rezepte und Zuweisungen der aktuellen Woche"><i class="bi bi-trash"></i> Leeren</button>
+                            </div>
+                            <div id="autosave-indicator" class="text-muted">
+                                <span class="indicator-icon"></span>
+                                <span class="indicator-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="container-fluid">
+        <!-- Das Grid wird hier von menueplan-grid.js gerendert -->
+        <div id="menueplan-grid-wrapper" class="mt-4">
+             <div class="text-center p-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Lade...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    <div id="modal-container"></div>
+    <script type="module" src="./js/script.js"></script>
+</body>
+</html> 

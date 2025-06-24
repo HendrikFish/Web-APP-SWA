@@ -1,0 +1,112 @@
+{
+  "lieferanten": [
+    "Transgourmet",
+    "Pinzgau-Milch",
+    "Kröswang",
+    "ChefsCulinar",
+    "Eurogast",
+    "Schultes",
+    "Katschner",
+    "Manfreddo",
+    "Hügli",
+    "Eskimo"
+  ],
+  "kategorien": [
+    "Obst",
+    "Gemüse",
+    "Fleisch (frisch)",
+    "Fleisch (TK)",
+    "Wurst",
+    "Fisch (frisch)",
+    "Fisch (TK)",
+    "Milchprodukte",
+    "Eier",
+    "Gewürze",
+    "Flüssigkeiten",
+    "Konserven",
+    "Convenience-Produkte",
+    "Soßen und Dressings",
+    "trockene Lebensmittel",
+    "Brot und Backwaren"
+  ],
+  "allergene": [
+    {
+      "name": "Gluten",
+      "code": "A",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Krebstiere",
+      "code": "B",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Eier",
+      "code": "C",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Fisch",
+      "code": "D",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Erdnüsse",
+      "code": "E",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Soja",
+      "code": "F",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Laktose",
+      "code": "G",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Schalenfrüchte",
+      "code": "H",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Sellerie",
+      "code": "L",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Senf",
+      "code": "M",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Sesam",
+      "code": "N",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Sulfite",
+      "code": "O",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Lupinen",
+      "code": "P",
+      "icon": "placeholder.svg"
+    },
+    {
+      "name": "Weichtiere",
+      "code": "R",
+      "icon": "placeholder.svg"
+    }
+  ],
+  "einheiten": [
+    { "name": "Gramm", "abk": "g", "typ": "Gewicht", "faktor": 1 },
+    { "name": "Kilogramm", "abk": "kg", "typ": "Gewicht", "faktor": 1000 },
+    { "name": "Milliliter", "abk": "ml", "typ": "Volumen", "faktor": 1 },
+    { "name": "Liter", "abk": "l", "typ": "Volumen", "faktor": 1000 },
+    { "name": "Stück", "abk": "Stk.", "typ": "Stück", "faktor": 1 },
+    { "name": "Packung", "abk": "Pkg.", "typ": "Stück", "faktor": 1 }
+  ]
+}

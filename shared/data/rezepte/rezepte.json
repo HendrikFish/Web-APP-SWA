@@ -1,0 +1,340 @@
+[
+  {
+    "name": "Mozzarella-Tomate",
+    "kategorie": "Vorspeise",
+    "portionen": 1,
+    "anleitung": "Alles Kochen",
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 120,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 23,
+        "einheit": "ml"
+      }
+    ],
+    "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+    "isActive": true
+  },
+  {
+    "name": "Lasagne ",
+    "anleitung": "Test 2",
+    "kategorie": "Hauptspeise",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 110,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 60,
+        "einheit": "ml"
+      },
+      {
+        "zutatId": "86e25931-fdc1-4191-b159-1946e2538a22",
+        "menge": 20,
+        "einheit": "g"
+      }
+    ],
+    "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+    "isActive": true,
+    "updatedAt": "2025-06-23T11:55:22.769Z",
+    "createdAt": "2025-06-23T11:27:02.700Z",
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    }
+  },
+  {
+    "name": "Wurst",
+    "anleitung": "Test",
+    "kategorie": "Dessert",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "86e25931-fdc1-4191-b159-1946e2538a22",
+        "menge": 123,
+        "einheit": "g"
+      }
+    ],
+    "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750677840830-idmwpxk",
+    "name": "Hefebier",
+    "anleitung": "Happy",
+    "kategorie": "Hauptspeise",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 102,
+        "einheit": "ml"
+      },
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 110,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T11:24:00.830Z",
+    "isActive": true,
+    "updatedAt": "2025-06-23T11:59:38.550Z",
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    }
+  },
+  {
+    "id": "rezept-1750679035844-54zghf0",
+    "name": "Hackepeter",
+    "anleitung": "Tesst 2",
+    "kategorie": "Suppe",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 4,
+        "einheit": "ml"
+      },
+      {
+        "zutatId": "86e25931-fdc1-4191-b159-1946e2538a22",
+        "menge": 6,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1750675503081-z0sm4aw",
+        "menge": 8,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T11:43:55.844Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897"
+    },
+    "isActive": false
+  },
+  {
+    "id": "rezept-1750679454215-ea9p7hw",
+    "name": "Möhrensalat",
+    "anleitung": "okay",
+    "kategorie": "Salat",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 91,
+        "einheit": "ml"
+      },
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 40,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T11:50:54.215Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Unbekannt"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true,
+    "updatedAt": "2025-06-23T12:05:44.102Z"
+  },
+  {
+    "id": "rezept-1750679508813-89cacyi",
+    "name": "Humus",
+    "anleitung": "Test",
+    "kategorie": "Hauptspeise",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 20,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T11:51:48.813Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Unbekannt"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true,
+    "updatedAt": "2025-06-23T11:53:44.128Z"
+  },
+  {
+    "id": "rezept-1750679663309-1mweywf",
+    "name": "Radiesalat",
+    "anleitung": "Set",
+    "kategorie": "Salat",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 20,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1750675503081-z0sm4aw",
+        "menge": 20,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T11:54:23.309Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750680376233-qrnhgaw",
+    "name": "Harzerroller",
+    "anleitung": "Fight",
+    "kategorie": "Suppe",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750667189445-28p4w7i",
+        "menge": 21,
+        "einheit": "ml"
+      },
+      {
+        "zutatId": "zutat-1750662825245-4k9kv67",
+        "menge": 5,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T12:06:16.233Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750711766277-wmuh3bf",
+    "name": "Wurstbrot",
+    "anleitung": "Schneiden ",
+    "kategorie": "Brotzeit",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "86e25931-fdc1-4191-b159-1946e2538a22",
+        "menge": 20,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1750675503081-z0sm4aw",
+        "menge": 4,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T20:49:26.277Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750711812742-g4mdny2",
+    "name": "Rindersuppe",
+    "anleitung": "",
+    "kategorie": "Suppe",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750675503081-z0sm4aw",
+        "menge": 31,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T20:50:12.742Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750711841307-mfacn10",
+    "name": "Frittaten",
+    "anleitung": "",
+    "kategorie": "Suppe",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750663837326-gy8o8iy",
+        "menge": 152,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T20:50:41.307Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  },
+  {
+    "id": "rezept-1750712140922-rqe006y",
+    "name": "Kuchen",
+    "anleitung": "",
+    "kategorie": "Dessert",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1750663837326-gy8o8iy",
+        "menge": 41,
+        "einheit": "g"
+      }
+    ],
+    "createdAt": "2025-06-23T20:55:40.922Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
+  }
+]

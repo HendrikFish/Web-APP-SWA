@@ -1,0 +1,226 @@
+[
+  {
+    "name": "Hendrik Fischer",
+    "kuerzel": "ER",
+    "adresse": "Einöd\n21 Top 1",
+    "ansprechperson": "Kathi",
+    "telefon": "06606114036",
+    "email": "mr.hendrik.fischer@gmx.de",
+    "isIntern": false,
+    "personengruppe": "Schüler",
+    "tour": "Tour 1",
+    "speiseplan": {
+      "montag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "dienstag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "mittwoch": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "donnerstag": {
+        "suppe": false,
+        "hauptspeise": true,
+        "dessert": false
+      },
+      "freitag": {
+        "suppe": true,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "samstag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "sonntag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      }
+    },
+    "gruppen": [
+      {
+        "name": "dd",
+        "anzahl": 8
+      }
+    ],
+    "id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
+  },
+  {
+    "name": "Limberg",
+    "kuerzel": "Lim",
+    "adresse": "Einöd 21\nTop 1",
+    "ansprechperson": "Gertrude",
+    "telefon": "06604906529",
+    "email": "rebekka.fischer@gmx.at",
+    "isIntern": false,
+    "personengruppe": "Kindergartenkinder",
+    "tour": "Tour 2",
+    "speiseplan": {
+      "montag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": false
+      },
+      "dienstag": {
+        "suppe": false,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "mittwoch": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": false
+      },
+      "donnerstag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "freitag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "samstag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "sonntag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      }
+    },
+    "gruppen": [
+      {
+        "name": "KR",
+        "anzahl": 10
+      },
+      {
+        "name": "KG",
+        "anzahl": 23
+      }
+    ],
+    "id": "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+  },
+  {
+    "name": "Hendrik Fischer",
+    "kuerzel": "LH",
+    "adresse": "Einöd 21\nTop 1",
+    "ansprechperson": "Gudrun",
+    "telefon": "06643561749",
+    "email": "nehilanthe@gmail.com",
+    "isIntern": true,
+    "personengruppe": "Erwachsene",
+    "tour": "Tour 2",
+    "speiseplan": {
+      "montag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "dienstag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "mittwoch": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "donnerstag": {
+        "suppe": false,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "freitag": {
+        "suppe": false,
+        "hauptspeise": false,
+        "dessert": false
+      },
+      "samstag": {
+        "suppe": false,
+        "hauptspeise": true,
+        "dessert": false
+      },
+      "sonntag": {
+        "suppe": false,
+        "hauptspeise": true,
+        "dessert": false
+      }
+    },
+    "gruppen": [
+      {
+        "name": "gg",
+        "anzahl": 12
+      }
+    ],
+    "id": "5409619a-b506-442f-a97d-182c354f2480"
+  },
+  {
+    "name": "St. Stephan",
+    "kuerzel": "ST",
+    "adresse": "Dumbastraße\n4b",
+    "ansprechperson": "Kathi",
+    "telefon": "06766572995",
+    "email": "bo_christian82@yahoo.de",
+    "isIntern": true,
+    "personengruppe": "Erwachsene",
+    "tour": "Tour 3",
+    "speiseplan": {
+      "montag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "dienstag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "mittwoch": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "donnerstag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "freitag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "samstag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      },
+      "sonntag": {
+        "suppe": true,
+        "hauptspeise": true,
+        "dessert": true
+      }
+    },
+    "gruppen": [
+      {
+        "name": "Bewohner",
+        "anzahl": 82
+      }
+    ],
+    "id": "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+  }
+]

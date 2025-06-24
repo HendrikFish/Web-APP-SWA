@@ -1,0 +1,24 @@
+{
+    "personengruppen": [
+        "Schüler",
+        "Kindergartenkinder",
+        "Erwachsene"
+    ],
+    "touren": [
+        { "name": "Tour 1", "zeit": "09:30 Uhr" },
+        { "name": "Tour 2", "zeit": "10:30 Uhr" },
+        { "name": "Tour 3", "zeit": "11:30 Uhr" }
+    ],
+    "speiseplanKomponenten": [
+        "Suppe",
+        "Hauptspeise",
+        "Dessert"
+    ],
+    "abendessenOptionen": [
+        "Tagessuppe",
+        "Milchspeise",
+        "Normalkost",
+        "Brotangebot A",
+        "Brotangebot B"
+    ]
+} 

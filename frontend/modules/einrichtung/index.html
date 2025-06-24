@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einrichtungsverwaltung - SmartWorkArt</title>
+</head>
+<body class="bg-light">
+    <header id="main-header"></header>
+
+    <main class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- Titel und Desktop-Button -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="h2">Einrichtungen</h1>
+                    <button id="add-einrichtung-btn-desktop" class="btn btn-primary d-none d-lg-block" type="button" data-bs-toggle="collapse" data-bs-target="#form-collapse-container" aria-expanded="false" aria-controls="form-collapse-container">
+                        <i class="bi bi-plus-lg"></i> Neue Einrichtung
+                    </button>
+                </div>
+                
+                <!-- Mobiler Button -->
+                <div class="d-lg-none mb-3">
+                    <button id="add-einrichtung-btn-mobile" class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#form-collapse-container" aria-expanded="false" aria-controls="form-collapse-container">
+                        <i class="bi bi-plus-lg"></i> Neue Einrichtung
+                    </button>
+                </div>
+
+                <!-- Einklappbarer Container für das Formular -->
+                <div class="collapse mb-4" id="form-collapse-container">
+                    <div id="einrichtung-form-container">
+                        <!-- Das Formular wird hier per JavaScript geladen -->
+                    </div>
+                </div>
+
+                <!-- Bereich für Liste (Suche, Sortierung, Liste) -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" id="search-input" placeholder="Einrichtung suchen...">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <!-- Sortierung -->
+                                <div class="d-flex justify-content-start justify-content-md-end align-items-center mb-2">
+                                    <small class="text-muted me-2">Sortieren:</small>
+                                    <!-- Buttons für Sortier-Kriterium -->
+                                    <div class="btn-group btn-group-sm me-2" role="group" id="sort-key-group">
+                                        <button type="button" class="btn btn-outline-secondary active" data-key="name">Name</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-key="kuerzel">Kürzel</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-key="gesamtPersonen">Anzahl</button>
+                                    </div>
+                            
+                                    <!-- Buttons für Sortier-Richtung -->
+                                    <div class="btn-group btn-group-sm" id="sort-direction-group">
+                                        <button type="button" class="btn btn-outline-secondary active" data-direction="asc" title="Aufsteigend">
+                                            <i class="bi bi-sort-alpha-down"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" data-direction="desc" title="Absteigend">
+                                            <i class="bi bi-sort-alpha-up"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liste der Einrichtungen -->
+                        <div id="einrichtung-liste-container" class="mt-3">
+                            <!-- Inhalt wird per JS geladen -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+</html> 

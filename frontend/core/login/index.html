@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartWorkArt</title>
+    <style>
+        .form-signin-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+        .form-signin {
+            max-width: 480px;
+            width: 100%;
+        }
+    </style>
+    <!-- Kein separates Stylesheet mehr nötig, da wir Bootstrap-Klassen direkt verwenden -->
+</head>
+<body class="form-signin-container">
+    
+    <main class="form-signin m-auto">
+        <div class="card shadow-sm border-0 rounded-0">
+            <div class="card-header bg-white border-0">
+                <ul class="nav nav-pills card-header-pills justify-content-center" id="auth-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-0" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-panel" type="button" role="tab" aria-controls="login-panel" aria-selected="true">Anmelden</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-0" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-panel" type="button" role="tab" aria-controls="register-panel" aria-selected="false">Registrieren</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body tab-content p-4" id="auth-tabs-content">
+                <!-- Login Panel -->
+                <div class="tab-pane fade show active" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
+                    <h5 class="card-title mb-4">Anmelden</h5>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-Mail-Adresse</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="name@beispiel.de" autocomplete="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Passwort</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Passwort" autocomplete="current-password">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Anmelden</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <hr>
+                        <p class="text-muted small">Für Entwickler: Schnell-Login</p>
+                        <div class="d-grid gap-2">
+                             <button id="dev-login-admin-btn" class="btn btn-secondary btn-sm" type="button">Login als Admin</button>
+                             <button id="dev-login-user-btn" class="btn btn-info btn-sm" type="button">Login als Benutzer</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Register Panel -->
+                <div class="tab-pane fade" id="register-panel" role="tabpanel" aria-labelledby="register-tab">
+                    <h5 class="card-title mb-4">Account anfragen</h5>
+                    <p class="text-muted small">Nach dem Absenden wird Ihre Anfrage von einem Administrator geprüft. Sie erhalten eine Benachrichtigung, sobald Ihr Konto freigeschaltet wurde.</p>
+                    <form id="register-form">
+                         <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="register-firstname" class="form-label">Vorname <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="register-firstname" required placeholder="Max">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="register-lastname" class="form-label">Nachname <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="register-lastname" required placeholder="Mustermann">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="register-email" class="form-label">E-Mail-Adresse <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="register-email" required placeholder="max.mustermann@firma.de" autocomplete="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="register-password" class="form-label">Passwort <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="register-password" required placeholder="Ein sicheres Passwort" autocomplete="new-password">
+                        </div>
+                         <!-- Container für dynamisch geladene Felder -->
+                        <div id="dynamic-fields-container" class="row"></div>
+
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary">Registrierung anfragen</button>
+                        </div>
+                    </form>
+                     <!-- Erfolgsmeldung, initial ausgeblendet -->
+                    <div id="register-success-message" class="text-center d-none">
+                        <h5 class="text-success">Anfrage erfolgreich übermittelt!</h5>
+                        <p>Ihre Anfrage wird nun von einem Administrator geprüft. Sie erhalten eine Benachrichtigung per E-Mail, sobald Ihr Konto freigeschaltet ist.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Das Haupt-Skript für das Login-Modul -->
+    <script type="module" src="/core/login/js/script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,23 @@
+[
+    {
+        "id": "position",
+        "label": "Position im Unternehmen",
+        "type": "text",
+        "required": true,
+        "placeholder": "z.B. Pflegefachkraft, Verwaltung"
+    },
+    {
+        "id": "facility",
+        "label": "Einrichtung",
+        "type": "text",
+        "required": true,
+        "placeholder": "z.B. Seniorenheim 'Abendsonne'"
+    },
+    {
+        "id": "phone",
+        "label": "Telefonnummer (Optional)",
+        "type": "tel",
+        "required": false,
+        "placeholder": "Ihre dienstliche Telefonnummer"
+    }
+]

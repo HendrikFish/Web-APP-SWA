@@ -1,0 +1,25 @@
+{
+  "name": "smartworkart-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "start": "concurrently \"npm:start:backend\" \"npm:start:frontend-wait\"",
+    "start:frontend-wait": "wait-on http://localhost:3000/health && npm run start:frontend",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "express": "^5.1.0",
+    "wait-on": "^8.0.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

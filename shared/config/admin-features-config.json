@@ -1,0 +1,27 @@
+[
+    {
+        "id": "user-approval",
+        "name": "Benutzer-Genehmigung",
+        "icon": "bi-person-check-fill"
+    },
+    {
+        "id": "user-management",
+        "name": "Benutzerverwaltung",
+        "icon": "bi-people-fill"
+    },
+    {
+        "id": "field-config",
+        "name": "Registrierungsfelder",
+        "icon": "bi-input-cursor-text"
+    },
+    {
+        "id": "notifications",
+        "name": "Benachrichtigungen",
+        "icon": "bi-bell-fill"
+    },
+    {
+        "id": "module-management",
+        "name": "Modulverwaltung",
+        "icon": "bi-grid-1x2-fill"
+    }
+]

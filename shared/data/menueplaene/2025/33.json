@@ -1,0 +1,423 @@
+{
+  "year": 2025,
+  "week": 33,
+  "days": {
+    "montag": {
+      "Mahlzeiten": {
+        "suppe": [
+          {
+            "id": "rezept-1750711766277-wmuh3bf",
+            "name": "Wurstbrot"
+          }
+        ],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [],
+        "menu2": []
+      }
+    },
+    "dienstag": {
+      "Mahlzeiten": {
+        "suppe": [
+          {
+            "id": "rezept-1750677840830-idmwpxk",
+            "name": "Hefebier"
+          }
+        ],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ],
+        "menu2": [
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+        ]
+      }
+    },
+    "mittwoch": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+        ],
+        "menu2": [
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ]
+      }
+    },
+    "donnerstag": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
+        ],
+        "menu2": [
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ]
+      }
+    },
+    "freitag": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ],
+        "menu2": [
+          "5409619a-b506-442f-a97d-182c354f2480"
+        ]
+      }
+    },
+    "samstag": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
+          "5409619a-b506-442f-a97d-182c354f2480"
+        ],
+        "menu2": [
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ]
+      }
+    },
+    "sonntag": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [],
+        "menu2": []
+      }
+    }
+  },
+  "einrichtungsSnapshot": {
+    "einrichtungen": [
+      {
+        "id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+        "name": "Hendrik Fischer",
+        "kuerzel": "ER",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "dienstag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "mittwoch": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "donnerstag": {
+            "suppe": false,
+            "hauptspeise": true,
+            "dessert": false
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "samstag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "sonntag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      },
+      {
+        "id": "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+        "name": "Limberg",
+        "kuerzel": "Lim",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": false
+          },
+          "dienstag": {
+            "suppe": false,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": false
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "sonntag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      },
+      {
+        "id": "5409619a-b506-442f-a97d-182c354f2480",
+        "name": "Hendrik Fischer",
+        "kuerzel": "LH",
+        "isIntern": true,
+        "speiseplan": {
+          "montag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "dienstag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "mittwoch": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "donnerstag": {
+            "suppe": false,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": false,
+            "hauptspeise": false,
+            "dessert": false
+          },
+          "samstag": {
+            "suppe": false,
+            "hauptspeise": true,
+            "dessert": false
+          },
+          "sonntag": {
+            "suppe": false,
+            "hauptspeise": true,
+            "dessert": false
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      },
+      {
+        "id": "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+        "name": "St. Stephan",
+        "kuerzel": "ST",
+        "isIntern": true,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      }
+    ],
+    "generatedAt": "2025-06-24T10:17:06.128Z",
+    "categories": [
+      {
+        "id": "suppe",
+        "name": "Suppe"
+      },
+      {
+        "id": "menu1",
+        "name": "Menü 1"
+      },
+      {
+        "id": "menu2",
+        "name": "Menü 2"
+      },
+      {
+        "id": "dessert",
+        "name": "Dessert"
+      },
+      {
+        "id": "abend-suppe",
+        "name": "Abend-Suppe"
+      },
+      {
+        "id": "milchspeise",
+        "name": "Milchspeise"
+      },
+      {
+        "id": "normalkost",
+        "name": "Normalkost"
+      },
+      {
+        "id": "kalte-platte",
+        "name": "Kalte Platte"
+      },
+      {
+        "id": "wurstbrot-toast",
+        "name": "Wurstbrot-Toast"
+      },
+      {
+        "id": "wurstbrot-schwarzbrot",
+        "name": "Wurstbrot-Schw. Brot"
+      },
+      {
+        "id": "kaesebrot-toast",
+        "name": "Käsebrot-Toast"
+      },
+      {
+        "id": "kaesebrot-schwarzbrot",
+        "name": "Käsebrot-Schw. Brot"
+      }
+    ]
+  },
+  "updatedAt": "2025-06-24T10:17:06.160Z",
+  "updatedBy": {
+    "userId": "679f7a109d1d8b3535030897",
+    "name": "Admin System"
+  }
+}

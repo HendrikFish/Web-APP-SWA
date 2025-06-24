@@ -1,0 +1,146 @@
+/**
+ * Toast-Notification CSS
+ * Moderne Styles für die Toast-Benachrichtigungen
+ */
+
+/* Toast-Container Positioning */
+.toast-container {
+    z-index: 1055 !important; /* Über Bootstrap Modals aber unter Bootstrap Offcanvas */
+}
+
+/* Toast Base Styles */
+.toast {
+    min-width: 300px;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Toast Body Styles */
+.toast .toast-body {
+    padding: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.toast .toast-body i {
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+}
+
+/* Close Button Styles */
+.toast .btn-close {
+    padding: 0.5rem;
+    margin: 0;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Success Toast */
+.toast.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    color: white !important;
+}
+
+.toast.bg-success .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Error Toast */
+.toast.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%) !important;
+    color: white !important;
+}
+
+.toast.bg-danger .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Warning Toast */
+.toast.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #f39c12 100%) !important;
+    color: #212529 !important;
+}
+
+.toast.bg-warning .btn-close {
+    filter: brightness(0);
+}
+
+/* Info Toast */
+.toast.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #3498db 100%) !important;
+    color: white !important;
+}
+
+.toast.bg-info .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Animation Improvements */
+.toast.showing {
+    animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+.toast.hide {
+    animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 576px) {
+    .toast-container {
+        left: 1rem !important;
+        right: 1rem !important;
+        bottom: 1rem !important;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .toast .toast-body {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    .toast.bg-light {
+        background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+        color: white !important;
+    }
+    
+    .toast.bg-light .btn-close {
+        filter: brightness(0) invert(1);
+    }
+} 

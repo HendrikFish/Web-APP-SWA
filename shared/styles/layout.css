@@ -1,0 +1,14 @@
+/* 
+  Sorgt für den nötigen Abstand am oberen Rand der Seite, 
+  wenn die `fixed-top` Klasse im Header verwendet wird.
+*/
+body {
+    padding-top: 70px; /* Höhe der Navbar + etwas Puffer */
+} 
+
+/* Globale Layout-Regeln für das gesamte Projekt */
+
+.icon-link {
+    display: inline-flex;
+    align-items: center;
+} 

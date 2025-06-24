@@ -1,0 +1,18 @@
+/*
+ * Spezifische Stile für das Admin-Dashboard.
+ * Nur verwenden, wenn Bootstrap-Klassen nicht ausreichen.
+ */
+
+/*
+ * Problem: Die Sidebar (`vh-100`) nimmt auf Mobilgeräten als Overlay die volle 
+ * Bildschirmhöhe ein, auch wenn der Inhalt kurz ist.
+ * 
+ * Lösung: Auf Bildschirmen, die schmaler als der "md"-Breakpoint von Bootstrap sind,
+ * wird die Höhe auf "auto" gesetzt. Das !important ist notwendig, um die
+ * Utility-Klasse .vh-100 von Bootstrap sicher zu überschreiben.
+ */
+@media (max-width: 767.98px) {
+    #admin-sidebar {
+        height: auto !important;
+    }
+} 

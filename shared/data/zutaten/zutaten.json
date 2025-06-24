@@ -1,0 +1,163 @@
+[
+  {
+    "name": "Milch ESL",
+    "kategorie": "Milchprodukte",
+    "lieferant": "Pinzgau-Milch",
+    "preis": {
+      "basis": 1.05,
+      "basiseinheit": "l",
+      "verwendungseinheit": "ml",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "G",
+        "name": "Milch und Laktose"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1750661925296-m2xudba",
+    "zutatennummer": 1,
+    "isActive": false
+  },
+  {
+    "name": "Butter",
+    "kategorie": "Milchprodukte",
+    "lieferant": "Pinzgau-Milch",
+    "preis": {
+      "basis": 14.5,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "G",
+        "name": "Laktose"
+      }
+    ],
+    "naehrwerte": {
+      "kalorien_kcal": 120,
+      "fett_g": 80,
+      "davon_zucker_g": 10,
+      "eiweiss_g": 6,
+      "kohlenhydrate_g": 4,
+      "salz_g": 1
+    },
+    "id": "zutat-1750662825245-4k9kv67",
+    "zutatennummer": 3,
+    "isActive": true
+  },
+  {
+    "name": "Margarine",
+    "kategorie": "Milchprodukte",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 12,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "G",
+        "name": "Milch und Laktose"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1750663652244-wrbouc6",
+    "zutatennummer": 4,
+    "isActive": true
+  },
+  {
+    "name": "Karotten",
+    "kategorie": "Gemüse",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 0.84,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "C",
+        "name": "Sellerie"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1750663837326-gy8o8iy",
+    "zutatennummer": 5,
+    "isActive": true
+  },
+  {
+    "name": "Gouda",
+    "kategorie": "Milchprodukte",
+    "lieferant": "Pinzgau-Milch",
+    "preis": {
+      "basis": 10.02,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "G",
+        "name": "Milch und Laktose"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "86e25931-fdc1-4191-b159-1946e2538a22",
+    "zutatennummer": 2,
+    "isActive": true
+  },
+  {
+    "name": "Essig",
+    "kategorie": "Flüssigkeiten",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 1.2,
+      "basiseinheit": "l",
+      "verwendungseinheit": "ml",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "B",
+        "name": "Krebstiere"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1750667189445-28p4w7i",
+    "zutatennummer": 6,
+    "isActive": true
+  },
+  {
+    "name": "Gourmet Brot",
+    "kategorie": "Brot und Backwaren",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 12.4,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Nicht-EU",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1750675503081-z0sm4aw",
+    "zutatennummer": 7,
+    "isActive": true
+  }
+]

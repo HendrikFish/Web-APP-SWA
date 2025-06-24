@@ -1,0 +1,16 @@
+{
+  "kategorien": [
+    { "id": "suppe", "name": "Suppe" },
+    { "id": "menu1", "name": "Menü 1" },
+    { "id": "menu2", "name": "Menü 2" },
+    { "id": "dessert", "name": "Dessert" },
+    { "id": "abend-suppe", "name": "Abend-Suppe" },
+    { "id": "milchspeise", "name": "Milchspeise" },
+    { "id": "normalkost", "name": "Normalkost" },
+    { "id": "kalte-platte", "name": "Kalte Platte" },
+    { "id": "wurstbrot-toast", "name": "Wurstbrot-Toast" },
+    { "id": "wurstbrot-schwarzbrot", "name": "Wurstbrot-Schw. Brot" },
+    { "id": "kaesebrot-toast", "name": "Käsebrot-Toast" },
+    { "id": "kaesebrot-schwarzbrot", "name": "Käsebrot-Schw. Brot" }
+  ]
+} 

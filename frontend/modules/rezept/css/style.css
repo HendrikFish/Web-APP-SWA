@@ -1,0 +1,15 @@
+/* 
+ * Dieses Padding ist obligatorisch für jede Modul-Hauptseite, 
+ * da die Hauptnavigation (`main-header`) eine feste Höhe hat 
+ * und sonst den Seiteninhalt überdecken würde.
+ */
+body {
+    padding-top: 80px;
+}
+
+/**
+ * Alle neuen Klassen MÜSSEN mit dem Präfix .rezept-- versehen werden,
+ * um Styling-Konflikte zu verhindern.
+ * 
+ * z.B. .rezept--card { ... }
+ */ 

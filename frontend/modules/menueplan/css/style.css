@@ -1,0 +1,773 @@
+/* Initiale CSS-Datei für das Menüplan-Modul */ 
+
+/* 
+  Optimiert den Abstand zwischen Header und Controls
+  Da body bereits 70px padding-top hat, brauchen wir hier weniger
+*/
+#app {
+    margin-top: 0 !important;
+    padding-top: 0; /* Kein zusätzlicher Abstand nötig */
+}
+
+.menueplan-controls {
+    margin-bottom: 1rem;
+}
+
+/* Responsive Anpassung für Mobile */
+@media (max-width: 768px) {
+    .menueplan-controls {
+        margin-bottom: 0.75rem;
+    }
+    
+    .menueplan-controls .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+} 
+
+.rezept-card {
+    cursor: default;
+    /* Stellt sicher, dass langer Text umgebrochen und nicht die Karte verbreitert wird */
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* Ältere Browser */
+    word-break: break-word;
+
+    font-size: 0.8rem;       /* Kleinere Schriftgröße */
+    padding: 0.2rem 0.4rem;
+    margin-bottom: 1px !important;      /* Überschreibt Bootstrap's .alert-Margin */
+}
+
+/* Reduziertes Padding für die Griffe */
+.zone-drag-handle {
+    padding: 0.5rem 0.3rem !important; /* Weiter reduziert */
+}
+
+.drop-zone-container.drag-over {
+    background-color: #e8f5e9 !important; /* Helles Grün */
+    border: 2px dashed #4caf50 !important;   /* Kräftiger grüner Rand um den ganzen Container */
+}
+.drop-zone-container.drag-over .drop-zone {
+    border-style: none !important; /* Deaktiviert den inneren Rand */
+}
+
+.drop-zone-container.drag-over-denied {
+    background-color: #ffebee !important; /* Helles Rot */
+    border: 2px dashed #f44336 !important;   /* Kräftiger roter Rand um den ganzen Container */
+}
+.drop-zone-container.drag-over-denied .drop-zone {
+    border-style: none !important; /* Deaktiviert den inneren Rand */
+}
+
+.zone-drag-handle, .rezept-drag-handle {
+    cursor: grab;
+}
+
+.zone-drag-handle:active, .rezept-drag-handle:active {
+    cursor: grabbing;
+}
+
+/* --- Layout-Struktur (Desktop-First) --- */
+
+#menueplan-grid {
+    display: flex; /* Hauptcontainer ist eine Flexbox */
+    overflow-x: auto; /* Erlaubt horizontales Scrollen bei Bedarf */
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+}
+
+.menueplan-mahlzeiten-header {
+    flex: 0 0 125px; /* Feste Breite, nicht wachsen, nicht schrumpfen */
+    position: sticky; /* Bleibt beim Scrollen links kleben */
+    left: 0;
+    background-color: white;
+    z-index: 20;
+    border-right: 1px solid #dee2e6;
+}
+
+.menueplan-days-grid {
+    display: flex; /* Container für die Tage ist ebenfalls eine Flexbox */
+    flex-grow: 1;
+}
+
+.menueplan-tages-spalte {
+    flex: 1 1 180px; /* Jede Tages-Spalte ist flexibel, Basis 180px */
+    min-width: 180px; /* Verhindert, dass die Spalten zu schmal werden */
+    border-left: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column; /* Zellen innerhalb der Spalte sind vertikal angeordnet */
+}
+.menueplan-tages-spalte:first-child {
+    border-left: none;
+}
+
+
+.menueplan-tag-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #fff;
+    position: sticky;
+    top: 0; /* Bezogen auf den scrollenden Container */
+    z-index: 10;
+}
+
+.menueplan-mahlzeit-titel {
+    font-weight: bold;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 140px; /* Feste Höhe, passend zu den Zellen */
+    border-bottom: 1px solid #eee;
+}
+.menueplan-mahlzeiten-header > div:last-child {
+    border-bottom: none;
+}
+
+.menueplan-zelle {
+    height: 140px; /* Feste Höhe, damit die Zeilen übereinstimmen */
+    padding: 4px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+.menueplan-tages-spalte > .menueplan-zelle:last-child {
+    border-bottom: none;
+}
+
+.menueplan-zelle .card {
+    height: 100%;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* =================================== */
+/* ===    Mobiles Accordion Layout === */
+/* =================================== */
+
+@media (max-width: 768px) {
+    .menueplan-controls {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Desktop-Grid verstecken */
+    .menueplan-grid {
+        display: none !important;
+    }
+
+    /* Mobile Accordion Container */
+    .mobile-accordion {
+        display: block;
+        margin-top: 1rem;
+    }
+
+    /* Tag-Accordion Sektion */
+    .day-accordion-section {
+        margin-bottom: 0.75rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        background-color: white;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    /* Tag-Header (klickbar) */
+    .day-header {
+        padding: 1rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: none;
+        border-radius: 0.5rem 0.5rem 0 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #495057;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .day-header:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        color: #212529;
+    }
+
+    .day-header.expanded {
+        border-radius: 0.5rem 0.5rem 0 0;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+    }
+
+    /* Tag-Titel mit Rezept-Counter */
+    .day-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .day-counter {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.2rem 0.5rem;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .day-header.expanded .day-counter {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Expand/Collapse Icon */
+    .day-toggle-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .day-header.expanded .day-toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Tag-Inhalt (expandierbar) */
+    .day-content {
+        display: none;
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+        background-color: #fafbfc;
+    }
+
+    .day-content.expanded {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Kategorie-Zeilen im Tag */
+    .mobile-category-row {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: white;
+        border: 1px solid #e3e6ea;
+        border-radius: 0.375rem;
+        box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05);
+    }
+
+    .mobile-category-row:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Kategorie-Titel */
+    .mobile-category-title {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .mobile-category-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #007bff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Drop-Zone Container mit Drag Handle */
+    .mobile-drop-zone-container {
+        display: flex;
+        gap: 0;
+        align-items: stretch;
+    }
+
+    /* Mobile Zone Drag Handle - Vertikal links */
+    .mobile-zone-drag-handle {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        width: 20px;
+        font-size: 0.8rem;
+        cursor: grab;
+        display: none; /* Standardmäßig ausgeblendet */
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+    }
+
+    /* Handle nur sichtbar wenn Drop-Zone Inhalt hat */
+    .mobile-drop-zone-container.has-content .mobile-zone-drag-handle {
+        display: flex;
+    }
+
+    .mobile-zone-drag-handle:hover {
+        background: #5a6268;
+        transform: scaleX(1.2);
+    }
+
+    .mobile-zone-drag-handle:active {
+        cursor: grabbing;
+        background: #495057;
+        transform: scaleX(0.9);
+    }
+
+    .mobile-zone-drag-handle.zone-dragging {
+        background: #007bff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Drop-Zone für Mobile */
+    .mobile-drop-zone {
+        min-height: 80px;
+        border: 2px dashed #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background: #f8f9fa;
+        transition: all 0.2s ease;
+        flex: 1;
+    }
+
+    .mobile-drop-zone.has-content {
+        border-style: solid;
+        border-color: #007bff;
+        background: white;
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    /* Wenn Handle sichtbar ist, passe Drop-Zone Border an */
+    .mobile-drop-zone-container.has-content .mobile-drop-zone {
+        border-left: none;
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    .mobile-drop-zone.drag-over-active {
+        border-color: #28a745 !important;
+        background-color: #e8f5e9 !important;
+        border-style: solid !important;
+    }
+
+    .mobile-drop-zone.drag-over-invalid {
+        border-color: #dc3545 !important;
+        background-color: #ffebee !important;
+        border-style: solid !important;
+    }
+
+    /* Rezept-Karten in Mobile */
+    .mobile-drop-zone .rezept-card {
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        padding: 0.5rem;
+        border: 1px solid #e3e6ea;
+        border-radius: 0.25rem;
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .mobile-drop-zone .rezept-card:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Einrichtungs-Buttons für Mobile */
+    .mobile-einrichtungs-buttons {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .mobile-einrichtungs-buttons .btn {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        min-width: 60px;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /* Platzhalter-Text */
+    .mobile-drop-zone-placeholder {
+        color: #6c757d;
+        font-style: italic;
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Touch-Support CSS */
+    .touch-drop-zone-highlight {
+        border: 2px dashed #007bff !important;
+        background-color: rgba(0, 123, 255, 0.1) !important;
+    }
+
+    .touch-drop-zone-active {
+        border: 3px solid #28a745 !important;
+        background-color: #e8f5e9 !important;
+        transform: scale(1.02);
+        transition: all 0.2s ease;
+    }
+
+    .touch-drop-zone-invalid {
+        border: 3px solid #dc3545 !important;
+        background-color: #ffebee !important;
+        transform: scale(0.98);
+        transition: all 0.2s ease;
+    }
+
+    /* Verbesserte Touch-Targets */
+    .mobile-drop-zone .rezept-card {
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    .rezept-pill {
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    /* Desktop-only Elemente verstecken */
+    @media (max-width: 768px) {
+        .menueplan-mahlzeiten-header,
+        .menueplan-days-grid,
+        .menueplan-tages-spalte,
+        .menueplan-tag-header,
+        .menueplan-zelle {
+            display: none !important;
+        }
+    }
+}
+
+/* --- Suchergebnisse als draggable Elemente kenntlich machen --- */
+/* Kompakte horizontale Suchvorschläge */
+#menueplan-suche-ergebnisse {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5px);
+    transition: all 0.2s ease-in-out;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+#menueplan-suche-ergebnisse.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.rezept-pill {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.rezept-pill:hover {
+    background-color: #0d6efd !important;
+    transform: scale(1.05);
+}
+
+.rezept-pill:active {
+    transform: scale(0.95);
+}
+
+/* --- Alte Regeln, die aufgeräumt/angepasst werden --- */
+/* (Die meisten alten Regeln für .row, .col etc. sind nicht mehr relevant) */
+
+.menueplan-controls {
+    position: sticky;
+    top: 58px; /* Direkt unter der Navbar (tatsächliche Navbar-Höhe) */
+    z-index: 1020;
+    background-color: #f8f9fa;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    width: 100%;
+}
+
+#autosave-indicator {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 130px; /* Feste Breite verhindert Flackern */
+    height: 38px; /* Feste Höhe passend zu den Buttons */
+    margin-left: 12px; /* Abstand zu den Buttons */
+    flex-shrink: 0; /* Verhindert Schrumpfen */
+}
+
+#autosave-indicator.visible {
+    opacity: 1;
+}
+
+#autosave-indicator .indicator-text {
+    white-space: nowrap; /* Verhindert Zeilenumbruch */
+    font-size: 0.875rem; /* Kleinere Schrift für mehr Platz */
+    min-width: 90px; /* Mindestbreite für Text-Stabilität */
+    text-align: left;
+}
+
+#autosave-indicator .indicator-icon {
+    flex-shrink: 0; /* Icon behält immer seine Größe */
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#action-buttons-column {
+    /* Stabile Breite für Layout ohne Flackern */
+    width: 400px;
+    flex-shrink: 0;
+}
+
+#action-buttons-column .btn-group {
+    flex-shrink: 0;
+}
+
+/* Autosave-Indicator-Status wird jetzt über Bootstrap-Icons statt ::before Pseudo-Elemente gehandhabt */
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Das neue, korrekte CSS Grid Layout --- */
+.menueplan-grid {
+    display: grid;
+    /* 8 Spalten: 1 für Kategorien, 7 für Wochentage */
+    grid-template-columns: minmax(150px, 1.5fr) repeat(7, minmax(180px, 2fr));
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    overflow: hidden; /* Für abgerundete Ecken */
+    background-color: #fff;
+}
+
+/* Basis-Styling für alle Zellen */
+.grid-header-cell,
+.grid-kategorie-cell,
+.grid-cell {
+    padding: 0; /* Padding entfernen, um die Dropzone vollflächig zu machen */
+    border-right: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #fff;
+}
+/* Letzte Spalte ohne rechten Rand */
+.menueplan-grid > *:nth-child(8n) {
+    border-right: 0;
+}
+/* Letzte Zeile ohne unteren Rand */
+.menueplan-grid > *:nth-last-child(-n+8) {
+    border-bottom: 0;
+}
+
+
+/* Kopfzeile (Wochentage) */
+.grid-header {
+    display: contents; /* Header-Zellen ins Grid-Layout integrieren */
+}
+.grid-header-cell {
+    font-weight: 600;
+    text-align: center;
+    background-color: #f8f9fa;
+    position: sticky;
+  
+    
+    z-index: 10;
+}
+
+/* Erste Spalte (Mahlzeiten-Kategorien) */
+.grid-kategorie-cell {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+}
+.grid-corner-cell {
+    z-index: 11; /* Muss über beiden sticky-Achsen liegen */
+    left: 0;
+}
+
+
+/* Haupt-Grid-Zellen */
+.grid-cell {
+    min-height: 120px;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+/* NEU: Styling für den seitlichen Griff */
+.cell-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: grab;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-right: 1px solid #dee2e6;
+}
+.cell-drag-handle:hover {
+    background-color: #e9ecef;
+}
+
+/* NEU: Wrapper für den Inhalt rechts vom Griff */
+.cell-content-wrapper {
+    flex-grow: 1;
+    height: 100%;
+    padding: 0; /* Padding entfernt wie gewünscht */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Drop-Zonen für Rezepte */
+.drop-zone {
+    height: 100%;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+    padding: 0; /* Sicherstellen, dass hier kein Padding ist */
+}
+.drop-zone.has-content {
+    border-style: solid;
+    border-color: #f1f3f5;
+}
+.drop-zone.drag-over-active {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+    border-style: solid;
+}
+.drop-zone.drag-over-invalid {
+    background-color: #fff1f0;
+    border-color: #ffccc7;
+    border-style: solid;
+}
+
+
+/* Rezept-Karten */
+.rezept-card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.rezept-drag-handle {
+    cursor: grab;
+    color: #adb5bd;
+}
+.rezept-name {
+    flex-grow: 1;
+}
+.rezept-card .btn-close {
+    font-size: 0.7rem;
+}
+
+/* Einrichtungs-Buttons */
+.einrichtungs-buttons .btn {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.3rem;
+}
+
+
+/* Drag Handles für Zonen / Kategorien */
+.zone-drag-handle {
+    cursor: grab;
+    color: #6c757d;
+}
+
+/* Responsive Verhalten */
+@media (max-width: 992px) {
+    #app {
+        /* Wrapper für horizontales Scrollen auf kleinen Bildschirmen */
+        overflow-x: auto;
+    }
+}
+
+#menueplan-grid-wrapper {
+    margin-top: 120px; /* Platz für fixed Controls-Leiste + Navbar (zusammen ca. 120px) */
+}
+
+/* Haupt-Layout mit CSS Grid */
+.menueplan-grid {
+    display: grid;
+    /* 8 Spalten: 1 für Kategorien, 7 für Wochentage */
+    grid-template-columns: minmax(150px, 1.5fr) repeat(7, minmax(180px, 2fr));
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    overflow: hidden; /* Für abgerundete Ecken */
+    background-color: #fff;
+}
+
+/* NEU: Styling für die gesamte Zelle als Drop-Target */
+.grid-cell.drag-over-active {
+    background-color: #e8f5e9 !important; /* Helles Grün */
+    box-shadow: inset 0 0 0 2px #4caf50;   /* Innerer grüner Rahmen */
+}
+
+.grid-cell.drag-over-invalid {
+    background-color: #ffebee !important; /* Helles Rot */
+    box-shadow: inset 0 0 0 2px #f44336;   /* Innerer roter Rahmen */
+}
+
+/* NEU: Styling für die gesamte Zelle als Drop-Target */
+.drop-zone.drag-over-invalid {
+    /* Diese Regel ist nicht mehr primär, wird aber als Fallback behalten */
+    border-color: #f44336;
+} 

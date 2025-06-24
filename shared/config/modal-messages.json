@@ -1,0 +1,12 @@
+{
+    "menueplan": {
+        "clearPlan": {
+            "title": "Plan löschen",
+            "message": "Möchten Sie den gesamten Plan für diese Woche wirklich endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        },
+        "load7WeeksAgo": {
+            "title": "Plan laden",
+            "message": "Möchten Sie den aktuellen Plan wirklich durch den Plan von vor 7 Wochen ersetzen? Alle nicht gespeicherten Änderungen gehen verloren."
+        }
+    }
+} 
