@@ -8,7 +8,10 @@ async function registerUser(req, res) {
 
     // Einfache Validierung
     if (!firstName || !lastName || !email || !password) {
-        return res.status(400).json({ message: 'Bitte füllen Sie alle Felder aus.' });
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Bitte füllen Sie alle Felder aus.' 
+        });
     }
 
     try {
@@ -16,7 +19,10 @@ async function registerUser(req, res) {
         const userExists = await User.findOne({ email });
 
         if (userExists) {
-            return res.status(400).json({ message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.' 
+            });
         }
 
         // Neuen Benutzer erstellen (Passwort wird durch Mongoose-Middleware automatisch gehasht)
@@ -31,14 +37,21 @@ async function registerUser(req, res) {
 
         if (user) {
             res.status(201).json({
+                success: true,
                 message: 'Registrierungsanfrage erfolgreich gesendet. Sie wird nun von einem Administrator geprüft.'
             });
         } else {
-            res.status(400).json({ message: 'Ungültige Benutzerdaten.' });
+            res.status(400).json({ 
+                success: false, 
+                message: 'Ungültige Benutzerdaten.' 
+            });
         }
     } catch (error) {
         console.error("Fehler bei der Registrierung:", error);
-        res.status(500).json({ message: "Serverfehler bei der Registrierung." });
+        res.status(500).json({ 
+            success: false, 
+            message: "Serverfehler bei der Registrierung." 
+        });
     }
 }
 
