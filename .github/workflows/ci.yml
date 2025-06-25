@@ -51,7 +51,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ping: 1})'"
+          --health-cmd "mongo --eval 'db.runCommand({ping: 1})'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -73,7 +73,7 @@ jobs:
         
     - name: Wait for MongoDB
       run: |
-        until mongosh --eval "print(\"MongoDB is ready\")"; do
+        until mongo --eval "print('MongoDB is ready')"; do
           echo "Waiting for MongoDB..."
           sleep 2
         done
@@ -142,7 +142,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ping: 1})'"
+          --health-cmd "mongo --eval 'db.runCommand({ping: 1})'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
