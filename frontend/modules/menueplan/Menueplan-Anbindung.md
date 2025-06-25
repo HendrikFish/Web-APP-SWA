@@ -1,5 +1,7 @@
 # Menüplan Modul - Technische Anbindung
 
+> **🛡️ SICHERHEIT:** Dieses Modul MUSS das neue Sicherheitssystem verwenden! Siehe `shared/docs/MODULARE-ENTWICKLUNG.md` für sichere Implementierung mit Error-Boundary und einheitlichem API-Client.
+
 Dieses Dokument beschreibt die technischen Details der Integration des Menüplan-Moduls, einschließlich Datenquellen, API-Endpunkte, Auto-Save-System und Geschäftslogik-Integration.
 
 ## Datenquellen & State-Management

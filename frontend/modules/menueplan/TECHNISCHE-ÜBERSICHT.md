@@ -1,6 +1,8 @@
 # Menüplan-Modul - Technische Übersicht
 
-> **Status:** ✅ Produktionsreif | **Version:** 2.0 | **Letzte Aktualisierung:** Januar 2025
+> **Status:** ✅ Produktionsreif | **Version:** 2.1 | **Letzte Aktualisierung:** Januar 2025
+> 
+> **🛡️ SICHERHEIT:** Dieses Modul verwendet das neue Sicherheitssystem! Siehe `shared/docs/MODULARE-ENTWICKLUNG.md` für Details zu Error-Boundary und einheitlichem API-Client.
 
 ## 🏗️ Architektur-Übersicht
 

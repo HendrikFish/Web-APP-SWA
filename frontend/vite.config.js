@@ -59,6 +59,17 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true, // Notwendig für virtuelle Hosts
+        secure: false,
+        timeout: 10000,
+        // Error-Handling für Proxy
+        onError: (err, req, res) => {
+          console.error('🚨 Proxy-Fehler:', err.message);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ 
+            error: 'Backend nicht erreichbar', 
+            message: 'Der Backend-Server antwortet nicht. Bitte starten Sie das Backend.' 
+          }));
+        }
       },
     },
     // Konfiguration für den File-Watcher
@@ -71,6 +82,14 @@ export default defineConfig({
       // Erlaubt dem Vite-Server den Zugriff auf Dateien außerhalb des Workspace-Roots.
       // Notwendig, damit wir auf /shared zugreifen können.
       allow: ['..']
+    },
+    // Hot Module Replacement für bessere Entwicklungserfahrung
+    hmr: {
+      // Overlay bei Fehlern, aber nicht bei Warnings
+      overlay: {
+        errors: true,
+        warnings: false
+      }
     }
   },
   build: {

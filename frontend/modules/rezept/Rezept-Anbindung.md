@@ -1,5 +1,7 @@
 # Rezept-Modul: Datenstruktur und Anbindung
 
+> **🛡️ SICHERHEIT:** Dieses Modul MUSS das neue Sicherheitssystem verwenden! Siehe `shared/docs/MODULARE-ENTWICKLUNG.md` für sichere Implementierung mit Error-Boundary und einheitlichem API-Client.
+
 Dieses Dokument definiert den "Datenvertrag" für das Rezept-Modul. Alle Komponenten, sowohl im Frontend als auch im Backend, müssen sich an diese Struktur halten.
 
 ## 1. Datenstruktur (`rezepte.json`)

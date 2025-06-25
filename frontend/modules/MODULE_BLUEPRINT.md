@@ -1,17 +1,36 @@
 # Modul-Blueprint: Anleitung zur Erstellung neuer Frontend-Module
 
+## 🛡️ **WICHTIG: Sichere Entwicklung ZUERST lesen!**
+
+**Bevor Sie mit der Modulentwicklung beginnen, lesen Sie unbedingt:**
+📖 **`shared/docs/MODULARE-ENTWICKLUNG.md`** - Vollständige Anleitung für fehlerfreie, modulare Entwicklung
+
+Diese Datei enthält das neue **Sicherheitssystem** das Abstürze verhindert:
+- ✅ Error-Boundary-System für Module-Isolation
+- ✅ Einheitlicher API-Client für Backend/Frontend-Synchronisation  
+- ✅ Backend Error-Middleware für Server-Stabilität
+- ✅ Module-Template für sichere Basis
+
+---
+
 Dieses Dokument ist eine verbindliche Schritt-für-Schritt-Anleitung für die Erstellung eines neuen Frontend-Moduls. Das strikte Befolgen dieses Blueprints ist entscheidend, um die Architektur, Stabilität und Wartbarkeit des gesamten Projekts zu gewährleisten.
 
 ## 1. Checkliste für die Modulerstellung
 
-1.  **[ ] Ordnerstruktur anlegen:** Erstellen Sie die Standard-Ordnerstruktur für Ihr neues Modul.
-2.  **[ ] Pfade definieren:** Legen Sie alle externen Daten- und API-Pfade in der `path/paths.js`-Datei fest.
-3.  **[ ] HTML-Grundgerüst erstellen:** Erstellen Sie die `index.html` mit den notwendigen Verweisen auf CSS und JS.
-4.  **[ ] CSS-Stile anlegen:** Erstellen Sie die `css/style.css`, importieren Sie Bootstrap und verwenden Sie primär Bootstrap-Klassen.
-5.  **[ ] JavaScript-Logik aufteilen:** Erstellen Sie im `js/module/`-Ordner separate Dateien für die verschiedenen Verantwortlichkeiten (z.B. `mein-modul-ui.js`, `mein-modul-api.js`).
-6.  **[ ] Haupt-Skript (`script.js`) erstellen:** Importieren und initialisieren Sie Ihre Sub-Module in der `js/script.js`.
-7.  **[ ] Modul registrieren:** Fügen Sie Ihr Modul in der `shared/config/module-config.json` hinzu, um es im Dashboard sichtbar zu machen.
-8.  **[ ] Backend erstellen (falls nötig):** Erstellen Sie das zugehörige Backend-Modul gemäß den Architekturregeln der Haupt-`README.md`.
+**🛡️ SICHERHEIT ZUERST:**
+0.  **[ ] Template verwenden:** Kopieren Sie `shared/templates/module-template.js` als Basis für Ihr `script.js`
+1.  **[ ] Error-Boundary einbauen:** Alle Module MÜSSEN `safeModuleInit()` verwenden
+2.  **[ ] API-Client verwenden:** Alle HTTP-Requests über `api` aus `@shared/utils/api-client.js`
+
+**STANDARD-SCHRITTE:**
+3.  **[ ] Ordnerstruktur anlegen:** Erstellen Sie die Standard-Ordnerstruktur für Ihr neues Modul.
+4.  **[ ] Pfade definieren:** Legen Sie alle externen Daten- und API-Pfade in der `path/paths.js`-Datei fest.
+5.  **[ ] HTML-Grundgerüst erstellen:** Erstellen Sie die `index.html` mit den notwendigen Verweisen auf CSS und JS.
+6.  **[ ] CSS-Stile anlegen:** Erstellen Sie die `css/style.css`, importieren Sie Bootstrap und verwenden Sie primär Bootstrap-Klassen.
+7.  **[ ] JavaScript-Logik aufteilen:** Erstellen Sie im `js/module/`-Ordner separate Dateien für die verschiedenen Verantwortlichkeiten (z.B. `mein-modul-ui.js`, `mein-modul-api.js`).
+8.  **[ ] Haupt-Skript (`script.js`) erstellen:** Importieren und initialisieren Sie Ihre Sub-Module in der `js/script.js`.
+9.  **[ ] Modul registrieren:** Fügen Sie Ihr Modul in der `shared/config/module-config.json` hinzu, um es im Dashboard sichtbar zu machen.
+10. **[ ] Backend erstellen (falls nötig):** Erstellen Sie das zugehörige Backend-Modul gemäß den Architekturregeln der Haupt-`README.md`.
 
 ---
 
@@ -47,8 +66,19 @@ Dies ist die "Schaltzentrale" Ihres Moduls. **Jegliche externe Kommunikation lä
 - **Eigene Klassen als Ausnahme:** Nur wenn ein Styling mit Bootstrap-Utilities nicht möglich ist, werden eigene Klassen erstellt. Diese **MÜSSEN** mit dem Modulnamen als Präfix versehen sein, um Konflikte zu vermeiden (z.B. `.mein-modul--spezial-button`).
 
 ### 2.4. JavaScript-Modularität (`js/`)
-- `script.js`: Die Haupt-Integrationsdatei. Sie importiert und initialisiert nur andere Sub-Module und enthält selbst **minimale Logik**. Sie ist auch der Ort, um CSS-Frameworks wie Bootstrap zu importieren.
-- `/js/module/`: Enthält Feature-basierte, verantwortungsgetriebene Sub-Module (z.B. `mein-modul-formular.js` für die UI, `mein-modul-api.js` für die Datenverarbeitung).
+- `script.js`: Die Haupt-Integrationsdatei. Sie **MUSS** Error-Boundary verwenden! Sie importiert und initialisiert nur andere Sub-Module und enthält selbst **minimale Logik**. Sie ist auch der Ort, um CSS-Frameworks wie Bootstrap zu importieren.
+
+**🛡️ WICHTIG: Sichere script.js Struktur:**
+```javascript
+import { safeModuleInit } from '@shared/components/error-boundary/error-boundary.js';
+import { api } from '@shared/utils/api-client.js';
+
+safeModuleInit(async () => {
+    // Ihre Module-Initialisierung hier
+}, 'IHR_MODULE_NAME');
+```
+
+- `/js/module/`: Enthält Feature-basierte, verantwortungsgetriebene Sub-Module (z.B. `mein-modul-formular.js` für die UI, `mein-modul-api.js` für die Datenverarbeitung). Diese MÜSSEN den API-Client verwenden!
 
 ### 2.5. Modul-Autarkie (Eigenständigkeit)
 Jedes Frontend-Modul ist dafür verantwortlich, seine eigenen Kern-Abhängigkeiten (insbesondere `bootstrap/dist/css/bootstrap.min.css`) in seinem Haupt-JavaScript-Einstiegspunkt (`script.js`) zu importieren. Dies stellt sicher, dass jedes Modul unabhängig und gekapselt funktioniert.

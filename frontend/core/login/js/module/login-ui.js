@@ -3,6 +3,7 @@ import { loginUser } from './login-api.js';
 import { registerUser } from './register-api.js';
 import customFieldsConfig from '@shared/config/custom-fields.json';
 import { renderDynamicFormFields, collectDynamicFieldValues } from '@shared/components/dynamic-form/form-builder.js';
+import { createPasswordStrengthIndicator } from '@shared/components/password-strength/password-strength.js';
 
 /**
  * Zeigt eine Feedback-Nachricht im Login-Formular an.
@@ -114,6 +115,17 @@ function setupRegisterForm(form) {
         renderDynamicFormFields(dynamicFieldsContainer, customFieldsConfig);
     }
 
+    // Passwort-Stärke-Anzeige hinzufügen
+    const passwordStrengthContainer = document.getElementById('password-strength-container');
+    let passwordStrengthAPI = null;
+    
+    if (passwordStrengthContainer) {
+        passwordStrengthAPI = createPasswordStrengthIndicator(
+            passwordStrengthContainer, 
+            'register-password'
+        );
+    }
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -127,6 +139,16 @@ function setupRegisterForm(form) {
         
         const customFields = collectDynamicFieldValues(dynamicFieldsContainer);
 
+        // Passwort-Validierung vor dem Absenden
+        if (passwordStrengthAPI && !passwordStrengthAPI.isValid()) {
+            const validation = passwordStrengthAPI.validate();
+            const errorMessage = `Passwort erfüllt nicht alle Anforderungen:\n\n${validation.errors.join('\n')}`;
+            
+            // Bessere Fehleranzeige als Alert
+            showRegistrationError(errorMessage);
+            return;
+        }
+
         try {
             await registerUser(firstName, lastName, email, password, customFields);
             
@@ -135,10 +157,48 @@ function setupRegisterForm(form) {
             successMessage.classList.remove('d-none');
 
         } catch (error) {
-            // Einfache Fehleranzeige
-            alert(`Fehler bei der Registrierung: ${error.message}`);
+            showRegistrationError(error.message);
         }
     });
+
+    /**
+     * Zeigt eine benutzerfreundliche Fehlermeldung für die Registrierung
+     * @param {string} message 
+     */
+    function showRegistrationError(message) {
+        // Feedback-Element finden oder erstellen
+        let feedbackElement = form.querySelector('.registration-feedback');
+        if (!feedbackElement) {
+            feedbackElement = document.createElement('div');
+            feedbackElement.className = 'registration-feedback alert alert-danger mt-3';
+            feedbackElement.setAttribute('role', 'alert');
+            
+            // Vor dem Submit-Button einfügen
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.parentNode.insertBefore(feedbackElement, submitButton);
+        }
+
+        feedbackElement.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="me-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <strong>Registrierung fehlgeschlagen:</strong><br>
+                    ${message.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+        `;
+        
+        feedbackElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Fehlermeldung nach 10 Sekunden automatisch ausblenden
+        setTimeout(() => {
+            if (feedbackElement.parentNode) {
+                feedbackElement.remove();
+        }
+        }, 10000);
+    }
 }
 
 // ... (Rest der Datei bleibt gleich)

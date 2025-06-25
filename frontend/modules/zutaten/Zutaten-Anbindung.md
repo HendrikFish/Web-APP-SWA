@@ -1,5 +1,7 @@
 # Technische Dokumentation: Datenanbindung des Zutaten-Moduls
 
+> **🛡️ SICHERHEIT:** Dieses Modul MUSS das neue Sicherheitssystem verwenden! Siehe `shared/docs/MODULARE-ENTWICKLUNG.md` für sichere Implementierung mit Error-Boundary und einheitlichem API-Client.
+
 Dieses Dokument beschreibt die technische Struktur, die Datenquellen und die zentralen Logiken für die Verarbeitung von Zutatendaten. Es dient als Referenz für Entwickler und KIs.
 
 ## 1. Datenquellen (Wo liegen die Daten?)

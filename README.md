@@ -33,6 +33,17 @@ rules:
     content: |
       Jedes neue Frontend-Modul muss einer standardisierten 'Blueprint'-Struktur folgen, um Konsistenz und Wartbarkeit zu gewährleisten.
 
+      **🛡️ WICHTIG: Sichere Entwicklung verwenden!**
+      Alle neuen Module MÜSSEN das Error-Boundary-System verwenden:
+      ```javascript
+      import { safeModuleInit } from '@shared/components/error-boundary/error-boundary.js';
+      import { api } from '@shared/utils/api-client.js';
+      
+      safeModuleInit(async () => {
+          // Ihre Module-Initialisierung hier
+      }, 'IHR_MODULE_NAME');
+      ```
+
       **1. Standard-Ordnerstruktur:**
       - `/[modul-name]/css/`: Enthält aufgeteilte CSS-Dateien.
       - `/[modul-name]/js/`: Enthält das Haupt-`script.js` und einen `/module`-Unterordner.
@@ -41,7 +52,7 @@ rules:
       - `/[modul-name]/index.html`: Der Haupteinstiegspunkt für das Modul.
 
       **2. JavaScript-Modularität (`/js`):**
-      - `script.js`: Die Haupt-Integrationsdatei. Sie importiert und initialisiert nur andere Untermodule und enthält selbst minimale Logik.
+      - `script.js`: Die Haupt-Integrationsdatei. Sie importiert und initialisiert nur andere Untermodule und enthält selbst minimale Logik. MUSS Error-Boundary verwenden!
       - `/js/module/`: Enthält Feature-basierte, verantwortungsgetriebene Untermodule (z.B. `zutaten-formular.js` für die UI, `zutaten-api.js` für die Datenverarbeitung).
 
       **3. CSS-Modularität & Benennung (`/css`):**
@@ -53,6 +64,16 @@ rules:
       - Sie definiert, wo Daten gelesen/geschrieben werden, und abstrahiert, ob die Quelle ein API-Endpunkt (z.B. `/api/zutaten`) oder eine JSON-Datei (`shared/data/zutaten.json`) ist.
       - Sie muss auch Logik zur Erzeugung dynamischer Pfade enthalten (z.B. Erstellung eines Pfades basierend auf Jahr/Woche für Menüpläne).
       - Die Kernmodullogik interagiert AUSSCHLIESSLICH mit dieser Abstraktionsebene, niemals mit fest codierten Pfaden oder API-Endpunkten. 
+
+      **5. Einheitliche API-Nutzung:**
+      - Alle HTTP-Requests MÜSSEN über den globalen API-Client erfolgen: `import { api } from '@shared/utils/api-client.js'`
+      - NIEMALS direktes `fetch()` verwenden - der API-Client bietet einheitliche Fehlerbehandlung, Retry-Logic und Auth-Handling.
+
+      **6. Template verwenden:**
+      Für neue Module das sichere Template verwenden:
+      ```bash
+      cp shared/templates/module-template.js frontend/modules/ihr-modul/js/script.js
+      ``` 
 
   - title: "UI/Design-Grundsatz: Bootstrap First"
     content: |
@@ -334,7 +355,17 @@ Eine einheitliche Sprache ist entscheidend für die Wartbarkeit.
 
 Die Entwicklung neuer Module ist der Kern der Weiterentwicklung dieses Projekts. Um maximale Konsistenz und Qualität zu gewährleisten, muss jedes Modul exakt nach den Vorgaben des Modul-Blueprints erstellt werden.
 
-**➡️ Eine detaillierte Schritt-für-Schritt-Anleitung zur Erstellung, Implementierung und Integration neuer Module finden Sie in der Datei: `frontend/modules/MODULE_BLUEPRINT.md`**
+**🛡️ WICHTIGER HINWEIS: Sicherheitssystem**
+Das Projekt verfügt über ein umfassendes Sicherheitssystem für modulare Entwicklung:
+- **Error-Boundary-System**: Verhindert App-Abstürze durch fehlerhafte Module
+- **Einheitlicher API-Client**: Löst Backend/Frontend-Inkonsistenzen  
+- **Backend Error-Middleware**: Verhindert Server-Abstürze
+- **Module-Template**: Sichere Basis für neue Module
+
+**➡️ Detaillierte Anleitungen finden Sie in:**
+- `shared/docs/MODULARE-ENTWICKLUNG.md` - **Hauptanleitung für sichere Entwicklung**
+- `frontend/modules/MODULE_BLUEPRINT.md` - Schritt-für-Schritt-Anleitung
+- `shared/templates/module-template.js` - Sichere Vorlage für neue Module
 
 ## 7. Benutzer- & Authentifizierungssystem
 

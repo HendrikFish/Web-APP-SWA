@@ -1,5 +1,14 @@
 # Blueprint: Neues Feature im Admin-Dashboard
 
+> **🛡️ WICHTIG: Sichere Entwicklung ZUERST!**
+> Bevor Sie ein neues Feature entwickeln, lesen Sie unbedingt:
+> 📖 **`shared/docs/MODULARE-ENTWICKLUNG.md`** - Vollständige Anleitung für sichere, modulare Entwicklung
+> 
+> **Alle neuen Features MÜSSEN das Sicherheitssystem verwenden:**
+> - ✅ Error-Boundary für Feature-Isolation
+> - ✅ Einheitlichen API-Client für Backend-Kommunikation
+> - ✅ Template aus `shared/templates/module-template.js`
+
 Dieses Dokument beschreibt den "Contract-First" Prozess zur Erstellung eines neuen, robusten Features innerhalb des Admin-Dashboards. Dieser Prozess ist darauf ausgelegt, häufige Fehler wie Race Conditions und Schnittstellen-Konflikte von vornherein zu vermeiden.
 
 Jedes neue Feature muss diesen 4 Schritten folgen.
