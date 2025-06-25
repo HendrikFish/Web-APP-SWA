@@ -109,26 +109,27 @@ describe('Authentication API', () => {
 
     describe('POST /api/auth/login', () => {
         beforeEach(async () => {
-            // Approved Test-Benutzer erstellen
-            const hashedPassword = await bcrypt.hash('testPassword123', 12);
-            await User.create({
+            // Approved Test-Benutzer erstellen (Passwort wird durch pre('save') gehashed)
+            const approvedUser = new User({
                 email: 'approved@example.com',
-                password: hashedPassword,
+                password: 'testPassword123',
                 firstName: 'Approved',
                 lastName: 'User',
                 role: 'Koch',
                 isApproved: true
             });
+            await approvedUser.save();
 
-            // Nicht-approved Test-Benutzer erstellen
-            await User.create({
+            // Nicht-approved Test-Benutzer erstellen (Passwort wird durch pre('save') gehashed)
+            const pendingUser = new User({
                 email: 'pending@example.com',
-                password: hashedPassword,
+                password: 'testPassword123',
                 firstName: 'Pending',
                 lastName: 'User',
                 role: 'extern',
                 isApproved: false
             });
+            await pendingUser.save();
         });
 
         it('sollte approved Benutzer einloggen', async () => {
