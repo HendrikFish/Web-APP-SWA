@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezept-Verwaltung</title>
+  <script type="module" crossorigin src="/assets/rezept-xz_a5isi.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/bootstrap.esm-DGoQCxh1.js">
+  <link rel="modulepreload" crossorigin href="/assets/header-DaFr1czl.js">
+  <link rel="modulepreload" crossorigin href="/assets/toast-notification-BBb3bACE.js">
+  <link rel="stylesheet" crossorigin href="/assets/bootstrap-DhAbcaWn.css">
+  <link rel="stylesheet" crossorigin href="/assets/header-BnwqsTiD.css">
+  <link rel="stylesheet" crossorigin href="/assets/toast-notification-CC4azLeq.css">
+  <link rel="stylesheet" crossorigin href="/assets/rezept-C3M7vmFd.css">
+  <link rel="stylesheet" crossorigin href="/assets/layout-BF2FfxtW.css">
+</head>
+<body class="bg-light">
+    <header id="main-header"></header>
+
+    <main class="container my-4">
+        <div class="row g-4">
+            <!-- Linke Spalte: Formular -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h1 class="h4 mb-0">Rezept erfassen/bearbeiten</h1>
+                            <button id="neues-rezept-btn" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-2"></i>Neues Rezept
+                            </button>
+                        </div>
+                        <form id="rezept-form">
+                            <!-- Das Formular wird hier von JS dynamisch eingefügt -->
+                            <p class="text-center text-muted">Bitte wählen Sie ein Rezept aus der Liste zum Bearbeiten oder erstellen Sie ein neues.</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rechte Spalte: Rezeptliste -->
+            <div class="col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h1 class="h4 mb-0">Rezeptliste</h1>
+                        </div>
+
+                        <!-- Such- und Filterleiste -->
+                        <div class="row g-2 mb-3 align-items-center">
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="rezept-suche-input" class="form-control" placeholder="Rezept suchen...">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <select id="rezept-sortierung-select" class="form-select">
+                                    <option value="name-asc">Name (A-Z)</option>
+                                    <option value="name-desc">Name (Z-A)</option>
+                                    <option value="date-new">Neueste zuerst</option>
+                                    <option value="date-old">Älteste zuerst</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Rezeptliste -->
+                        <div id="rezept-liste-container" class="list-group">
+                            <!-- Die Rezeptliste wird hier dynamisch eingefügt -->
+                            <p class="text-center text-muted">Lade Rezepte...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Toast-Notifications-Container -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+</body>
+</html> 

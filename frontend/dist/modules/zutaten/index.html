@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zutatenerfassung - SmartWorkArt</title>
+  <script type="module" crossorigin src="/assets/zutaten-5iy-103L.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/bootstrap.esm-DGoQCxh1.js">
+  <link rel="modulepreload" crossorigin href="/assets/header-DaFr1czl.js">
+  <link rel="modulepreload" crossorigin href="/assets/toast-notification-BBb3bACE.js">
+  <link rel="stylesheet" crossorigin href="/assets/bootstrap-DhAbcaWn.css">
+  <link rel="stylesheet" crossorigin href="/assets/header-BnwqsTiD.css">
+  <link rel="stylesheet" crossorigin href="/assets/toast-notification-CC4azLeq.css">
+  <link rel="stylesheet" crossorigin href="/assets/zutaten-C7Wb_Oa4.css">
+</head>
+<body class="bg-light">
+    <header id="main-header"></header>
+
+    <main class="container my-4">
+        <div class="row g-4">
+            <!-- Linke Spalte: Erfassungsformular -->
+            <div class="col-md-5">
+                <div class="card shadow-sm rounded-0">
+                    <div class="card-header">
+                        <h1 class="h4 mb-0">Neue Zutat erfassen</h1>
+                    </div>
+                    <div class="card-body">
+                        <form id="zutat-form">
+                            <!-- Zutat Name mit Vorschlägen -->
+                            <div class="mb-3 position-relative">
+                                <label for="zutat-name" class="form-label">Name der Zutat*</label>
+                                <input type="text" id="zutat-name" class="form-control form-control-sm" autocomplete="off" required>
+                                <div id="custom-suggestions" class="list-group position-absolute w-100" style="z-index: 10;">
+                                    <!-- Vorschläge werden hier per JS eingefügt -->
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Kategorie -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="zutat-kategorie" class="form-label">Kategorie*</label>
+                                    <select id="zutat-kategorie" class="form-select form-select-sm" required></select>
+                                </div>
+                                <!-- Lieferant -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="zutat-lieferant" class="form-label">Lieferant*</label>
+                                    <select id="zutat-lieferant" class="form-select form-select-sm" required></select>
+                                </div>
+                            </div>
+
+                            <!-- Preise und Einheiten -->
+                            <div class="row align-items-end">
+                                <div class="col-md-4 mb-3">
+                                    <label for="basiseinheit" class="form-label">Basiseinheit*</label>
+                                    <select id="basiseinheit" class="form-select form-select-sm" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="verwendungseinheit" class="form-label">Verwendungseinheit*</label>
+                                    <select id="verwendungseinheit" class="form-select form-select-sm" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="preis-basis" class="form-label">Preis pro Basiseinheit*</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">€</span>
+                                        <input type="number" id="preis-basis" class="form-control form-control-sm" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 form-text">
+                                Preis pro Verwendungseinheit: <span id="preis-verwendung" class="fw-bold">wird berechnet...</span>
+                            </div>
+
+                            <!-- Herkunft -->
+                            <div class="mb-3">
+                                <label for="zutat-herkunft" class="form-label">Herkunft*</label>
+                                <select id="zutat-herkunft" class="form-select form-select-sm" required>
+                                    <option value="" disabled selected>Bitte wählen...</option>
+                                    <option value="Einheimisch">Einheimisch (Österreich)</option>
+                                    <option value="EU">EU</option>
+                                    <option value="Nicht-EU">Nicht-EU</option>
+                                </select>
+                            </div>
+
+                            <!-- Allergene (optional) -->
+                            <div class="mb-3">
+                                <div class="d-grid">
+                                    <button type="button" id="toggle-allergene-btn" class="btn btn-sm btn-outline-secondary">
+                                        Allergene bearbeiten
+                                    </button>
+                                </div>
+                                <div id="allergene-section" class="d-none border rounded p-3 mt-2">
+                                    <label class="form-label">Enthaltene Allergene</label>
+                                    <div id="allergene-container" class="bg-white">
+                                        <!-- Checkboxen werden hier dynamisch eingefügt -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Nährwerte (optional) -->
+                            <div class="mb-3">
+                                <div class="d-grid">
+                                    <button type="button" id="toggle-naehrwerte-btn" class="btn btn-sm btn-outline-secondary">
+                                        Nährwertangaben bearbeiten
+                                    </button>
+                                </div>
+                                <div id="naehrwerte-section" class="d-none border rounded p-3 mt-2">
+                                    <h6 class="mb-3">Nährwertangaben pro 100g/100ml</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-kalorien" class="form-label">Kalorien (kcal)</label>
+                                            <input type="number" id="naehrwert-kalorien" class="form-control form-control-sm" step="1">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-fett" class="form-label">Fett (g)</label>
+                                            <input type="number" id="naehrwert-fett" class="form-control form-control-sm" step="0.1">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-zucker" class="form-label">davon Zucker (g)</label>
+                                            <input type="number" id="naehrwert-zucker" class="form-control form-control-sm" step="0.1">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-eiweiss" class="form-label">Eiweiß (g)</label>
+                                            <input type="number" id="naehrwert-eiweiss" class="form-control form-control-sm" step="0.1">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-kohlenhydrate" class="form-label">Kohlenhydrate (g)</label>
+                                            <input type="number" id="naehrwert-kohlenhydrate" class="form-control form-control-sm" step="0.1">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label for="naehrwert-salz" class="form-label">Salz (g)</label>
+                                            <input type="number" id="naehrwert-salz" class="form-control form-control-sm" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Zutat speichern</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rechte Spalte: Zutatenliste und Filter -->
+            <div class="col-md-7">
+                <div class="card shadow-sm rounded-0">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="h5 mb-0">Zutatenliste</h2>
+                            <div class="d-flex gap-2 align-items-center ms-3">
+                                <!-- Import/Export Buttons -->
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" id="zutaten-export-btn" class="btn btn-outline-secondary">Export</button>
+                                    <label for="zutaten-import-input" class="btn btn-outline-secondary mb-0">Import</label>
+                                    <input type="file" id="zutaten-import-input" class="d-none" accept=".json">
+                                </div>
+                                <!-- Filter und Sortierung -->
+                                <select id="filter-kategorie" class="form-select form-select-sm">
+                                    <option value="">Alle Kategorien</option>
+                                    <!-- Kategorien werden hier per JS eingefügt -->
+                                </select>
+                                <input type="text" id="filter-zutaten" class="form-control form-control-sm" placeholder="Textfilter...">
+                                <select id="sort-zutaten" class="form-select form-select-sm">
+                                    <option value="name-asc">Sortieren: Name A-Z</option>
+                                    <option value="name-desc">Sortieren: Name Z-A</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="zutaten-liste-container" class="list-group">
+                            <!-- Die Zutatenliste wird hier dynamisch eingefügt -->
+                            <p class="text-center text-muted">Lade Zutaten...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html> 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menü-Portal - SmartWorkArt</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Shared Components CSS -->
+    <link rel="stylesheet" href="/shared/styles/layout.css">
+    <link rel="stylesheet" href="/shared/components/toast-notification/toast-notification.css">
+    
+    <!-- Module CSS -->
+  <script type="module" crossorigin src="/assets/menuePortal-CZW5cAmN.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/bootstrap.esm-DGoQCxh1.js">
+  <link rel="modulepreload" crossorigin href="/assets/header-DaFr1czl.js">
+  <link rel="modulepreload" crossorigin href="/assets/toast-notification-BBb3bACE.js">
+  <link rel="stylesheet" crossorigin href="/assets/bootstrap-DhAbcaWn.css">
+  <link rel="stylesheet" crossorigin href="/assets/header-BnwqsTiD.css">
+  <link rel="stylesheet" crossorigin href="/assets/toast-notification-CC4azLeq.css">
+  <link rel="stylesheet" crossorigin href="/assets/menuePortal-CqB-sfWP.css">
+  <link rel="stylesheet" crossorigin href="/assets/layout-BF2FfxtW.css">
+</head>
+<body>
+    <!-- Header wird dynamisch geladen -->
+    <div id="main-header"></div>
+
+    <!-- Main App Container -->
+    <div id="app">
+        <!-- Menü-Portal Controls -->
+        <div class="menue-portal-controls">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Titel und Einrichtungs-Info -->
+                        <div class="col-md-6">
+                            <h4 class="mb-1">
+                                <i class="bi bi-calendar-week text-primary"></i>
+                                Menü-Portal
+                            </h4>
+                            <div id="einrichtungs-info" class="text-muted">
+                                <!-- Wird per JavaScript gefüllt -->
+                            </div>
+                        </div>
+                        
+                        <!-- Wochennavigation -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center justify-content-md-end gap-2">
+                                <button id="prev-week" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-chevron-left"></i>
+                                    <span class="d-none d-sm-inline">Vorherige</span>
+                                </button>
+                                
+                                <button id="current-week" class="btn btn-outline-secondary btn-sm">
+                                    Heute
+                                </button>
+                                
+                                <div id="week-display" class="fw-bold text-center" style="min-width: 120px;">
+                                    <!-- Wird per JavaScript gefüllt -->
+                                </div>
+                                
+                                <button id="next-week" class="btn btn-outline-secondary btn-sm">
+                                    <span class="d-none d-sm-inline">Nächste</span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Einrichtungs-Auswahl (falls mehrere zugewiesen) -->
+        <div id="einrichtungs-selector" class="card shadow-sm mb-3" style="display: none;">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-building"></i>
+                    Einrichtung auswählen
+                </h6>
+                <div id="einrichtungs-buttons" class="d-flex flex-wrap gap-2">
+                    <!-- Wird per JavaScript gefüllt -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="text-center p-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Lade Menüplan...</span>
+            </div>
+            <p class="mt-2 text-muted">Lade Menüplan...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="alert alert-danger" style="display: none;">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span id="error-text"></span>
+        </div>
+
+        <!-- Menüplan Container -->
+        <div id="menue-portal-wrapper">
+            <!-- Desktop Grid (ab md) -->
+            <div id="desktop-grid" class="d-none d-md-block">
+                <!-- Wird per JavaScript gefüllt -->
+            </div>
+
+            <!-- Mobile Accordion (bis md) -->
+            <div id="mobile-accordion" class="d-md-none">
+                <!-- Wird per JavaScript gefüllt -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-container mt-4">
+            <div class="d-flex gap-2 flex-wrap">
+                <button id="print-menu" class="btn btn-outline-primary">
+                    <i class="bi bi-printer"></i>
+                    <span class="d-none d-sm-inline">Drucken</span>
+                </button>
+                
+                <button id="export-pdf" class="btn btn-outline-success">
+                    <i class="bi bi-file-pdf"></i>
+                    <span class="d-none d-sm-inline">PDF Export</span>
+                </button>
+                
+                <button id="refresh-menu" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span class="d-none d-sm-inline">Aktualisieren</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Module Script -->
+</body>
+</html> 

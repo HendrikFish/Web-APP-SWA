@@ -13,16 +13,16 @@ const generateToken = (id) => {
  * Authentifiziert einen Benutzer anhand von E-Mail und Passwort.
  */
 async function loginUser(req, res) {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Bitte geben Sie E-Mail und Passwort an.' 
-        });
-    }
-
     try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Bitte geben Sie E-Mail und Passwort an.' 
+            });
+        }
+
         // Finde den Benutzer anhand der E-Mail
         const user = await User.findOne({ email });
 
@@ -36,7 +36,7 @@ async function loginUser(req, res) {
                 });
             }
 
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 user: {
                     _id: user._id,
@@ -49,14 +49,14 @@ async function loginUser(req, res) {
             });
         } else {
             // Aus Sicherheitsgründen eine generische Fehlermeldung
-            res.status(401).json({ 
+            return res.status(401).json({ 
                 success: false, 
                 message: 'Ungültige Anmeldedaten.' 
             });
         }
     } catch (error) {
         console.error("Fehler beim Login:", error);
-        res.status(500).json({ 
+        return res.status(500).json({ 
             success: false, 
             message: "Serverfehler beim Login." 
         });

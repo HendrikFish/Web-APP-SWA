@@ -4,17 +4,17 @@ const User = require('../../../models/User');
  * Registriert einen neuen Benutzer mit dem Status "nicht genehmigt".
  */
 async function registerUser(req, res) {
-    const { firstName, lastName, email, password, customFields } = req.body;
-
-    // Einfache Validierung
-    if (!firstName || !lastName || !email || !password) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Bitte füllen Sie alle Felder aus.' 
-        });
-    }
-
     try {
+        const { firstName, lastName, email, password, customFields } = req.body;
+
+        // Einfache Validierung
+        if (!firstName || !lastName || !email || !password) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Bitte füllen Sie alle Felder aus.' 
+            });
+        }
+
         // Prüfen, ob der Benutzer bereits existiert
         const userExists = await User.findOne({ email });
 
@@ -36,19 +36,19 @@ async function registerUser(req, res) {
         });
 
         if (user) {
-            res.status(201).json({
+            return res.status(201).json({
                 success: true,
                 message: 'Registrierungsanfrage erfolgreich gesendet. Sie wird nun von einem Administrator geprüft.'
             });
         } else {
-            res.status(400).json({ 
+            return res.status(400).json({ 
                 success: false, 
                 message: 'Ungültige Benutzerdaten.' 
             });
         }
     } catch (error) {
         console.error("Fehler bei der Registrierung:", error);
-        res.status(500).json({ 
+        return res.status(500).json({ 
             success: false, 
             message: "Serverfehler bei der Registrierung." 
         });
