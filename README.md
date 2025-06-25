@@ -5,9 +5,28 @@ Dieses Dokument ist das zentrale "Grundgesetz" für das SmartWorkArt-Projekt. Es
 ## Regeln und Prinzipien
 
 rules:
-  - title: "Kommentare auf Deutsch"
+  - title: "Deutsche Sprache im gesamten Projekt"
     content: |
-      Alle Code-Kommentare müssen auf Deutsch verfasst werden, um die Konsistenz in der gesamten Codebasis zu wahren.
+      Um die Konsistenz und Verständlichkeit für das deutsche Entwicklungsteam zu gewährleisten, muss die deutsche Sprache konsequent verwendet werden:
+      1.  **Code-Kommentare:** Alle Code-Kommentare müssen auf Deutsch verfasst werden.
+      2.  **Commit-Messages:** Alle Git-Commit-Nachrichten müssen auf Deutsch geschrieben werden, um die Projekthistorie für das Team verständlich zu halten.
+      3.  **Dokumentation:** Alle Markdown-Dateien, README-Inhalte und technische Dokumentation erfolgen auf Deutsch.
+      4.  **Variablen- und Funktionsnamen:** Wo sinnvoll, sollen deutsche Begriffe verwendet werden (z.B. `rezeptListe` statt `recipeList`).
+      
+      **Commit-Message Format (Deutsch):**
+      ```
+      typ: Kurze Beschreibung der Änderung
+      
+      - Detaillierte Erklärung was geändert wurde
+      - Warum die Änderung notwendig war
+      - Welche Auswirkungen sie hat
+      ```
+      
+      **Beispiele für gute deutsche Commits:**
+      - `feat: Neues Rezept-Modul mit Suchfunktion hinzugefügt`
+      - `fix: Menüplan-Synchronisation zwischen Frontend und Backend repariert`
+      - `docs: Anfänger-Guide für CI/CD Pipeline erstellt`
+      - `refactor: API-Client für einheitliche Fehlerbehandlung überarbeitet`
 
   - title: "Regressionsschutz (Oberstes Gebot)"
     content: |

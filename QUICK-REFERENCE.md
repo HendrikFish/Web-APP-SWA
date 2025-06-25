@@ -165,12 +165,35 @@ git status
 # Änderungen hinzufügen
 git add .
 
-# Commit erstellen
-git commit -m "Beschreibung der Änderung"
+# Commit erstellen (IMMER auf Deutsch!)
+git commit -m "feat: Neue Funktion für Rezept-Verwaltung hinzugefügt"
 
 # Zu GitHub hochladen
 git push
 ```
+
+### **🇩🇪 WICHTIG: Deutsche Commit-Messages**
+
+**✅ GUT (Deutsch):**
+```bash
+git commit -m "feat: Drag-and-Drop für Menüplan implementiert"
+git commit -m "fix: Login-Problem bei ungültigen Passwörtern behoben"
+git commit -m "docs: Anleitung für neue Module erstellt"
+git commit -m "refactor: API-Client für bessere Fehlerbehandlung überarbeitet"
+```
+
+**❌ SCHLECHT (Englisch):**
+```bash
+git commit -m "feat: implement drag and drop for menu plan"
+git commit -m "fix: login issue with invalid passwords"
+```
+
+**Commit-Typen:**
+- `feat:` - Neue Funktion
+- `fix:` - Fehler behoben
+- `docs:` - Dokumentation
+- `refactor:` - Code umstrukturiert
+- `test:` - Tests hinzugefügt
 
 ---
 
