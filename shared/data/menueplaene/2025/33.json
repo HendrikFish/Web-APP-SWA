@@ -185,13 +185,13 @@
         "isIntern": false,
         "speiseplan": {
           "montag": {
-            "suppe": false,
-            "hauptspeise": false,
-            "dessert": false
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
           },
           "dienstag": {
             "suppe": false,
-            "hauptspeise": false,
+            "hauptspeise": true,
             "dessert": false
           },
           "mittwoch": {
@@ -200,9 +200,9 @@
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
-            "dessert": false
+            "dessert": true
           },
           "freitag": {
             "suppe": true,
@@ -210,7 +210,7 @@
             "dessert": false
           },
           "samstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
@@ -287,12 +287,12 @@
             "dessert": false
           },
           "mittwoch": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
             "dessert": true
           },
@@ -363,7 +363,7 @@
         }
       }
     ],
-    "generatedAt": "2025-06-24T10:17:06.128Z",
+    "generatedAt": "2025-06-24T15:48:48.550Z",
     "categories": [
       {
         "id": "suppe",
@@ -415,7 +415,7 @@
       }
     ]
   },
-  "updatedAt": "2025-06-24T10:17:06.160Z",
+  "updatedAt": "2025-06-24T15:48:48.582Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

@@ -1,34 +1,14 @@
 {
   "year": 2025,
-  "week": 26,
+  "week": 31,
   "days": {
     "montag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "suppe": [],
+        "menu1": [],
         "menu2": [],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "abend-suppe": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
+        "dessert": [],
+        "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
         "kalte-platte": [],
@@ -44,51 +24,13 @@
     },
     "dienstag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          },
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu2": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          },
-          {
-            "id": "rezept-1750679454215-ea9p7hw",
-            "name": "Möhrensalat"
-          }
-        ],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "abend-suppe": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
         "milchspeise": [],
-        "normalkost": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "normalkost": [],
         "kalte-platte": [],
         "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
@@ -97,87 +39,37 @@
       },
       "Zuweisungen": {
         "menu1": [],
-        "menu2": [
-          "17cf0076-e28f-4a11-9b21-49ad01039650"
-        ]
+        "menu2": []
       }
     },
     "mittwoch": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu2": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
         "abend-suppe": [],
         "milchspeise": [],
-        "normalkost": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "normalkost": [],
         "kalte-platte": [],
-        "wurstbrot-toast": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
         "kaesebrot-toast": [],
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
         "menu1": [],
-        "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
-          "5409619a-b506-442f-a97d-182c354f2480"
-        ]
+        "menu2": []
       }
     },
     "donnerstag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
+        "suppe": [],
         "menu1": [],
         "menu2": [],
-        "dessert": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "dessert": [],
         "abend-suppe": [],
-        "milchspeise": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "milchspeise": [],
         "normalkost": [],
         "kalte-platte": [],
         "wurstbrot-toast": [],
@@ -186,130 +78,36 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu2": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
-        ],
-        "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "5409619a-b506-442f-a97d-182c354f2480"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "freitag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          },
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "suppe": [],
+        "menu1": [],
         "menu2": [],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
+        "dessert": [],
         "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
         "kalte-platte": [],
-        "wurstbrot-toast": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
         "kaesebrot-toast": [],
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
-        ],
-        "menu2": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "samstag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750679454215-ea9p7hw",
-            "name": "Möhrensalat"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "suppe": [],
+        "menu1": [],
         "menu2": [],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "abend-suppe": [],
-        "milchspeise": [],
-        "normalkost": [],
-        "kalte-platte": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "wurstbrot-toast": [],
-        "wurstbrot-schwarzbrot": [],
-        "kaesebrot-toast": [],
-        "kaesebrot-schwarzbrot": []
-      },
-      "Zuweisungen": {
-        "menu1": [
-          "5409619a-b506-442f-a97d-182c354f2480",
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
-        ],
-        "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
-      }
-    },
-    "sonntag": {
-      "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
-        "menu2": [],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
+        "dessert": [],
         "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
@@ -320,9 +118,27 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "5409619a-b506-442f-a97d-182c354f2480"
-        ],
+        "menu1": [],
+        "menu2": []
+      }
+    },
+    "sonntag": {
+      "Mahlzeiten": {
+        "suppe": [],
+        "menu1": [],
+        "menu2": [],
+        "dessert": [],
+        "abend-suppe": [],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [],
         "menu2": []
       }
     }
@@ -372,8 +188,7 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       },
       {
@@ -419,8 +234,7 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       },
       {
@@ -466,8 +280,7 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       },
       {
@@ -513,8 +326,7 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       },
       {
@@ -560,8 +372,7 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       },
       {
@@ -607,59 +418,11 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
-        }
-      },
-      {
-        "id": "136e90d8-255a-4d28-a1cb-85af9639ea9d",
-        "name": "VS-Schüttdorf",
-        "kuerzel": "VS-Schü",
-        "isIntern": false,
-        "speiseplan": {
-          "montag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "dienstag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "mittwoch": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "donnerstag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "freitag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "samstag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          },
-          "sonntag": {
-            "suppe": true,
-            "hauptspeise": true,
-            "dessert": true
-          }
-        },
-        "snapshotMetadata": {
-          "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-25T11:06:29.805Z"
+          "originalDataTimestamp": null
         }
       }
     ],
-    "generatedAt": "2025-06-25T11:06:29.805Z",
+    "generatedAt": "2025-06-24T15:58:41.448Z",
     "categories": [
       {
         "id": "suppe",
@@ -709,14 +472,9 @@
         "id": "kaesebrot-schwarzbrot",
         "name": "Käsebrot-Schw. Brot"
       }
-    ],
-    "updatedBy": {
-      "userId": "679f7a109d1d8b3535030897",
-      "name": "Admin System",
-      "action": "snapshot_update"
-    }
+    ]
   },
-  "updatedAt": "2025-06-25T11:06:31.441Z",
+  "updatedAt": "2025-06-24T15:58:41.477Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

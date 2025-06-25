@@ -8,7 +8,9 @@ Dieses Modul ist das zentrale Werkzeug zur Planung der wöchentlichen Mahlzeiten
 
 1.  **Historische Genauigkeit (Snapshot-Prinzip):**
     *   Ein gespeicherter Menüplan (`kW.json`) ist ein **in sich geschlossenes Dokument**.
-    *   Beim Speichern wird eine **Kopie** der zu diesem Zeitpunkt gültigen "Anrechte" (welche Einrichtung bekommt welche Mahlzeit) direkt in die Plandatei geschrieben.
+    *   **Neue Pläne:** Beim ersten Speichern wird automatisch eine **Kopie** der zu diesem Zeitpunkt gültigen "Anrechte" (welche Einrichtung bekommt welche Mahlzeit) direkt in die Plandatei geschrieben.
+    *   **Bestehende Pläne:** Der ursprüngliche Snapshot bleibt **unverändert** und wird nicht automatisch überschrieben. Dies gewährleistet historische Genauigkeit.
+    *   **Explizite Aktualisierung:** Nur über den Button "Einrichtungen aktualisieren" kann der Snapshot bewusst mit aktuellen Stammdaten aktualisiert werden.
     *   **Grund:** Dies garantiert, dass zukünftige Module (Bestellung, Kalkulation) und auch der Ausdruck alter Pläne immer auf korrekten, unveränderlichen historischen Daten basieren.
 
 2.  **Sonderbehandlung für 'interne' Einrichtungen:**
@@ -30,38 +32,48 @@ Dieses Modul ist das zentrale Werkzeug zur Planung der wöchentlichen Mahlzeiten
     *   **Responsive Design:** Mobile-optimiert mit horizontalem Scrolling.
     *   **Drop-Zonen:** Visuelles Feedback mit grün (gültig) und rot (ungültig) Markierungen.
 
-3.  **Intelligente Rezept-Suche:**
+3.  **Rezept-Management & Grid-Interaktion:**
+    *   **Drag & Drop:** Rezepte können von der Suchleiste direkt in Grid-Zellen gezogen werden.
+    *   **Zell-Transfer:** Ganze Zellinhalte können zwischen Tagen/Kategorien verschoben werden.
+    *   **Individuelle Entfernung:** Einzelne Rezepte können per "X"-Button aus Zellen entfernt werden.
+
+4.  **Erweiterte Plan-Aktionen:**
+    *   **Plan leeren:** "Leeren"-Button löscht alle Rezepte und Zuweisungen der aktuellen Woche (mit Bestätigung).
+    *   **Vorlage laden:** "Vorlage"-Button lädt den Plan von vor 7 Wochen als Basis (mit Bestätigung).
+    *   **Einrichtungen aktualisieren:** "Einrichtungen aktualisieren"-Button ermöglicht die **explizite** Aktualisierung des Einrichtungs-Snapshots mit aktuellen Stammdaten. **Wichtig:** Rezepte und Zuweisungen bleiben dabei unverändert - nur die Einrichtungsdaten (Namen, Kürzel, Speisepläne) werden aktualisiert.
+
+5.  **Intelligente Rezept-Suche:**
     *   **Kompakte Pills:** Horizontale Darstellung der Suchvorschläge als Bootstrap-Badges.
     *   **Click-away:** Automatisches Schließen bei Klicks außerhalb der Suche.
     *   **Live-Suche:** Sofortige Filterung mit maximal 2 Vorschlägen für optimale UX.
     *   **Drag & Drop:** Direkt aus Suchvorschlägen ins Grid ziehen.
 
-4.  **Vielfältige Drag-and-Drop-Funktionen:**
+6.  **Vielfältige Drag-and-Drop-Funktionen:**
     *   **Rezept-Drag:** Einzelne Rezepte zwischen Zellen verschieben.
     *   **Zellen-Drag:** Ganze Zellen (alle Rezepte einer Kategorie an einem Tag) tauschen.
     *   **Such-Drag:** Neue Rezepte aus Suche direkt ins Grid ziehen.
     *   **Touch-Support:** Native Touch-Events für optimierte Mobile-UX (siehe Mobile Design).
 
-5.  **Mobile-First Design (Smartphone-optimiert):**
+7.  **Mobile-First Design (Smartphone-optimiert):**
     *   **Accordion-Layout:** Wochentage als expandierbare Karten statt Grid.
     *   **Sticky Controls:** Navigation und Suche bleiben immer sichtbar (`position: sticky`).
     *   **Touch-Drag & Drop:** Native Touch-Events mit visuellem Feedback.
     *   **Auto-Expand:** Heutiger Tag öffnet sich automatisch beim Laden.
     *   **Kategorie-Icons:** Emoji-Icons für bessere Orientierung (🍲 Suppe, 🍽️ Menü 1).
 
-6.  **Einrichtungs-Zuweisungen:**
+8.  **Einrichtungs-Zuweisungen:**
     *   **Exklusive Zuweisungen:** Jede Einrichtung kann pro Tag nur Menü 1 ODER Menü 2 erhalten.
     *   **Button-Toggle:** Klick aktiviert/deaktiviert Zuweisungen (blau = aktiv).
     *   **Automatische Konfliktlösung:** Wechsel von Menü 1 → Menü 2 entfernt alte Zuweisung.
     *   **Interne Einrichtungen:** Bekommen automatisch ALLE Kategorien.
 
-7.  **Auto-Save mit visueller Rückmeldung:**
+9.  **Auto-Save mit visueller Rückmeldung:**
     *   **Debounced Saving:** 1,5 Sekunden Verzögerung nach letzter Änderung.
     *   **Visueller Indikator:** Icons und Texte für Status (Speichert.../Gespeichert/Fehler).
     *   **Toast-Benachrichtigungen:** Erfolgs- und Fehlermeldungen.
     *   **Snapshot-Integration:** Automatische Einrichtungs-Snapshots bei jedem Speichern.
 
-8.  **Geschäftslogik-konforme Datenintegrität:**
+10. **Geschäftslogik-konforme Datenintegrität:**
     *   **Historische Snapshots:** Jeder Plan enthält eingefrorene Einrichtungs-Stammdaten.
     *   **Unveränderliche Historie:** Alte Pläne zeigen immer die korrekten historischen Daten.
     *   **Interne Einrichtungen:** Sonderbehandlung für `isIntern: true` Einrichtungen.

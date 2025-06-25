@@ -53,5 +53,18 @@ export const api = {
             method: 'POST',
             body: JSON.stringify(planData)
         });
+    },
+
+    /**
+     * Aktualisiert den Einrichtungs-Snapshot eines bestehenden Menüplans
+     * @param {number} year 
+     * @param {number} week 
+     * @returns {Promise<object>}
+     */
+    updateEinrichtungsSnapshot: (year, week) => {
+        const path = menueplanPaths.api.updateSnapshot(year, week);
+        return fetchData(path, {
+            method: 'PUT'
+        });
     }
 };

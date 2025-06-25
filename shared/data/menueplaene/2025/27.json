@@ -12,12 +12,7 @@
             "name": "Humus"
           }
         ],
-        "dessert": [
-          {
-            "id": "rezept-1750679508813-89cacyi",
-            "name": "Humus"
-          }
-        ],
+        "dessert": [],
         "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
@@ -28,8 +23,17 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [],
-        "menu2": []
+        "menu1": [
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
+        ],
+        "menu2": [
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa"
+        ]
       }
     },
     "dienstag": {
@@ -49,7 +53,8 @@
       },
       "Zuweisungen": {
         "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650"
         ],
         "menu2": []
       }
@@ -59,7 +64,16 @@
         "suppe": [],
         "menu1": [],
         "menu2": [],
-        "dessert": [],
+        "dessert": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          },
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
         "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
@@ -91,7 +105,8 @@
       },
       "Zuweisungen": {
         "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650"
         ],
         "menu2": []
       }
@@ -168,13 +183,13 @@
         "isIntern": false,
         "speiseplan": {
           "montag": {
-            "suppe": false,
-            "hauptspeise": false,
-            "dessert": false
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
           },
           "dienstag": {
             "suppe": false,
-            "hauptspeise": false,
+            "hauptspeise": true,
             "dessert": false
           },
           "mittwoch": {
@@ -183,9 +198,9 @@
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
-            "dessert": false
+            "dessert": true
           },
           "freitag": {
             "suppe": true,
@@ -193,7 +208,7 @@
             "dessert": false
           },
           "samstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
@@ -204,7 +219,8 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
         }
       },
       {
@@ -250,7 +266,8 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
         }
       },
       {
@@ -270,12 +287,12 @@
             "dessert": false
           },
           "mittwoch": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
             "dessert": true
           },
@@ -296,7 +313,8 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
         }
       },
       {
@@ -342,11 +360,153 @@
           }
         },
         "snapshotMetadata": {
-          "originalDataTimestamp": null
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
+        }
+      },
+      {
+        "id": "b0914524-d72a-4fac-8a2a-06c55db71afa",
+        "name": "Essen auf Rädern ",
+        "kuerzel": "ER_EX",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
+        }
+      },
+      {
+        "id": "17cf0076-e28f-4a11-9b21-49ad01039650",
+        "name": "Volkschule Zell ",
+        "kuerzel": "VS-Zell",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
+        }
+      },
+      {
+        "id": "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+        "name": "VS-Schüttdorf",
+        "kuerzel": "VS-Schü",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null,
+          "snapshotUpdatedAt": "2025-06-25T11:06:35.204Z"
         }
       }
     ],
-    "generatedAt": "2025-06-24T12:20:32.164Z",
+    "generatedAt": "2025-06-25T11:06:35.204Z",
     "categories": [
       {
         "id": "suppe",
@@ -396,9 +556,14 @@
         "id": "kaesebrot-schwarzbrot",
         "name": "Käsebrot-Schw. Brot"
       }
-    ]
+    ],
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System",
+      "action": "snapshot_update"
+    }
   },
-  "updatedAt": "2025-06-24T12:20:32.199Z",
+  "updatedAt": "2025-06-25T11:06:53.253Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

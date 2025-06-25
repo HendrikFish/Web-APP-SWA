@@ -163,6 +163,15 @@ rules:
       - **Regel:** Wenn nach einer Dateiänderung ein unerklärlicher, kompletter Seiten-Reload auftritt, ist der erste Verdächtige immer die `watch`-Konfiguration des Entwicklungsservers (z.B. `vite.config.js`).
       - **Anweisung:** Alle Daten-Dateien (wie `.json`), die von der Anwendung selbst zur Laufzeit geändert werden, müssen von der Überwachung explizit ausgeschlossen werden (`server.watch.ignored`), da der Server sonst einen unnötigen Reload erzwingt.
 
+  - title: "Historische Datenintegrität (Snapshot-Prinzip)"
+    content: |
+      Bei historischen Daten (wie Menüplänen) ist es entscheidend, dass einmal gespeicherte Informationen unveränderlich bleiben, um die Datenintegrität zu gewährleisten.
+      - **Neue Dokumente:** Beim ersten Speichern wird automatisch ein "Snapshot" der aktuellen Stammdaten (z.B. Einrichtungseinstellungen) in das Dokument eingebettet.
+      - **Bestehende Dokumente:** Der ursprüngliche Snapshot darf NIEMALS automatisch überschrieben werden, da dies die historische Genauigkeit zerstören würde.
+      - **Explizite Updates:** Änderungen an Snapshots dürfen nur durch bewusste Benutzeraktionen erfolgen (z.B. "Einrichtungen aktualisieren"-Button).
+      - **Rendering-Logik:** Die UI-Darstellung muss **vorhandene Snapshots bevorzugen** gegenüber aktuellen Stammdaten, um historische Korrektheit zu garantieren.
+      - **Fehlerprävention:** Automatisches Neuladen von Plänen nach Snapshot-Updates ist zu vermeiden - stattdessen nur die betroffenen UI-Komponenten neu rendern.
+
 ### 📜 Neue Regel: Clean & Focused UI
 
 -   **Reduzierte Ästhetik:** Wir bevorzugen ein klares, aufgeräumtes Design.

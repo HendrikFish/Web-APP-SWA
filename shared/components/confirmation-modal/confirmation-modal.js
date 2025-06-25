@@ -42,7 +42,7 @@ export async function showConfirmationModal(title, message) {
 
     // Titel und Nachricht setzen
     document.getElementById('confirmationModalLabel').textContent = title;
-    document.getElementById('confirmationModalMessage').textContent = message;
+    document.getElementById('confirmationModalMessage').innerHTML = message;
 
     return new Promise((resolve) => {
         const confirmBtn = document.getElementById('confirmationModalConfirmBtn');

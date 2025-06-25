@@ -57,5 +57,20 @@
             "co-admin",
             "Koch"
         ]
+    },
+    {
+        "id": "menue-portal",
+        "name": "Menü-Portal",
+        "description": "Ansicht der Menüpläne verschiedener Einrichtungen (Read-Only).",
+        "icon": "bi-eye",
+        "path": "/modules/menue-portal/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch",
+            "Service",
+            "Pflege",
+            "Leitung"
+        ]
     }
 ]

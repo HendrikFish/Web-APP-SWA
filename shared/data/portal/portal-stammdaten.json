@@ -1,0 +1,37 @@
+{
+  "einrichtungsregeln": {
+    "beschreibung": "Spezielle Regeln für das Menü-Portal basierend auf Einrichtungstyp",
+    "regeln": {
+      "intern": {
+        "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert", "abend-suppe", "milchspeise", "normalkost", "kalte-platte", "wurstbrot-toast", "wurstbrot-schwarzbrot", "kaesebrot-toast", "kaesebrot-schwarzbrot"],
+        "beschreibung": "Interne Einrichtungen sehen alle Kategorien"
+      },
+      "extern": {
+        "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert"],
+        "beschreibung": "Externe Einrichtungen sehen nur Grundkategorien basierend auf ihrem Speiseplan"
+      },
+      "kindergarten": {
+        "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert"],
+        "speiseplan_basiert": true,
+        "beschreibung": "Kindergärten sehen nur was in der KW.json ausgewählt wurde"
+      },
+      "schule": {
+        "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert"],
+        "speiseplan_basiert": true,
+        "beschreibung": "Schulen sehen nur was in der KW.json ausgewählt wurde"
+      }
+    }
+  },
+  "personengruppen_mapping": {
+    "beschreibung": "Mapping von Personengruppen zu speziellen Regeln (nur für Ausnahmen)",
+    "mapping": {
+      "Kindergartenkinder": "kindergarten",
+      "Schüler": "schule"
+    },
+    "hinweis": "Erwachsene folgen der normalen intern/extern Logik aus einrichtungen.json"
+  },
+  "hinweise": {
+    "kategorie_definitionen": "Kategorie-Namen und Icons werden aus shared/data/menueplaene/stammdaten.json geladen",
+    "speiseplan_struktur": "Speiseplan-Flags für externe Einrichtungen werden aus der jeweiligen KW.json geladen"
+  }
+} 

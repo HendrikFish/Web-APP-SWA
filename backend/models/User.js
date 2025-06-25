@@ -50,6 +50,18 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: []
     },
+    einrichtungen: {
+        type: [String],
+        default: [],
+        validate: {
+            validator: function(einrichtungIds) {
+                // Validierung dass alle IDs gültige UUIDs sind
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+                return einrichtungIds.every(id => uuidRegex.test(id));
+            },
+            message: 'Invalid einrichtung ID format'
+        }
+    },
     customFields: {
         type: Map,
         of: String

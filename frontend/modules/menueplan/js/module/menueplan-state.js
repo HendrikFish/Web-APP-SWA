@@ -28,11 +28,22 @@ const debouncedSave = debounce(async (plan, callbacks) => {
     try {
         const { year, week } = plan;
         
-        // GESCHÄFTSLOGIK: Snapshot der Einrichtungs-Anrechte hinzufügen
-        const planWithSnapshot = {
-            ...plan,
-            einrichtungsSnapshot: createEinrichtungsSnapshot()
-        };
+        // GESCHÄFTSLOGIK: Snapshot nur erstellen wenn noch keiner vorhanden ist (neuer Plan)
+        // Bei bestehenden Plänen den vorhandenen Snapshot beibehalten
+        let planWithSnapshot;
+        
+        if (plan.einrichtungsSnapshot) {
+            // Plan hat bereits einen Snapshot - beibehalten
+            console.log('📸 Verwende bestehenden Einrichtungs-Snapshot beim Speichern');
+            planWithSnapshot = { ...plan };
+        } else {
+            // Neuer Plan ohne Snapshot - einen erstellen
+            console.log('📸 Erstelle neuen Einrichtungs-Snapshot für neuen Plan');
+            planWithSnapshot = {
+                ...plan,
+                einrichtungsSnapshot: createEinrichtungsSnapshot()
+            };
+        }
         
         await api.saveMenueplan(year, week, planWithSnapshot);
         callbacks.onSuccess(); // "Gespeichert!" anzeigen
@@ -124,6 +135,12 @@ function normalizePlan(planData, year, week) {
 
     fullPlan.year = planData.year || year;
     fullPlan.week = planData.week || week;
+    
+    // Einrichtungs-Snapshot übernehmen falls vorhanden
+    if (planData.einrichtungsSnapshot) {
+        fullPlan.einrichtungsSnapshot = planData.einrichtungsSnapshot;
+        console.log('📸 Bestehender Einrichtungs-Snapshot beim Laden übernommen');
+    }
 
     for (const dayTag in fullPlan.days) {
         if (planData.days[dayTag]) {

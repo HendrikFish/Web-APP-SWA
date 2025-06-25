@@ -1,15 +1,10 @@
 {
   "year": 2025,
-  "week": 33,
+  "week": 24,
   "days": {
     "montag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
+        "suppe": [],
         "menu1": [],
         "menu2": [],
         "dessert": [],
@@ -29,12 +24,7 @@
     },
     "dienstag": {
       "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "suppe": [],
         "menu1": [],
         "menu2": [],
         "dessert": [],
@@ -48,12 +38,8 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ],
-        "menu2": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "mittwoch": {
@@ -72,12 +58,8 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
-        ],
-        "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "donnerstag": {
@@ -96,14 +78,8 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
-        ],
-        "menu2": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "5409619a-b506-442f-a97d-182c354f2480",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "freitag": {
@@ -122,13 +98,8 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ],
-        "menu2": [
-          "5409619a-b506-442f-a97d-182c354f2480"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "samstag": {
@@ -147,12 +118,8 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "5409619a-b506-442f-a97d-182c354f2480"
-        ],
-        "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
+        "menu1": [],
+        "menu2": []
       }
     },
     "sonntag": {
@@ -185,13 +152,13 @@
         "isIntern": false,
         "speiseplan": {
           "montag": {
-            "suppe": false,
-            "hauptspeise": false,
-            "dessert": false
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
           },
           "dienstag": {
             "suppe": false,
-            "hauptspeise": false,
+            "hauptspeise": true,
             "dessert": false
           },
           "mittwoch": {
@@ -200,9 +167,9 @@
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
-            "dessert": false
+            "dessert": true
           },
           "freitag": {
             "suppe": true,
@@ -210,7 +177,7 @@
             "dessert": false
           },
           "samstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
@@ -287,12 +254,12 @@
             "dessert": false
           },
           "mittwoch": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
             "dessert": true
           },
@@ -361,9 +328,101 @@
         "snapshotMetadata": {
           "originalDataTimestamp": null
         }
+      },
+      {
+        "id": "b0914524-d72a-4fac-8a2a-06c55db71afa",
+        "name": "Essen auf Rädern ",
+        "kuerzel": "ER_EX",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      },
+      {
+        "id": "17cf0076-e28f-4a11-9b21-49ad01039650",
+        "name": "Volkschule Zell ",
+        "kuerzel": "VS-Zell",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
       }
     ],
-    "generatedAt": "2025-06-24T10:17:10.621Z",
+    "generatedAt": "2025-06-25T10:48:48.338Z",
     "categories": [
       {
         "id": "suppe",
@@ -415,7 +474,7 @@
       }
     ]
   },
-  "updatedAt": "2025-06-24T10:17:10.654Z",
+  "updatedAt": "2025-06-25T10:48:48.413Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

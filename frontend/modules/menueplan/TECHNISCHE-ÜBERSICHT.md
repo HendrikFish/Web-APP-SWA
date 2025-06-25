@@ -38,19 +38,54 @@ frontend/modules/menueplan/
 DOMContentLoaded → Header laden → UI initialisieren → Stammdaten → Grid rendern
 ```
 
-### **Zentraler State:**
+### **2. State Management (`menueplan-state.js`)**
+
+**Zentrale Zustandsverwaltung** für den gesamten Menüplan mit einer klaren, funktionalen API.
+
+#### **Core Functions:**
+
+*   **`getCurrentPlan()`**: Gibt den aktuellen Plan zurück.
+*   **`setPlan(plan)`**: Ersetzt den gesamten Plan (wird beim Laden verwendet).
+*   **`savePlan(callbacks)`**: Löst das automatische Speichern aus mit UI-Callbacks.
+
+#### **Auto-Save mit Snapshot-Logik:**
+
 ```javascript
-const state = {
-    currentPlan: { year, week, days: {}, einrichtungsSnapshot },
-    stammdaten: { kategorien, einrichtungen, rezepte },
-    currentYear/Week: number,
-    onStateChange: autoSaveCallback
-};
+// GESCHÄFTSLOGIK: Snapshot nur bei neuen Plänen erstellen
+const debouncedSave = debounce(async (plan, callbacks) => {
+    let planWithSnapshot;
+    
+    if (plan.einrichtungsSnapshot) {
+        // Bestehender Plan - Snapshot beibehalten
+        planWithSnapshot = { ...plan };
+    } else {
+        // Neuer Plan - Snapshot erstellen
+        planWithSnapshot = {
+            ...plan,
+            einrichtungsSnapshot: createEinrichtungsSnapshot()
+        };
+    }
+    
+    await api.saveMenueplan(year, week, planWithSnapshot);
+}, 1500);
 ```
 
-### **Auto-Save-Flow:**
-```
-User-Aktion → State-Update → onStateChange() → Debounced-Save (1,5s) → API-Call
+**Wichtige Änderung:** Das automatische Speichern überschreibt **nicht mehr** bestehende Snapshots, sondern erstellt sie nur bei neuen Plänen.
+
+#### **Plan-Normalisierung:**
+
+```javascript
+// Vollständige Struktur aller Tage/Kategorien sicherstellen
+function normalizePlan(planData, year, week) {
+    const fullPlan = initializeEmptyPlan(year, week);
+    
+    // Snapshot übernehmen falls vorhanden
+    if (planData.einrichtungsSnapshot) {
+        fullPlan.einrichtungsSnapshot = planData.einrichtungsSnapshot;
+    }
+    
+    // Restliche Daten übernehmen...
+}
 ```
 
 ## 🎯 Kernfunktionen
@@ -189,3 +224,29 @@ import '../css/style.css';
 ---
 
 **🎉 Das Menüplan-Modul ist vollständig produktionsreif und entspricht allen Projekt-Standards!** 
+
+### **4. Controls (`menueplan-controls.js`)**
+
+**Alle Benutzer-Aktionen** (Buttons, Formulare) mit entsprechender Business-Logik.
+
+#### **Wichtige Funktionen:**
+
+*   **`updateEinrichtungsSnapshot()`**: **Explizite** Aktualisierung des Einrichtungs-Snapshots:
+
+```javascript
+async function updateEinrichtungsSnapshot() {
+    // Backend-Call zur Snapshot-Aktualisierung
+    const result = await api.updateEinrichtungsSnapshot(year, week);
+    
+    // Nur das Grid neu rendern, NICHT den Plan neu laden!
+    const { render } = await import('./menueplan-grid.js');
+    render();
+}
+```
+
+**Wichtig:** Nach Snapshot-Updates wird **nur das Grid neu gerendert**, nicht der gesamte Plan neu geladen. Dies verhindert, dass Rezepte verschwinden.
+
+*   **`loadWeekPlan(year, week)`**: Lädt einen spezifischen Wochenplan.
+*   **`saveCurrentPlan()`**: Manuelle Speicherung mit **Snapshot-Bewahrung** (verwendet dieselbe Logik wie Auto-Save).
+*   **`clearCurrentPlan()`**: Leert den aktuellen Plan (mit Bestätigung).
+*   **`loadPreviousPlan()`**: Lädt 7-Wochen-alte Vorlage (mit Bestätigung).

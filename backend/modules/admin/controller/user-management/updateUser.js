@@ -7,8 +7,8 @@ const User = require('../../../../models/User.js');
  */
 async function updateUser(req, res) {
     try {
-        const { firstName, lastName, email, role, customFields } = req.body;
-        const updatedData = { firstName, lastName, email, role, customFields };
+        const { firstName, lastName, email, role, einrichtungen, customFields } = req.body;
+        const updatedData = { firstName, lastName, email, role, einrichtungen, customFields };
 
         const user = await User.findByIdAndUpdate(
             req.params.id,

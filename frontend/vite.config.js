@@ -84,7 +84,8 @@ export default defineConfig({
         zutaten: resolve(__dirname, 'modules/zutaten/index.html'),
         rezept: resolve(__dirname, 'modules/rezept/index.html'),
         einrichtung: resolve(__dirname, 'modules/einrichtung/index.html'),
-        menueplan: resolve(__dirname, 'modules/menueplan/index.html')
+        menueplan: resolve(__dirname, 'modules/menueplan/index.html'),
+        menuePortal: resolve(__dirname, 'modules/menue-portal/index.html')
       }
     }
   }

@@ -9,29 +9,52 @@ Diese Datei dokumentiert, wie die in [`GESCHÄFTSLOGIK.md`](./GESCHÄFTSLOGIK.md
 
 ### **Implementierung:**
 
-#### **A) Snapshot-Erstellung beim Speichern**
+#### **A) Snapshot-Erstellung beim ersten Speichern (Neue Pläne)**
 **Dateien:** `menueplan-state.js`, `menueplan-controls.js`
 
-Sowohl beim automatischen als auch beim manuellen Speichern wird ein Einrichtungs-Snapshot erstellt:
+Bei **neuen Plänen** (ohne bestehenden Snapshot) wird beim Speichern automatisch ein Einrichtungs-Snapshot erstellt:
 
 ```javascript
-// GESCHÄFTSLOGIK: Snapshot der Einrichtungs-Anrechte hinzufügen
-const planWithSnapshot = {
-    ...plan,
-    einrichtungsSnapshot: createEinrichtungsSnapshot()
-};
-
-await api.saveMenueplan(year, week, planWithSnapshot);
+// GESCHÄFTSLOGIK: Snapshot nur erstellen wenn noch keiner vorhanden ist (neuer Plan)
+if (plan.einrichtungsSnapshot) {
+    // Plan hat bereits einen Snapshot - beibehalten
+    console.log('📸 Verwende bestehenden Einrichtungs-Snapshot beim Speichern');
+    planWithSnapshot = { ...plan };
+} else {
+    // Neuer Plan ohne Snapshot - einen erstellen
+    console.log('📸 Erstelle neuen Einrichtungs-Snapshot für neuen Plan');
+    planWithSnapshot = {
+        ...plan,
+        einrichtungsSnapshot: createEinrichtungsSnapshot()
+    };
+}
 ```
 
-#### **B) Snapshot-Struktur**
+#### **B) Snapshot-Bewahrung bei bestehenden Plänen**
+**Wichtige Änderung:** Bei **bestehenden Plänen** mit vorhandenem Snapshot wird dieser **nicht automatisch überschrieben**. Dies gewährleistet historische Genauigkeit und verhindert ungewollte Änderungen der Einrichtungszuweisungen.
+
+#### **C) Explizite Snapshot-Aktualisierung**
+**Datei:** `menueplan-controls.js`
+
+Nur über den Button "Einrichtungen aktualisieren" kann der Snapshot explizit aktualisiert werden:
+
+```javascript
+// Backend-Call zur expliziten Snapshot-Aktualisierung
+const result = await api.updateEinrichtungsSnapshot(year, week);
+
+// Nur das Grid neu rendern, NICHT den Plan neu laden!
+const { render } = await import('./menueplan-grid.js');
+render();
+```
+
+#### **D) Snapshot-Struktur**
 Der Snapshot enthält:
-- **`einrichtungen[]`**: Komplette Kopie aller Einrichtungs-Stammdaten
+- **`einrichtungen[]`**: Komplette Kopie aller Einrichtungs-Stammdaten zum Zeitpunkt der Erstellung
 - **`generatedAt`**: Zeitstempel der Snapshot-Erstellung  
 - **`categories[]`**: Die zu diesem Zeitpunkt gültigen Mahlzeiten-Kategorien
 - **`snapshotMetadata`**: Zusätzliche Informationen für Nachvollziehbarkeit
 
-#### **C) Verwendung historischer Snapshots**
+#### **E) Verwendung historischer Snapshots**
 **Datei:** `menueplan-grid.js`
 
 Beim Laden eines Plans wird geprüft, ob ein Snapshot vorhanden ist:
@@ -45,7 +68,10 @@ if (currentPlan?.einrichtungsSnapshot?.einrichtungen) {
 }
 ```
 
-**➜ Ergebnis:** Alte Menüpläne zeigen immer die korrekten, historischen Einrichtungs-Zuweisungen an, unabhängig von späteren Änderungen an den Stammdaten.
+**➜ Ergebnis:** 
+- **Neue Pläne** erhalten automatisch einen Snapshot mit aktuellen Stammdaten
+- **Bestehende Pläne** behalten ihren historischen Snapshot und zeigen immer die korrekten, unveränderlichen Einrichtungs-Zuweisungen
+- **Explizite Updates** sind nur über den entsprechenden Button möglich
 
 ---
 

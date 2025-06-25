@@ -200,6 +200,13 @@ export function renderUserTable(container, users, onDelete, onEdit) {
                   <option value="extern">Extern</option>
                 </select>
               </div>
+              <div class="mb-3">
+                <label for="edit-einrichtungen" class="form-label">Zugewiesene Einrichtungen</label>
+                <div id="edit-einrichtungen" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                  <!-- Einrichtungs-Checkboxes werden hier per JavaScript eingefügt -->
+                </div>
+                <small class="form-text text-muted">Wählen Sie eine oder mehrere Einrichtungen für diesen Benutzer aus.</small>
+              </div>
             </form>
           </div>
           <div class="modal-footer">
@@ -252,6 +259,9 @@ export function showEditModal(user, onSave) {
     modalElement.querySelector('#edit-email').value = user.email;
     modalElement.querySelector('#edit-role').value = user.role;
     
+    // Einrichtungen laden und anzeigen
+    loadEinrichtungenCheckboxes(user.einrichtungen || []);
+    
     // Dynamische Felder rendern
     const dynamicFieldsContainer = modalElement.querySelector('#dynamic-edit-fields');
     renderDynamicFormFields(dynamicFieldsContainer, customFieldsConfig, user.customFields);
@@ -277,6 +287,7 @@ export function showEditModal(user, onSave) {
             lastName: document.getElementById('edit-lastName').value,
             email: document.getElementById('edit-email').value,
             role: document.getElementById('edit-role').value,
+            einrichtungen: getSelectedEinrichtungen(),
             customFields: collectDynamicFieldValues(dynamicFieldsContainer, customFieldsConfig)
         };
 
@@ -285,4 +296,50 @@ export function showEditModal(user, onSave) {
     };
     
     newSaveButton.addEventListener('click', saveHandler);
+}
+
+/**
+ * Lädt Einrichtungen und erstellt Checkboxes
+ * @param {Array} selectedEinrichtungen - Array der bereits zugewiesenen Einrichtung-IDs
+ */
+async function loadEinrichtungenCheckboxes(selectedEinrichtungen = []) {
+    try {
+        const response = await fetch('/api/einrichtungen');
+        const einrichtungen = await response.json();
+        
+        const container = document.getElementById('edit-einrichtungen');
+        container.innerHTML = '';
+        
+        einrichtungen.forEach(einrichtung => {
+            const isChecked = selectedEinrichtungen.includes(einrichtung.id);
+            const checkboxHtml = `
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" value="${einrichtung.id}" 
+                           id="einrichtung-${einrichtung.id}" ${isChecked ? 'checked' : ''}>
+                    <label class="form-check-label" for="einrichtung-${einrichtung.id}">
+                        <strong>${einrichtung.kuerzel}</strong> - ${einrichtung.name}
+                        <br><small class="text-muted">${einrichtung.personengruppe}</small>
+                    </label>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', checkboxHtml);
+        });
+        
+        if (einrichtungen.length === 0) {
+            container.innerHTML = '<p class="text-muted">Keine Einrichtungen verfügbar.</p>';
+        }
+    } catch (error) {
+        console.error('Fehler beim Laden der Einrichtungen:', error);
+        const container = document.getElementById('edit-einrichtungen');
+        container.innerHTML = '<p class="text-danger">Fehler beim Laden der Einrichtungen.</p>';
+    }
+}
+
+/**
+ * Sammelt alle ausgewählten Einrichtung-IDs
+ * @returns {Array} Array der ausgewählten Einrichtung-IDs
+ */
+function getSelectedEinrichtungen() {
+    const checkboxes = document.querySelectorAll('#edit-einrichtungen input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(checkbox => checkbox.value);
 } 

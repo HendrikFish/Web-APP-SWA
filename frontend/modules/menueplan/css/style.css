@@ -464,7 +464,7 @@
         .menueplan-days-grid,
         .menueplan-tages-spalte,
         .menueplan-tag-header,
-        .menueplan-zelle {
+    .menueplan-zelle {
             display: none !important;
         }
     }

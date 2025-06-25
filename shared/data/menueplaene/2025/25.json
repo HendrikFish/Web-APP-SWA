@@ -152,13 +152,13 @@
         "isIntern": false,
         "speiseplan": {
           "montag": {
-            "suppe": false,
-            "hauptspeise": false,
-            "dessert": false
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
           },
           "dienstag": {
             "suppe": false,
-            "hauptspeise": false,
+            "hauptspeise": true,
             "dessert": false
           },
           "mittwoch": {
@@ -167,9 +167,9 @@
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
-            "dessert": false
+            "dessert": true
           },
           "freitag": {
             "suppe": true,
@@ -177,7 +177,7 @@
             "dessert": false
           },
           "samstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
@@ -254,12 +254,12 @@
             "dessert": false
           },
           "mittwoch": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": false,
             "dessert": false
           },
           "donnerstag": {
-            "suppe": false,
+            "suppe": true,
             "hauptspeise": true,
             "dessert": true
           },
@@ -328,9 +328,101 @@
         "snapshotMetadata": {
           "originalDataTimestamp": null
         }
+      },
+      {
+        "id": "b0914524-d72a-4fac-8a2a-06c55db71afa",
+        "name": "Essen auf Rädern ",
+        "kuerzel": "ER_EX",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
+      },
+      {
+        "id": "17cf0076-e28f-4a11-9b21-49ad01039650",
+        "name": "Volkschule Zell ",
+        "kuerzel": "VS-Zell",
+        "isIntern": false,
+        "speiseplan": {
+          "montag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "dienstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "mittwoch": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "donnerstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "freitag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "samstag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          },
+          "sonntag": {
+            "suppe": true,
+            "hauptspeise": true,
+            "dessert": true
+          }
+        },
+        "snapshotMetadata": {
+          "originalDataTimestamp": null
+        }
       }
     ],
-    "generatedAt": "2025-06-24T11:56:55.585Z",
+    "generatedAt": "2025-06-25T10:48:39.659Z",
     "categories": [
       {
         "id": "suppe",
@@ -382,7 +474,7 @@
       }
     ]
   },
-  "updatedAt": "2025-06-24T11:56:55.624Z",
+  "updatedAt": "2025-06-25T10:48:53.652Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

@@ -396,6 +396,7 @@ function createMobileEinrichtungsButtons(tag, kategorie, anforderungsmatrix, zuw
 /**
  * Erstellt eine Anforderungsmatrix, die angibt, welche Einrichtung an welchem Tag welche Mahlzeit benötigt.
  * GESCHÄFTSLOGIK: Verwendet bei historischen Plänen den gespeicherten Snapshot statt aktueller Stammdaten.
+ * Berücksichtigt auch bestehende Zuweisungen, auch wenn sie nicht mehr dem aktuellen Speiseplan entsprechen.
  * @returns {object} Die Anforderungsmatrix.
  */
 function getAnforderungsmatrix(einrichtungen, stammdaten) {
@@ -407,6 +408,7 @@ function getAnforderungsmatrix(einrichtungen, stammdaten) {
         console.log('Verwende historischen Einrichtungs-Snapshot für Menüplan');
         aktuelleEinrichtungen = currentPlan.einrichtungsSnapshot.einrichtungen;
     }
+    
     const matrix = {};
     const tage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
     
@@ -416,6 +418,7 @@ function getAnforderungsmatrix(einrichtungen, stammdaten) {
             matrix[tag][kat.id] = [];
         });
 
+        // Erst: Einrichtungen basierend auf Speiseplan hinzufügen
         aktuelleEinrichtungen.forEach(e => {
             // GESCHÄFTSLOGIK: Sonderbehandlung für interne Einrichtungen
             // Interne Einrichtungen erhalten ALLE Mahlzeiten-Kategorien
@@ -445,7 +448,35 @@ function getAnforderungsmatrix(einrichtungen, stammdaten) {
                 if (matrix[tag].menu2) matrix[tag].menu2.push({ id: e.id, kuerzel: e.kuerzel, name: e.name });
             }
         });
+
+        // Dann: Zusätzlich alle Einrichtungen hinzufügen, die bereits Zuweisungen haben
+        // Dies stellt sicher, dass bei Snapshot-Updates keine Buttons verschwinden
+        const zuweisungen = currentPlan?.days?.[tag]?.Zuweisungen || {};
+        
+        ['menu1', 'menu2'].forEach(menuKategorie => {
+            const zugewieseneEinrichtungen = zuweisungen[menuKategorie] || [];
+            
+            zugewieseneEinrichtungen.forEach(einrichtungId => {
+                // Prüfen ob Einrichtung bereits in der Matrix ist
+                const bereitsVorhanden = matrix[tag][menuKategorie].some(e => e.id === einrichtungId);
+                
+                if (!bereitsVorhanden) {
+                    // Einrichtung aus aktuellen Daten suchen
+                    const einrichtung = aktuelleEinrichtungen.find(e => e.id === einrichtungId);
+                    if (einrichtung) {
+                        console.log(`📌 Behalte zugewiesene Einrichtung ${einrichtung.name} für ${tag}/${menuKategorie}, auch wenn nicht mehr im Speiseplan`);
+                        matrix[tag][menuKategorie].push({ 
+                            id: einrichtung.id, 
+                            kuerzel: einrichtung.kuerzel, 
+                            name: einrichtung.name,
+                            hasAssignment: true // Markierung für zugewiesene Einrichtungen
+                        });
+                    }
+                }
+            });
+        });
     });
+    
     return matrix;
 }
 
