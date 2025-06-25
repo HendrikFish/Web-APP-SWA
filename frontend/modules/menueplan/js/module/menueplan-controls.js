@@ -10,7 +10,8 @@ import {
     getWeekNumber,
     getCurrentPlan,
     setPlan,
-    clearCurrentPlan
+    clearCurrentPlan,
+    setState
 } from './menueplan-state.js';
 
 let loadAndRenderPlanCallback = () => {};
@@ -76,16 +77,27 @@ function handleClickOutside(e) {
 // --- Haupt-Aktionen und Navigation ---
 
 async function saveCurrentPlan() {
-    const { year, week } = getWeekNumber(getCurrentDate());
+    const [year, week] = getWeekNumber(getCurrentDate());
     try {
         const currentPlan = getCurrentPlan();
-        const { stammdaten } = getState();
         
-        // GESCHÄFTSLOGIK: Snapshot der Einrichtungs-Anrechte hinzufügen
-        const planWithSnapshot = {
-            ...currentPlan,
-            einrichtungsSnapshot: createEinrichtungsSnapshot(stammdaten)
-        };
+        // GESCHÄFTSLOGIK: Snapshot nur erstellen wenn noch keiner vorhanden ist (neuer Plan)
+        // Bei bestehenden Plänen den vorhandenen Snapshot beibehalten
+        let planWithSnapshot;
+        
+        if (currentPlan.einrichtungsSnapshot) {
+            // Plan hat bereits einen Snapshot - beibehalten
+            console.log('📸 Verwende bestehenden Einrichtungs-Snapshot beim manuellen Speichern');
+            planWithSnapshot = { ...currentPlan };
+        } else {
+            // Neuer Plan ohne Snapshot - einen erstellen
+            console.log('📸 Erstelle neuen Einrichtungs-Snapshot für neuen Plan');
+            const { stammdaten } = getState();
+            planWithSnapshot = {
+                ...currentPlan,
+                einrichtungsSnapshot: createEinrichtungsSnapshot(stammdaten)
+            };
+        }
         
         await api.saveMenueplan(year, week, planWithSnapshot);
         showToast('Plan erfolgreich gespeichert.', 'success');
@@ -148,6 +160,127 @@ async function clearCurrentWeekPlan() {
     } catch (error) {
         console.error('Fehler beim Leeren des Plans:', error);
         showToast('Fehler beim Leeren des Plans.', 'error');
+    }
+}
+
+/**
+ * Lädt alle Stammdaten und den Plan komplett neu, um State-Inkonsistenzen zu vermeiden
+ */
+async function reloadCompleteState(year, week) {
+    try {
+        console.log('🔄 Lade komplette Stammdaten neu...');
+        
+        // Alle Stammdaten parallel neu laden
+        const [stammdatenData, einrichtungen, rezepte] = await Promise.all([
+            api.getStammdaten(),
+            api.getEinrichtungen(), 
+            api.getRezepte()
+        ]);
+        
+        // State mit neuen Stammdaten aktualisieren
+        const stammdaten = { stammdaten: stammdatenData, einrichtungen, rezepte };
+        setState({ stammdaten });
+        
+        console.log('✅ Stammdaten aktualisiert:', {
+            kategorien: stammdatenData.kategorien.length,
+            einrichtungen: einrichtungen.length,
+            rezepte: rezepte.length
+        });
+        
+        // Plan neu laden und rendern
+        await loadAndRenderPlanCallback(year, week);
+        
+    } catch (error) {
+        console.error('Fehler beim Neuladen der Stammdaten:', error);
+        throw error;
+    }
+}
+
+/**
+ * Aktualisiert den Einrichtungs-Snapshot der aktuellen Woche mit den neuesten Stammdaten.
+ * Aktualisiert nur die Einrichtungsdaten, Rezepte und Zuweisungen bleiben unverändert.
+ */
+async function updateEinrichtungsSnapshot() {
+    const { showConfirmationModal } = await import('@shared/components/confirmation-modal/confirmation-modal.js');
+    
+    // Bestätigung vom Benutzer einholen
+    const confirmed = await showConfirmationModal(
+        'Einrichtungen aktualisieren',
+        `Diese Funktion aktualisiert die Einrichtungsdaten im Menüplan mit den aktuellen Stammdaten.
+        
+        <div class="alert alert-info mt-3">
+            <strong>Was wird aktualisiert:</strong>
+            <ul class="mb-0">
+                <li>Namen und Kürzel der Einrichtungen</li>
+                <li>Speiseplan-Einstellungen der Einrichtungen</li>
+                <li>Interne/Externe Markierungen</li>
+            </ul>
+        </div>
+        
+        <div class="alert alert-success mt-2">
+            <strong>Was bleibt unverändert:</strong>
+            <ul class="mb-0">
+                <li>Alle Rezepte im Menüplan</li>
+                <li>Alle Einrichtungs-Zuweisungen</li>
+                <li>Alle anderen Plan-Daten</li>
+            </ul>
+        </div>
+        
+        Möchten Sie die Einrichtungsdaten aktualisieren?`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+        const [year, week] = getWeekNumber(getCurrentDate());
+        
+        console.log(`Aktualisiere Einrichtungs-Snapshot für KW ${week}/${year}`);
+        
+        const result = await api.updateEinrichtungsSnapshot(year, week);
+        
+        showToast('Einrichtungsdaten erfolgreich aktualisiert!', 'success');
+        console.log('📸 Snapshot aktualisiert:', result);
+        
+        // WICHTIG: Einrichtungen im State aktualisieren, damit das Grid sofort die neuen Einrichtungen anzeigt
+        const aktuelleEinrichtungen = await api.getEinrichtungen();
+        const { stammdaten, currentPlan } = getState();
+        
+        // KRITISCH: Auch den Snapshot im aktuellen Plan aktualisieren, 
+        // damit getAnforderungsmatrix die neuen Einrichtungen verwendet
+        if (currentPlan && result.snapshot) {
+            const aktualisierterPlan = {
+                ...currentPlan,
+                einrichtungsSnapshot: result.snapshot
+            };
+            setPlan(aktualisierterPlan);
+            console.log('📸 Plan-Snapshot im Frontend-State aktualisiert');
+        }
+        
+        setState({
+            stammdaten: {
+                ...stammdaten,
+                einrichtungen: aktuelleEinrichtungen
+            }
+        });
+        
+        // Nur das Grid neu rendern, NICHT den Plan neu laden!
+        // Das Update des Snapshots sollte die Rezepte nicht beeinflussen
+        console.log('🔄 Rendere Grid neu nach Snapshot-Update...');
+        
+        // Grid-Render direkt importieren und aufrufen
+        const { render } = await import('./menueplan-grid.js');
+        render();
+        
+        console.log('✅ Grid erfolgreich neu gerendert mit neuen Einrichtungen');
+        
+    } catch (error) {
+        console.error('Fehler beim Aktualisieren des Snapshots:', error);
+        
+        if (error.message.includes('404')) {
+            showToast('Kein Menüplan für diese Woche gefunden. Erstellen Sie zuerst einen Plan.', 'warning');
+        } else {
+            showToast('Fehler beim Aktualisieren der Einrichtungen.', 'error');
+        }
     }
 }
 
@@ -264,6 +397,7 @@ export function initControls(loadPlanFn) {
     document.getElementById('menueplan-suche')?.addEventListener('input', handleSearchInput);
     document.getElementById('menueplan-clear')?.addEventListener('click', clearCurrentWeekPlan);
     document.getElementById('menueplan-load-7-weeks-ago')?.addEventListener('click', loadPlanTemplate);
+    document.getElementById('menueplan-update-einrichtungen')?.addEventListener('click', updateEinrichtungsSnapshot);
     
     // Click-outside Handler für Suchvorschläge
     document.addEventListener('click', handleClickOutside);
