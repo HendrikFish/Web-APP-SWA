@@ -9,13 +9,14 @@ const markNotificationAsRead = require('./controller/markNotificationAsRead');
 
 // Middleware
 const { protect } = require('../../middleware/authMiddleware');
+const { asyncHandler } = require('../../middleware/errorMiddleware');
 
 // Routen
-router.post('/login', loginUser);
-router.post('/register', registerUser);
+router.post('/login', asyncHandler(loginUser));
+router.post('/register', asyncHandler(registerUser));
 
 // Benachrichtigungs-Routen für den eingeloggten User
-router.get('/notifications', protect, getUnreadNotifications);
-router.post('/notifications/read', protect, markNotificationAsRead);
+router.get('/notifications', protect, asyncHandler(getUnreadNotifications));
+router.post('/notifications/read', protect, asyncHandler(markNotificationAsRead));
 
 module.exports = router; 
