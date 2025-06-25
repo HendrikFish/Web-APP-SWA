@@ -46,6 +46,8 @@ export default defineConfig({
       // Definiert den @shared-Alias, um saubere Importe aus dem /shared-Ordner zu ermöglichen.
       // Er verweist auf das übergeordnete Verzeichnis und dann in den 'shared'-Ordner.
       '@shared': resolve(__dirname, '../shared'),
+      // Bootstrap-Alias für shared-Komponenten
+      'bootstrap': resolve(__dirname, 'node_modules/bootstrap'),
     },
   },
   server: {

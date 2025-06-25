@@ -6,6 +6,9 @@
 // Importiere CSS für die Toast-Komponente
 import './toast-notification.css';
 
+// Statischer Import von Bootstrap Toast
+import { Toast } from 'bootstrap';
+
 /**
  * Zeigt eine Toast-Nachricht an
  * @param {string} message - Die anzuzeigende Nachricht
@@ -78,21 +81,12 @@ export function showToast(message, type = 'info', duration = 4000) {
 
     // Bootstrap Toast initialisieren und anzeigen
     try {
-        // Dynamischer Import für Bootstrap Toast
-        import('bootstrap').then(({ Toast }) => {
-            const bsToast = new Toast(toastElement);
-            bsToast.show();
+        const bsToast = new Toast(toastElement);
+        bsToast.show();
 
-            // Event-Listener für das Entfernen aus dem DOM nach dem Ausblenden
-            toastElement.addEventListener('hidden.bs.toast', () => {
-                toastElement.remove();
-            });
-        }).catch((error) => {
-            console.error('Fehler beim Laden der Bootstrap Toast-Komponente:', error);
-            // Fallback: Entferne Toast nach der angegebenen Zeit
-            setTimeout(() => {
-                toastElement.remove();
-            }, duration);
+        // Event-Listener für das Entfernen aus dem DOM nach dem Ausblenden
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
         });
     } catch (error) {
         console.error('Fehler beim Initialisieren des Toast:', error);
@@ -113,12 +107,10 @@ export function hideToast(toastId) {
     const toastElement = document.getElementById(toastId);
     if (toastElement) {
         try {
-            import('bootstrap').then(({ Toast }) => {
-                const bsToast = Toast.getInstance(toastElement);
-                if (bsToast) {
-                    bsToast.hide();
-                }
-            });
+            const bsToast = Toast.getInstance(toastElement);
+            if (bsToast) {
+                bsToast.hide();
+            }
         } catch (error) {
             // Fallback: Einfach das Element entfernen
             toastElement.remove();
@@ -135,12 +127,10 @@ export function clearAllToasts() {
         const toasts = toastContainer.querySelectorAll('.toast');
         toasts.forEach(toast => {
             try {
-                import('bootstrap').then(({ Toast }) => {
-                    const bsToast = Toast.getInstance(toast);
-                    if (bsToast) {
-                        bsToast.hide();
-                    }
-                });
+                const bsToast = Toast.getInstance(toast);
+                if (bsToast) {
+                    bsToast.hide();
+                }
             } catch (error) {
                 toast.remove();
             }

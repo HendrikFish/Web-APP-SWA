@@ -5,8 +5,9 @@
 import { getStammdaten, createEinrichtung, updateEinrichtung } from "./einrichtung-api.js";
 import { showToast } from "@shared/components/toast-notification/toast-notification.js";
 import { Collapse } from 'bootstrap';
-import validation from '@shared/einrichtungen/einrichtung.validation.js';
-const { einrichtungSchema } = validation;
+
+// Validation Schema - wird bei Bedarf geladen
+let einrichtungSchema = null;
 
 const formContainer = document.getElementById('einrichtung-form-container');
 const formCollapseEl = document.getElementById('form-collapse-container');
@@ -276,19 +277,39 @@ async function handleFormSubmit(e) {
     const einrichtungData = getFormData(form);
 
     try {
-        const result = einrichtungSchema.safeParse(einrichtungData);
-
-        if (!result.success) {
-            showValidationErrors(result.error.flatten().fieldErrors);
-            return; // Beende die Funktion hier
+        // Einfache Frontend-Validierung ohne Zod-Abhängigkeit
+        const validationErrors = {};
+        
+        if (!einrichtungData.name || einrichtungData.name.length < 3) {
+            validationErrors.name = ['Der Name muss mindestens 3 Zeichen lang sein.'];
+        }
+        
+        if (!einrichtungData.kuerzel || einrichtungData.kuerzel.length < 1) {
+            validationErrors.kuerzel = ['Ein Kürzel ist erforderlich.'];
+        }
+        
+        if (!einrichtungData.adresse || einrichtungData.adresse.length < 5) {
+            validationErrors.adresse = ['Die Adresse muss mindestens 5 Zeichen lang sein.'];
+        }
+        
+        if (einrichtungData.email && einrichtungData.email.length > 0) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(einrichtungData.email)) {
+                validationErrors.email = ['Bitte geben Sie eine gültige E-Mail-Adresse ein.'];
+            }
+        }
+        
+        if (Object.keys(validationErrors).length > 0) {
+            showValidationErrors(validationErrors);
+            return;
         }
 
         if (currentEditId) {
-            await updateEinrichtung(currentEditId, result.data);
+            await updateEinrichtung(currentEditId, einrichtungData);
             showToast('Erfolg', 'Einrichtung wurde erfolgreich aktualisiert.', 'success');
             document.dispatchEvent(new CustomEvent('einrichtung-aktualisiert'));
         } else {
-            await createEinrichtung(result.data);
+            await createEinrichtung(einrichtungData);
             showToast('Erfolg', 'Neue Einrichtung wurde erfolgreich erstellt.', 'success');
             document.dispatchEvent(new CustomEvent('einrichtung-erstellt'));
         }
