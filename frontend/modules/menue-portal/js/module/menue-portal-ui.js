@@ -506,7 +506,7 @@ function renderDesktopGrid() {
  */
 function renderRecipeList(recipes) {
     if (!recipes || recipes.length === 0) {
-        return '<div class="empty-category">Keine Rezepte</div>';
+        return ''; // Keine Anzeige bei leeren Kategorien
     }
     
     return recipes.map(recipe => {

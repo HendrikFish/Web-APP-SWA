@@ -234,6 +234,7 @@
         flex: 1;
         font-weight: 500;
         color: #333;
+        text-align: center;
     }
 
     .recipe-details {
@@ -261,16 +262,7 @@
         font-weight: 600;
     }
 
-    /* Empty State */
-    .empty-category {
-        text-align: center;
-        color: #6c757d;
-        font-style: italic;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 0.25rem;
-        border: 2px dashed #dee2e6;
-    }
+    /* Empty State - entfernt, da keine leeren Kategorien mehr angezeigt werden */
 }
 
 /* Desktop Layout */
@@ -348,6 +340,10 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+    }
+
+    .grid-content-cell .recipe-name {
+        text-align: center;
     }
 
     /* Responsive Verhalten */
