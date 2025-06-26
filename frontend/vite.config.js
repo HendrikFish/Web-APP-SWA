@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import fs from 'fs';
 
 // Custom plugin to serve files from the /shared directory
@@ -38,7 +37,6 @@ function serveSharedMiddleware() {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    viteCommonjs(),
     serveSharedMiddleware()
   ],
   resolve: {
