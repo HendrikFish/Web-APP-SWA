@@ -782,12 +782,33 @@ function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
  */
 function highlightBewertungButtons() {
     // Alle Bewertungs-Buttons finden und hervorheben
-    document.querySelectorAll('.bewertung-btn').forEach(btn => {
+    const bewertungButtons = document.querySelectorAll('.bewertung-btn');
+    const aktiveBewertungButtons = document.querySelectorAll('.bewertung-btn:not([disabled])');
+    
+    console.log(`🔍 Bewertungs-Buttons gefunden: ${bewertungButtons.length} total, ${aktiveBewertungButtons.length} aktiv`);
+    
+    bewertungButtons.forEach((btn, index) => {
         if (!btn.disabled) {
             btn.classList.add('bewertung-highlight');
             
             // Kurzes Pulsieren zur Aufmerksamkeit
             btn.style.animation = 'pulse 2s ease-in-out 3';
+            
+            // Parent Grid-Cell hervorheben für Desktop
+            const gridCell = btn.closest('.grid-content-cell');
+            if (gridCell) {
+                gridCell.classList.add('bewertung-cell-highlight');
+                console.log(`✅ Desktop Grid-Cell ${index + 1} hervorgehoben`);
+            }
+            
+            // Parent Category-Section hervorheben für Mobile
+            const categorySection = btn.closest('.category-section');
+            if (categorySection) {
+                categorySection.classList.add('bewertung-category-highlight');
+                console.log(`✅ Mobile Category-Section ${index + 1} hervorgehoben`);
+            }
+        } else {
+            console.log(`⚠️ Button ${index + 1} ist disabled`);
         }
     });
     

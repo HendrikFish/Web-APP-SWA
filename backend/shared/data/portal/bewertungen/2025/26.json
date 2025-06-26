@@ -1,0 +1,32 @@
+{
+  "kalenderwoche": 26,
+  "jahr": 2025,
+  "erstellt_am": "2025-06-26T12:43:20.613Z",
+  "bewertungen": {
+    "montag": {},
+    "dienstag": {},
+    "mittwoch": {},
+    "donnerstag": {
+      "dessert": [
+        {
+          "id": "afeb167c-4564-47ae-82fa-028f26026e1a",
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "einrichtung_id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "einrichtung_name": "Hendrik Fischer",
+          "rezepte": [
+            "Hefebier"
+          ],
+          "geschmack": 3,
+          "optik": 3,
+          "verbesserungsvorschlag": "War Super!",
+          "timestamp": "2025-06-26T12:43:20.616Z",
+          "menueplan_datum": "2025-06-25"
+        }
+      ]
+    },
+    "freitag": {},
+    "samstag": {},
+    "sonntag": {}
+  }
+}
