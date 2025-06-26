@@ -23,25 +23,52 @@ const createTestApp = () => {
 
 describe('Authentication API', () => {
     beforeAll(async () => {
+        // Timeout für CI-Umgebung erhöhen
+        jest.setTimeout(30000);
+        
         // In-Memory MongoDB starten
         mongoServer = await MongoMemoryServer.create();
         const mongoUri = mongoServer.getUri();
         
-        await mongoose.connect(mongoUri);
+        // Robustere Verbindung mit Retry-Logic
+        await mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
+        });
+        
+        // Warten bis Verbindung wirklich bereit ist
+        await mongoose.connection.db.admin().ping();
+        
         app = createTestApp();
         
         // Test-Umgebung setzen
-        process.env.JWT_SECRET = 'test-secret-key';
-    });
+        process.env.JWT_SECRET = 'test-secret-key-for-testing-only';
+        process.env.NODE_ENV = 'test';
+        
+        // JWT_SECRET prüfen
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET ist nicht gesetzt für Tests');
+        }
+        console.log('JWT_SECRET für Tests gesetzt:', process.env.JWT_SECRET.substring(0, 10) + '...');
+    }, 30000);
 
     afterAll(async () => {
-        await mongoose.disconnect();
-        await mongoServer.stop();
-    });
+        // Graceful shutdown
+        if (mongoose.connection.readyState !== 0) {
+            await mongoose.disconnect();
+        }
+        if (mongoServer) {
+            await mongoServer.stop();
+        }
+    }, 30000);
 
     beforeEach(async () => {
-        // Datenbank vor jedem Test leeren
+        // Datenbank vor jedem Test leeren und warten bis fertig
         await User.deleteMany({});
+        
+        // Sicherstellen dass Löschvorgang abgeschlossen ist
+        const count = await User.countDocuments();
+        expect(count).toBe(0);
     });
 
     describe('POST /api/auth/register', () => {
@@ -119,6 +146,12 @@ describe('Authentication API', () => {
                 isApproved: true
             });
             await approvedUser.save();
+            
+            // Prüfen dass Passwort gehashed wurde
+            const savedApprovedUser = await User.findOne({ email: 'approved@example.com' });
+            if (savedApprovedUser.password === 'testPassword123') {
+                throw new Error('Passwort wurde nicht gehashed für approved user');
+            }
 
             // Nicht-approved Test-Benutzer erstellen (Passwort wird durch pre('save') gehashed)
             const pendingUser = new User({
@@ -130,17 +163,44 @@ describe('Authentication API', () => {
                 isApproved: false
             });
             await pendingUser.save();
+            
+            // Prüfen dass Passwort gehashed wurde
+            const savedPendingUser = await User.findOne({ email: 'pending@example.com' });
+            if (savedPendingUser.password === 'testPassword123') {
+                throw new Error('Passwort wurde nicht gehashed für pending user');
+            }
         });
 
         it('sollte approved Benutzer einloggen', async () => {
+            // Vorher prüfen dass der User wirklich existiert und approved ist
+            const existingUser = await User.findOne({ email: 'approved@example.com' });
+            expect(existingUser).toBeTruthy();
+            expect(existingUser.isApproved).toBe(true);
+            
+            // Password-Matching testen (Debug für CI)
+            const passwordMatches = await existingUser.matchPassword('testPassword123');
+            if (!passwordMatches) {
+                console.log('PASSWORD MISMATCH DEBUG:');
+                console.log('Stored password hash:', existingUser.password);
+                console.log('Password match result:', passwordMatches);
+                throw new Error('Password matching failed in test setup');
+            }
+            
             const response = await request(app)
                 .post('/api/auth/login')
                 .send({
                     email: 'approved@example.com',
                     password: 'testPassword123'
-                })
-                .expect(200);
+                });
 
+            // Debug info für CI
+            if (response.status !== 200) {
+                console.log('Login failed. Status:', response.status);
+                console.log('Response body:', JSON.stringify(response.body, null, 2));
+                console.log('User in DB:', JSON.stringify(existingUser, null, 2));
+            }
+
+            expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('token');
             expect(response.body.user).toHaveProperty('email', 'approved@example.com');
