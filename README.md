@@ -336,15 +336,24 @@ graph TD;
     -   Fügen Sie die folgenden Variablen hinzu und passen Sie die Werte an:
         ```
         # Ihr Verbindungsstring von MongoDB Atlas oder Ihrer lokalen Instanz
-        MONGODB_URI=mongodb+srv://...
+        MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/database
         
         # Ein beliebiger, langer und geheimer Schlüssel zur Signierung der Login-Tokens
         JWT_SECRET=DEIN_SUPER_GEHEIMES_WORT_HIER_EINFUEGEN
+        
+        # Backend-Port (Standard: 3000)
+        BACKEND_PORT=3000
+        
+        # Entwicklungsumgebung
+        NODE_ENV=development
         ```
+    -   **Wichtig für MongoDB Atlas:** Stellen Sie sicher, dass Ihre IP-Adresse in der Whitelist steht.
 
 3.  **Abhängigkeiten installieren:** Führen Sie `npm install` in den Hauptverzeichnissen `frontend/` und `backend/` aus.
 
-4.  **Projekt starten:** Führen Sie `npm start` im Projekt-Root-Verzeichnis aus. Dieser Befehl startet parallel den Backend-Server und den Frontend-Vite-Server. Der Backend-Server sollte nun die Meldung "MongoDB verbunden: ..." ausgeben.
+4.  **Projekt starten:** Führen Sie `npm start` im Projekt-Root-Verzeichnis aus. Dieser Befehl startet parallel den Backend-Server (Port 3000) und den Frontend-Vite-Server (Port 5173+). Der Backend-Server sollte nun die Meldung "✅ MongoDB erfolgreich verbunden" ausgeben.
+
+5.  **Tests ausführen:** Alle Tests laufen isoliert von der Produktionsumgebung mit `npm run test` oder `npm run test:isolated` im Backend-Verzeichnis.
 
 ## 4. Globale Code-Konventionen
 

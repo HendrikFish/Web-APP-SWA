@@ -34,19 +34,26 @@ Erstellen Sie eine `.env` Datei im `backend/` Verzeichnis:
 
 ```bash
 # Backend Konfiguration
-MONGODB_URI=mongodb://localhost:27017/smartworkart_dev
+MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/smartworkart
+# ODER für lokale Entwicklung:
+# MONGODB_URI=mongodb://localhost:27017/smartworkart_dev
+
 JWT_SECRET=your-super-secret-jwt-key-here
 BACKEND_PORT=3000
 NODE_ENV=development
 
-# Logging
+# Logging (optional)
 LOG_LEVEL=debug
 LOG_TO_FILE=true
 
-# Security
+# Security (optional)
 RATE_LIMIT_WINDOW=900000
 RATE_LIMIT_MAX=100
 ```
+
+**Wichtig für MongoDB Atlas:**
+- Stellen Sie sicher, dass Ihre IP-Adresse in der MongoDB Atlas Whitelist steht
+- Link: https://www.mongodb.com/docs/atlas/security-whitelist/
 
 ### **4. MongoDB einrichten**
 
@@ -69,6 +76,36 @@ npm run start:backend  # Backend auf Port 3000
 npm run start:frontend # Frontend auf Port 5173
 ```
 
+## 🧪 **Tests und Qualitätssicherung**
+
+### **Test-Umgebung**
+
+**Alle Tests laufen isoliert von der Produktionsumgebung:**
+- ✅ In-Memory MongoDB (keine echte Datenbank erforderlich)
+- ✅ Separate Ports (Test: 3001, Produktion: 3000)
+- ✅ Eigene Umgebungsvariablen
+- ✅ Keine Beeinträchtigung des laufenden Systems
+
+```bash
+# Verschiedene Test-Modi
+npm run test              # Standard-Tests mit Ausgabe
+npm run test:isolated     # Tests mit maximaler Isolation
+npm run test:watch        # Tests im Watch-Modus
+npm run test:coverage     # Tests mit Coverage-Report
+
+# Spezifische Test-Umgebung
+cd backend
+npm run test:isolated     # Läuft auf Port 3001, verwendet In-Memory DB
+```
+
+### **GitHub Actions / CI/CD**
+
+Die Tests laufen automatisch bei jedem Push und Pull Request:
+- Backend-Tests mit In-Memory MongoDB
+- Frontend-Build-Tests
+- Integration-Tests
+- Security-Scans
+
 ## 🛠️ **Entwickler-Tools**
 
 ### **Empfohlene VS Code Extensions**
@@ -90,11 +127,19 @@ npm run start:frontend # Frontend auf Port 5173
 ### **Scripts**
 
 ```bash
-# Tests ausführen
+# Anwendung starten
+npm start                 # Backend (Port 3000) + Frontend (Port 5173+) parallel
+
+# Tests ausführen (isoliert von Produktion)
 npm run test              # Alle Tests
-npm run test:backend      # Nur Backend-Tests
+npm run test:backend      # Nur Backend-Tests (isolierte In-Memory DB)
 npm run test:frontend     # Nur Frontend-Tests
 npm run test:coverage     # Mit Coverage-Report
+npm run test:isolated     # Backend-Tests mit maximaler Isolation
+
+# Entwicklung
+npm run start:backend     # Nur Backend (Port 3000)
+npm run start:frontend    # Nur Frontend (Port 5173+)
 
 # Code-Qualität
 npm run lint              # ESLint prüfen
