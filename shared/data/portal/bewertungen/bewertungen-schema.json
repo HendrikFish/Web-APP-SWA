@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bewertungssystem Schema",
+  "description": "Schema für kategorie-basierte Menüplan-Bewertungen",
+  "type": "object",
+  "properties": {
+    "kalenderwoche": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 53,
+      "description": "Kalenderwoche der bewerteten Menüs"
+    },
+    "jahr": {
+      "type": "integer",
+      "minimum": 2024,
+      "description": "Jahr der bewerteten Menüs"
+    },
+    "erstellt_am": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitstempel der Schema-Erstellung"
+    },
+    "bewertungen": {
+      "type": "object",
+      "properties": {
+        "montag": { "$ref": "#/definitions/tagBewertungen" },
+        "dienstag": { "$ref": "#/definitions/tagBewertungen" },
+        "mittwoch": { "$ref": "#/definitions/tagBewertungen" },
+        "donnerstag": { "$ref": "#/definitions/tagBewertungen" },
+        "freitag": { "$ref": "#/definitions/tagBewertungen" },
+        "samstag": { "$ref": "#/definitions/tagBewertungen" },
+        "sonntag": { "$ref": "#/definitions/tagBewertungen" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kalenderwoche", "jahr", "bewertungen"],
+  "definitions": {
+    "tagBewertungen": {
+      "type": "object",
+      "properties": {
+        "suppe": { "$ref": "#/definitions/kategorieBewertungen" },
+        "menu1": { "$ref": "#/definitions/kategorieBewertungen" },
+        "menu2": { "$ref": "#/definitions/kategorieBewertungen" },
+        "dessert": { "$ref": "#/definitions/kategorieBewertungen" },
+        "abend": { "$ref": "#/definitions/kategorieBewertungen" }
+      },
+      "additionalProperties": true,
+      "description": "Bewertungen pro Kategorie für einen Tag"
+    },
+    "kategorieBewertungen": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/einzelbewertung" },
+      "description": "Array von Bewertungen für eine Kategorie"
+    },
+    "einzelbewertung": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Eindeutige UUID der Bewertung"
+        },
+        "benutzer_id": {
+          "type": "string",
+          "description": "ID des bewertenden Benutzers"
+        },
+        "benutzer_name": {
+          "type": "string",
+          "description": "Name des bewertenden Benutzers"
+        },
+        "einrichtung_id": {
+          "type": "string",
+          "description": "ID der bewertenden Einrichtung"
+        },
+        "einrichtung_name": {
+          "type": "string",
+          "description": "Name der bewertenden Einrichtung"
+        },
+        "rezepte": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Liste der Rezepte in dieser Kategorie an diesem Tag"
+        },
+        "geschmack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Geschmacksbewertung (1-5 Sterne)"
+        },
+        "optik": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Optikbewertung (1-5 Sterne)"
+        },
+        "verbesserungsvorschlag": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Konkreter Verbesserungsvorschlag mit Alternative (mindestens 10 Zeichen)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Zeitstempel der Bewertungserstellung"
+        },
+        "menueplan_datum": {
+          "type": "string",
+          "format": "date",
+          "description": "Datum des bewerteten Menüplans (YYYY-MM-DD)"
+        }
+      },
+      "required": [
+        "id", 
+        "benutzer_id", 
+        "benutzer_name", 
+        "einrichtung_id", 
+        "einrichtung_name", 
+        "rezepte", 
+        "geschmack", 
+        "optik", 
+        "verbesserungsvorschlag", 
+        "timestamp", 
+        "menueplan_datum"
+      ],
+      "additionalProperties": false
+    }
+  }
+} 

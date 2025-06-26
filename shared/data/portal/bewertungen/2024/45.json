@@ -1,0 +1,61 @@
+{
+  "kalenderwoche": 45,
+  "jahr": 2024,
+  "erstellt_am": "2024-11-04T10:00:00Z",
+  "bewertungen": {
+    "montag": {
+      "suppe": [
+        {
+          "id": "bewertung-001",
+          "benutzer_id": "user123",
+          "benutzer_name": "Maria Schmidt",
+          "einrichtung_id": "einr001",
+          "einrichtung_name": "Seniorenheim Musterstadt",
+          "rezepte": ["Rindersuppe", "Frittaten"],
+          "geschmack": 4,
+          "optik": 3,
+          "verbesserungsvorschlag": "Statt Frittaten wären Leberknödel eine bessere Alternative - sie passen geschmacklich besser zur Rindersuppe",
+          "timestamp": "2024-11-04T12:30:00Z",
+          "menueplan_datum": "2024-11-04"
+        }
+      ],
+      "menu1": [
+        {
+          "id": "bewertung-002",
+          "benutzer_id": "user456",
+          "benutzer_name": "Thomas Weber",
+          "einrichtung_id": "einr002",
+          "einrichtung_name": "Kindergarten Sonnenschein",
+          "rezepte": ["Schnitzel Wiener Art", "Kartoffelpüree", "Gurkensalat"],
+          "geschmack": 5,
+          "optik": 4,
+          "verbesserungsvorschlag": "Das Schnitzel war perfekt! Als Alternative könnte man gelegentlich auch Putenschnitzel anbieten für Abwechslung",
+          "timestamp": "2024-11-04T13:15:00Z",
+          "menueplan_datum": "2024-11-04"
+        }
+      ]
+    },
+    "dienstag": {
+      "suppe": [
+        {
+          "id": "bewertung-003",
+          "benutzer_id": "user789",
+          "benutzer_name": "Anna Fischer",
+          "einrichtung_id": "einr001",
+          "einrichtung_name": "Seniorenheim Musterstadt",
+          "rezepte": ["Tomatensuppe"],
+          "geschmack": 2,
+          "optik": 2,
+          "verbesserungsvorschlag": "Die Tomatensuppe war zu dünn und fade. Eine cremigere Konsistenz mit frischen Kräutern wie Basilikum würde den Geschmack deutlich verbessern",
+          "timestamp": "2024-11-05T12:45:00Z",
+          "menueplan_datum": "2024-11-05"
+        }
+      ]
+    },
+    "mittwoch": {},
+    "donnerstag": {},
+    "freitag": {},
+    "samstag": {},
+    "sonntag": {}
+  }
+} 

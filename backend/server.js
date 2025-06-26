@@ -47,6 +47,7 @@ const rezeptRoutes = require('./modules/rezepte/routes');
 const einrichtungRoutes = require('./modules/einrichtung/routes');
 const menueplanRoutes = require('./modules/menueplan/routes');
 const portalRoutes = require('./modules/portal/routes');
+const bewertungenRoutes = require('./modules/bewertungen/routes');
 
 // Feature-Module (werden nach dem Kern geladen)
 app.use('/api/notifications', notificationRoutes);
@@ -56,6 +57,7 @@ app.use('/api/rezepte', rezeptRoutes);
 app.use('/api/einrichtungen', einrichtungRoutes);
 app.use('/api/menueplan', menueplanRoutes);
 app.use('/api/portal', portalRoutes);
+app.use('/api/bewertungen', bewertungenRoutes);
 
 // --- Health-Check-Route für wait-on ---
 app.get('/health', (req, res) => {

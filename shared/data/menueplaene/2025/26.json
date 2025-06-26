@@ -16,7 +16,12 @@
             "name": "Hackepeter"
           }
         ],
-        "menu2": [],
+        "menu2": [
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
         "dessert": [
           {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
@@ -38,8 +43,17 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [],
-        "menu2": []
+        "menu1": [
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+        ],
+        "menu2": [
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "17cf0076-e28f-4a11-9b21-49ad01039650"
+        ]
       }
     },
     "dienstag": {
@@ -96,9 +110,16 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [],
+        "menu1": [
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa"
+        ],
         "menu2": [
-          "17cf0076-e28f-4a11-9b21-49ad01039650"
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "5409619a-b506-442f-a97d-182c354f2480"
         ]
       }
     },
@@ -148,7 +169,12 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [],
+        "menu1": [
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+        ],
         "menu2": [
           "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
           "5409619a-b506-442f-a97d-182c354f2480"
@@ -164,7 +190,12 @@
           }
         ],
         "menu1": [],
-        "menu2": [],
+        "menu2": [
+          {
+            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
+            "name": "Wurst"
+          }
+        ],
         "dessert": [
           {
             "id": "rezept-1750677840830-idmwpxk",
@@ -187,11 +218,15 @@
       },
       "Zuweisungen": {
         "menu2": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
         ],
         "menu1": [
           "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "5409619a-b506-442f-a97d-182c354f2480"
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
         ]
       }
     },
@@ -213,7 +248,12 @@
             "name": "Hackepeter"
           }
         ],
-        "menu2": [],
+        "menu2": [
+          {
+            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
+            "name": "Wurst"
+          }
+        ],
         "dessert": [
           {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
@@ -236,11 +276,14 @@
       },
       "Zuweisungen": {
         "menu1": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
         ],
         "menu2": [
           "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "5409619a-b506-442f-a97d-182c354f2480"
         ]
       }
     },
@@ -258,7 +301,12 @@
             "name": "Hefebier"
           }
         ],
-        "menu2": [],
+        "menu2": [
+          {
+            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
+            "name": "Wurst"
+          }
+        ],
         "dessert": [
           {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
@@ -282,7 +330,9 @@
       "Zuweisungen": {
         "menu1": [
           "5409619a-b506-442f-a97d-182c354f2480",
-          "b0914524-d72a-4fac-8a2a-06c55db71afa"
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "17cf0076-e28f-4a11-9b21-49ad01039650"
         ],
         "menu2": [
           "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
@@ -303,7 +353,12 @@
             "name": "Wurstbrot"
           }
         ],
-        "menu2": [],
+        "menu2": [
+          {
+            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
+            "name": "Wurst"
+          }
+        ],
         "dessert": [
           {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
@@ -323,7 +378,12 @@
         "menu1": [
           "5409619a-b506-442f-a97d-182c354f2480"
         ],
-        "menu2": []
+        "menu2": [
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ]
       }
     }
   },
@@ -716,7 +776,7 @@
       "action": "snapshot_update"
     }
   },
-  "updatedAt": "2025-06-25T18:54:14.448Z",
+  "updatedAt": "2025-06-26T11:37:32.394Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"
