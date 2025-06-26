@@ -11,9 +11,9 @@ const markNotificationAsRead = require('./controller/markNotificationAsRead');
 const { protect } = require('../../middleware/authMiddleware');
 const { asyncHandler } = require('../../middleware/errorMiddleware');
 
-// Routen
-router.post('/login', asyncHandler(loginUser));
-router.post('/register', asyncHandler(registerUser));
+// Routen - ohne asyncHandler da Controller selbst alle Exceptions abfangen
+router.post('/login', loginUser);
+router.post('/register', registerUser);
 
 // Benachrichtigungs-Routen für den eingeloggten User
 router.get('/notifications', protect, asyncHandler(getUnreadNotifications));
