@@ -503,7 +503,6 @@ function renderMenuplan() {
  */
 function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
     if (!currentMenuplan || !currentMenuplan.days || !currentMenuplan.days[dayKey]) {
-        console.log(`istKategorieZugewiesen Debug - FEHLER: Keine Daten für ${dayKey}`);
         return false;
     }
     
@@ -514,29 +513,12 @@ function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
     if (categoryKey === 'hauptspeise') {
         const menu1Zuweisungen = zuweisungen['menu1'] || [];
         const menu2Zuweisungen = zuweisungen['menu2'] || [];
-        const result = menu1Zuweisungen.includes(einrichtungId) || menu2Zuweisungen.includes(einrichtungId);
-        
-        console.log(`istKategorieZugewiesen Debug - ${dayKey} ${categoryKey}:`, {
-            einrichtungId,
-            menu1Zuweisungen,
-            menu2Zuweisungen,
-            result
-        });
-        
-        return result;
+        return menu1Zuweisungen.includes(einrichtungId) || menu2Zuweisungen.includes(einrichtungId);
     }
     
     // Für normale Kategorien
     const kategorieZuweisungen = zuweisungen[categoryKey] || [];
-    const result = kategorieZuweisungen.includes(einrichtungId);
-    
-    console.log(`istKategorieZugewiesen Debug - ${dayKey} ${categoryKey}:`, {
-        einrichtungId,
-        kategorieZuweisungen,
-        result
-    });
-    
-    return result;
+    return kategorieZuweisungen.includes(einrichtungId);
 }
 
 function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, isMobile = false) {

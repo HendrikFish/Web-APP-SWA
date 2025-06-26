@@ -125,20 +125,8 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
         // Prüfe ob Einrichtung diese Kategorie zugewiesen bekommen hat
         let istZugewiesen = true;
         if (categoryKey === 'hauptspeise' && categoryInfo.isZusammengefasst) {
-            // Für Kindergarten/Schule: Zuweisung prüfen basierend auf menu1 oder menu2
-            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
-            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
-            istZugewiesen = istMenu1Zugewiesen || istMenu2Zugewiesen;
-            
-            // Debug-Logging
-            console.log(`Desktop Debug - ${dayKey} ${categoryKey}:`, {
-                einrichtungId: currentEinrichtung.id,
-                einrichtungName: currentEinrichtung.name,
-                istMenu1Zugewiesen,
-                istMenu2Zugewiesen,
-                istZugewiesen,
-                recipes: recipes.length
-            });
+            // Für Kindergarten/Schule: Verwende die direkte hauptspeise-Prüfung
+            istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('hauptspeise', dayKey, currentEinrichtung.id) : false;
         } else {
             istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
         }
