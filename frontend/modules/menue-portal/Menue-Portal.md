@@ -27,6 +27,7 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 - **Nicht kombinieren** von menu1+menu2 Rezepten
 - **Nur die zugewiesene** Kategorie anzeigen (menu1 ODER menu2)
 - **Umbenennung** zu "Hauptspeise" (verständlicher für Zielgruppe)
+- **Platzhalter**: Auch ohne Zuweisung wird "Hauptspeise - Noch nicht erzeugt" angezeigt
 - **Grund**: Vereinfachung, da sie nicht wissen dass es 2 Menüs gibt
 
 ### **Beispiel-Szenarien**
@@ -37,6 +38,9 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 | - Speiseplan: suppe=true, dessert=true | Suppe: "Noch nicht gewählt" | Suppe: "Noch nicht erzeugt" |
 | - KW.json: menu2 zugewiesen | Hauptspeise: "Mozzarella-Tomate" | Hauptspeise: "Mozzarella-Tomate" |
 | | Dessert: "Noch nicht gewählt" | Dessert: "Noch nicht erzeugt" |
+| **ER (Schüler) - Dienstag** | | |
+| - Speiseplan: hauptspeise=true | Hauptspeise: "Noch nicht gewählt" | Hauptspeise: "Noch nicht erzeugt" |
+| - KW.json: keine Zuweisung | (Platzhalter angezeigt) | (Platzhalter angezeigt) |
 | **Normale Einrichtung** | | |
 | - Speiseplan: alle=true | Alle 4 Kategorien sichtbar | Alle 4 Kategorien sichtbar |
 | - KW.json: nur menu1 zugewiesen | Menu1: Rezepte, Rest: Platzhalter | Menu1: Rezepte, Rest: Platzhalter |

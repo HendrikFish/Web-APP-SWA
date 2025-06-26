@@ -190,7 +190,12 @@
             "name": "Wurstbrot"
           }
         ],
-        "menu1": [],
+        "menu1": [
+          {
+            "id": "rezept-1750679035844-54zghf0",
+            "name": "Hackepeter"
+          }
+        ],
         "menu2": [
           {
             "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
@@ -237,10 +242,6 @@
           {
             "id": "rezept-1750677840830-idmwpxk",
             "name": "Hefebier"
-          },
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
           }
         ],
         "menu1": [
@@ -283,8 +284,8 @@
         ],
         "menu2": [
           "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
           "5409619a-b506-442f-a97d-182c354f2480",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
           "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
         ]
       }
@@ -435,7 +436,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -482,7 +483,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -529,7 +530,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -576,7 +577,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -623,7 +624,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -670,7 +671,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       },
       {
@@ -717,11 +718,11 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
+          "snapshotUpdatedAt": "2025-06-26T19:34:46.227Z"
         }
       }
     ],
-    "generatedAt": "2025-06-26T19:10:31.488Z",
+    "generatedAt": "2025-06-26T19:34:46.227Z",
     "categories": [
       {
         "id": "suppe",
@@ -778,7 +779,7 @@
       "action": "snapshot_update"
     }
   },
-  "updatedAt": "2025-06-26T19:10:33.035Z",
+  "updatedAt": "2025-06-26T19:36:52.992Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"
