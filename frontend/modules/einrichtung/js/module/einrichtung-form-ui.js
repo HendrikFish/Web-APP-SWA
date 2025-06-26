@@ -174,6 +174,32 @@ function addFormEventListeners() {
         }
     });
 
+    // Automatische Hauptspeise-Auswahl bei Suppe oder Dessert
+    form.addEventListener('change', (e) => {
+        if (e.target.matches('input.btn-check[id*="-Suppe"], input.btn-check[id*="-Dessert"]')) {
+            const checkbox = e.target;
+            const isChecked = checkbox.checked;
+            
+            // Tag extrahieren (z.B. "Montag" aus "Montag-Suppe")
+            const tagMatch = checkbox.id.match(/^([^-]+)-/);
+            if (tagMatch && isChecked) {
+                const tag = tagMatch[1];
+                const hauptspeiseCheckbox = form.querySelector(`#${tag}-Hauptspeise`);
+                
+                if (hauptspeiseCheckbox && !hauptspeiseCheckbox.checked) {
+                    hauptspeiseCheckbox.checked = true;
+                    console.log(`🍽️ Automatische Hauptspeise-Auswahl für ${tag} aktiviert`);
+                    
+                    // Toast-Benachrichtigung für bessere UX
+                    import('@shared/components/toast-notification/toast-notification.js')
+                        .then(({ showToast }) => {
+                            showToast(`Hauptspeise für ${tag} automatisch hinzugefügt`, 'info', 2000);
+                        });
+                }
+            }
+        }
+    });
+
     const typBtnGroup = document.querySelector('[aria-label="Einrichtungstyp"]');
     const addGruppeBtn = document.getElementById('add-gruppe-btn');
     const gruppenListe = document.getElementById('gruppen-liste');
@@ -426,11 +452,26 @@ function populateForm(einrichtung) {
     typBtnGroup.querySelector(`[data-typ="${isIntern ? 'intern' : 'extern'}"]`).classList.add('active');
     document.getElementById('abendessen-container').classList.toggle('d-none', !isIntern);
 
-    // Speiseplan
+    // Speiseplan - mit automatischer Hauptspeise-Korrektur
     Object.keys(einrichtung.speiseplan).forEach(tag => {
-        Object.keys(einrichtung.speiseplan[tag]).forEach(komponente => {
-            const checkbox = form.querySelector(`#${tag.charAt(0).toUpperCase() + tag.slice(1)}-${komponente.charAt(0).toUpperCase() + komponente.slice(1)}`);
-            if(checkbox) checkbox.checked = einrichtung.speiseplan[tag][komponente];
+        const tagData = einrichtung.speiseplan[tag];
+        const tagCapitalized = tag.charAt(0).toUpperCase() + tag.slice(1);
+        
+        // Prüfe ob Suppe oder Dessert aktiv ist, aber Hauptspeise fehlt
+        const hatSuppe = tagData.suppe;
+        const hatDessert = tagData.dessert;
+        const hatHauptspeise = tagData.hauptspeise;
+        
+        // Automatische Hauptspeise-Korrektur für bestehende Einrichtungen
+        if ((hatSuppe || hatDessert) && !hatHauptspeise) {
+            console.log(`🔧 Korrigiere ${tag}: Hauptspeise automatisch hinzugefügt (Suppe: ${hatSuppe}, Dessert: ${hatDessert})`);
+            tagData.hauptspeise = true;
+        }
+        
+        // Checkboxen setzen
+        Object.keys(tagData).forEach(komponente => {
+            const checkbox = form.querySelector(`#${tagCapitalized}-${komponente.charAt(0).toUpperCase() + komponente.slice(1)}`);
+            if(checkbox) checkbox.checked = tagData[komponente];
         });
     });
 
@@ -504,6 +545,15 @@ export async function initEinrichtungForm() {
         const stammdaten = await getStammdaten();
         formContainer.innerHTML = buildFormHtml(stammdaten);
         addFormEventListeners();
+        
+        // Einmalige automatische Korrektur der bestehenden Speiseplan-Logik
+        try {
+            const { autoFixSpeiseplanOnLoad } = await import('../../fix-speiseplan-logic.js');
+            await autoFixSpeiseplanOnLoad();
+        } catch (error) {
+            console.warn('⚠️ Auto-Fix Skript konnte nicht geladen werden:', error);
+        }
+        
     } catch (error) {
         console.error("Fehler beim Initialisieren des Einrichtungsformulars:", error);
         formContainer.innerHTML = '<div class="alert alert-danger">Fehler beim Laden des Formulars.</div>';

@@ -343,7 +343,6 @@ export function getCategoryName(categoryKey, stammdaten = null) {
         'suppe': 'Suppe',
         'menu1': 'Menü 1',
         'menu2': 'Menü 2',
-        'menu': 'Menü', // Vereinte Kategorie für externe Einrichtungen
         'dessert': 'Dessert',
         'abend': 'Abendessen',
         'abend-suppe': 'Abend-Suppe',
@@ -376,7 +375,7 @@ export function getCategoryIcon(categoryKey, stammdaten = null) {
         'suppe': '🍲',
         'menu1': '🍽️',
         'menu2': '🥘',
-        'menu': '🍽️', // Vereinte Kategorie für externe Einrichtungen
+        'menu': '🍽️', // Vereinte Kategorie für Kindergarten/Schule
         'dessert': '🍰',
         'abend': '🍴',
         'abend-suppe': '🍲',

@@ -128,5 +128,22 @@
     "id": "zutat-1750769178682-2ef3f7a1",
     "zutatennummer": 5,
     "isActive": true
+  },
+  {
+    "name": "Pommes Frites",
+    "kategorie": "Gemüse",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 4.32,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1750952534286-q2f2zb8",
+    "zutatennummer": 6,
+    "isActive": true
   }
 ]

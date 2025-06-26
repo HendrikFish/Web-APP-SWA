@@ -20,6 +20,11 @@ import { initMenuePortalAuth } from './module/menue-portal-auth.js';
 import './module/bewertung-api.js';
 import './module/bewertung-modal.js';
 
+// Bestellungs- und Handler-Module importieren um globale Funktionen verfügbar zu machen
+import './module/bestellung-handler.js';
+import './module/mobile-accordion-handler.js';
+import './module/desktop-calendar-handler.js';
+
 /**
  * Hauptinitialisierung des Menü-Portals
  */

@@ -12,13 +12,36 @@
       },
       "kindergarten": {
         "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert"],
+        "kategorie_zusammenfassung": {
+          "hauptspeise": ["menu1", "menu2"]
+        },
         "speiseplan_basiert": true,
-        "beschreibung": "Kindergärten sehen nur was in der KW.json ausgewählt wurde"
+        "beschreibung": "Kindergärten sehen menu1/menu2 zusammengefasst als 'Hauptspeise', da Koch entscheidet"
       },
       "schule": {
         "sichtbare_kategorien": ["suppe", "menu1", "menu2", "dessert"],
+        "kategorie_zusammenfassung": {
+          "hauptspeise": ["menu1", "menu2"]
+        },
         "speiseplan_basiert": true,
-        "beschreibung": "Schulen sehen nur was in der KW.json ausgewählt wurde"
+        "beschreibung": "Schulen sehen menu1/menu2 zusammengefasst als 'Hauptspeise', da Koch entscheidet"
+      }
+    }
+  },
+  "anzeige_konfiguration": {
+    "beschreibung": "Konfiguration wie Kategorien angezeigt werden sollen",
+    "kategorie_anzeigenamen": {
+      "hauptspeise": {
+        "name": "Hauptspeise",
+        "icon": "🍽️",
+        "beschreibung": "Zusammengefasste Anzeige von menu1 und menu2 für Kindergarten/Schule"
+      }
+    },
+    "zusammenfassungs_logik": {
+      "hauptspeise": {
+        "quell_kategorien": ["menu1", "menu2"],
+        "anzeige_verhalten": "zusammengefasst",
+        "leere_anzeige": "Noch nicht gewählt"
       }
     }
   },
@@ -32,6 +55,7 @@
   },
   "hinweise": {
     "kategorie_definitionen": "Kategorie-Namen und Icons werden aus shared/data/menueplaene/stammdaten.json geladen",
-    "speiseplan_struktur": "Speiseplan-Flags für externe Einrichtungen werden aus der jeweiligen KW.json geladen"
+    "speiseplan_struktur": "Speiseplan-Flags für externe Einrichtungen werden aus der jeweiligen KW.json geladen",
+    "zusammenfassung": "Kindergarten/Schule sehen menu1+menu2 als einheitliche 'Hauptspeise' da Koch die Auswahl trifft"
   }
 } 

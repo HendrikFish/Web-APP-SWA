@@ -100,6 +100,12 @@ export function istDatumBewertbar(datum) {
     const zehnTageZurueck = new Date();
     zehnTageZurueck.setDate(heute.getDate() - 10);
     
+    // Datum normalisieren (ohne Uhrzeiten für Vergleich)
+    heute.setHours(23, 59, 59, 999); // Ende des heutigen Tages
+    pruefDatum.setHours(0, 0, 0, 0); // Beginn des Prüfdatums
+    zehnTageZurueck.setHours(0, 0, 0, 0); // Beginn vor 10 Tagen
+    
+    // Nur Vergangenheit und heute bewertbar, keine zukünftigen Tage
     return pruefDatum >= zehnTageZurueck && pruefDatum <= heute;
 }
 

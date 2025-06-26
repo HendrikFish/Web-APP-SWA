@@ -22,7 +22,7 @@
       },
       "mittwoch": {
         "suppe": false,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       },
       "donnerstag": {
@@ -32,17 +32,17 @@
       },
       "freitag": {
         "suppe": true,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       },
       "samstag": {
         "suppe": true,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       },
       "sonntag": {
         "suppe": false,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       }
     },
@@ -125,18 +125,18 @@
     "tour": "Tour 2",
     "speiseplan": {
       "montag": {
-        "suppe": false,
-        "hauptspeise": false,
+        "suppe": true,
+        "hauptspeise": true,
         "dessert": false
       },
       "dienstag": {
         "suppe": false,
-        "hauptspeise": false,
-        "dessert": false
+        "hauptspeise": true,
+        "dessert": true
       },
       "mittwoch": {
         "suppe": true,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       },
       "donnerstag": {
@@ -146,7 +146,7 @@
       },
       "freitag": {
         "suppe": false,
-        "hauptspeise": false,
+        "hauptspeise": true,
         "dessert": false
       },
       "samstag": {

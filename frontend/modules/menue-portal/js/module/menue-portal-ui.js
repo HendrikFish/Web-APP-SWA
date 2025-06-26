@@ -1,5 +1,5 @@
-// menue-portal-ui.js - UI-Funktionen für das Menü-Portal
-// Verwaltet die Darstellung von Menüplänen (Mobile Accordion + Desktop Grid)
+// menue-portal-ui.js - REFAKTORIERTE UI-Funktionen für das Menü-Portal
+// Orchestriert Mobile Accordion, Desktop Calendar und Bestellfunktionalität
 
 import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 import { 
@@ -16,6 +16,16 @@ import {
 import { getAllEinrichtungen, getDefaultEinrichtung } from './menue-portal-auth.js';
 import { initBewertungModal, openBewertungModal } from './bewertung-modal.js';
 import { istDatumBewertbar } from './bewertung-api.js';
+import { renderMobileAccordion } from './mobile-accordion-handler.js';
+import { renderDesktopCalendar } from './desktop-calendar-handler.js';
+import { 
+    handleBestellungChange, 
+    loadBestellungenFromStorage, 
+    loadBestellungenIntoUI,
+    exportBestellungen,
+    clearBestellungen,
+    validateBestellungen 
+} from './bestellung-handler.js';
 
 // Globale UI-State
 let currentEinrichtung = null;
@@ -38,11 +48,26 @@ export async function initMenuePortalUI(user, einrichtungen) {
         
         // Benutzer speichern
         currentUser = user;
+        window.currentUser = user; // Global verfügbar für Module
         
         // Portal-Stammdaten laden
         const stammdatenResult = await loadPortalStammdaten();
         if (stammdatenResult.success) {
             portalStammdaten = stammdatenResult.stammdaten;
+            console.log('✅ Portal-Stammdaten geladen:', portalStammdaten);
+        } else {
+            console.warn('⚠️ Portal-Stammdaten konnten nicht geladen werden, verwende Fallback');
+            // Fallback-Stammdaten
+            portalStammdaten = {
+                kategorien: {
+                    'suppe': { name: 'Suppe', icon: 'bowl-hot' },
+                    'menu1': { name: 'Menü 1', icon: 'egg-fried' }, 
+                    'menu2': { name: 'Menü 2', icon: 'fish' },
+                    'menu': { name: 'Hauptspeise', icon: 'egg-fried' },
+                    'dessert': { name: 'Dessert', icon: 'cake' },
+                    'abend': { name: 'Abendessen', icon: 'moon-stars' }
+                }
+            };
         }
         
         // Mobile Detection
@@ -50,6 +75,9 @@ export async function initMenuePortalUI(user, einrichtungen) {
         
         // Loading ausblenden
         hideLoading();
+        
+        // Bestellungen aus localStorage laden
+        loadBestellungenFromStorage();
         
         // Einrichtungs-Selector setup
         setupEinrichtungsSelector(einrichtungen);
@@ -63,6 +91,7 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Standard-Einrichtung wählen und Menüplan laden
         currentEinrichtung = getDefaultEinrichtung();
         if (currentEinrichtung) {
+            window.currentEinrichtung = currentEinrichtung; // Global verfügbar
             await loadAndDisplayMenuplan();
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
@@ -88,10 +117,14 @@ function setupEinrichtungsSelector(einrichtungen) {
     
     // Einrichtungs-Info im Controls-Bereich aktualisieren
     if (infoElement && currentEinrichtung) {
+        const typeLabel = currentEinrichtung.isIntern ? 'Intern' : 'Extern';
+        const typeColor = currentEinrichtung.isIntern ? 'bg-info' : 'bg-success';
+        
         infoElement.innerHTML = `
             <i class="bi bi-building"></i>
             <strong>${currentEinrichtung.name}</strong>
             <span class="badge bg-secondary ms-2">${currentEinrichtung.kuerzel}</span>
+            <span class="badge ${typeColor} ms-1">${typeLabel}</span>
         `;
     }
     
@@ -102,16 +135,22 @@ function setupEinrichtungsSelector(einrichtungen) {
     }
     
     // Buttons für jede Einrichtung erstellen
-    const buttonsHtml = einrichtungen.map(einrichtung => `
-        <button 
-            type="button" 
-            class="btn btn-outline-primary einrichtung-btn" 
-            data-einrichtung-id="${einrichtung.id}"
-        >
-            ${einrichtung.name}
-            <span class="badge bg-light text-dark ms-1">${einrichtung.kuerzel}</span>
-        </button>
-    `).join('');
+    const buttonsHtml = einrichtungen.map(einrichtung => {
+        const typeLabel = einrichtung.isIntern ? 'Intern' : 'Extern';
+        const typeColor = einrichtung.isIntern ? 'info' : 'success';
+        
+        return `
+            <button 
+                type="button" 
+                class="btn btn-outline-primary einrichtung-btn" 
+                data-einrichtung-id="${einrichtung.id}"
+            >
+                ${einrichtung.name}
+                <span class="badge bg-light text-dark ms-1">${einrichtung.kuerzel}</span>
+                <span class="badge bg-${typeColor} ms-1">${typeLabel}</span>
+            </button>
+        `;
+    }).join('');
     
     container.innerHTML = `
         <div class="card">
@@ -145,14 +184,13 @@ function setupEinrichtungsSelector(einrichtungen) {
 }
 
 /**
- * Setup der Steuerelemente (Wochennavigation)
+ * Setup der Steuerelemente (Wochennavigation + Bestellaktionen)
  */
 function setupControls() {
     // Wochennavigation
     const prevWeekBtn = document.getElementById('prev-week');
     const nextWeekBtn = document.getElementById('next-week');
     const currentWeekBtn = document.getElementById('current-week');
-    const currentWeekDisplay = document.getElementById('week-display');
     
     if (prevWeekBtn) {
         prevWeekBtn.addEventListener('click', () => navigateWeek(-1));
@@ -183,8 +221,57 @@ function setupControls() {
         refreshBtn.addEventListener('click', () => loadAndDisplayMenuplan());
     }
     
+    // Bestellaktionen für externe Einrichtungen
+    setupBestellControls();
+    
     // Aktuelle Woche anzeigen
     updateWeekDisplay();
+}
+
+/**
+ * Setup für Bestellungs-Controls (nur bei externen Einrichtungen)
+ */
+function setupBestellControls() {
+    if (!currentEinrichtung || currentEinrichtung.isIntern) {
+        // Bestellkontrollen ausblenden
+        const bestellContainer = document.getElementById('bestellung-controls');
+        if (bestellContainer) bestellContainer.style.display = 'none';
+        return;
+    }
+    
+    const bestellContainer = document.getElementById('bestellung-controls');
+    if (!bestellContainer) return;
+    
+    bestellContainer.style.display = 'block';
+    bestellContainer.innerHTML = `
+        <div class="card border-success">
+            <div class="card-body">
+                <h6 class="card-title text-success">
+                    <i class="bi bi-cart-check-fill me-2"></i>
+                    Bestellungen für KW ${currentWeek}/${currentYear}
+                </h6>
+                <div class="btn-group-sm d-flex gap-2" role="group">
+                    <button type="button" class="btn btn-outline-success" id="export-bestellungen">
+                        <i class="bi bi-download me-1"></i>
+                        Exportieren
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" id="clear-bestellungen">
+                        <i class="bi bi-trash me-1"></i>
+                        Löschen
+                    </button>
+                    <button type="button" class="btn btn-outline-info" id="validate-bestellungen">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Prüfen
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Event-Listener für Bestellaktionen
+    document.getElementById('export-bestellungen')?.addEventListener('click', exportCurrentBestellungen);
+    document.getElementById('clear-bestellungen')?.addEventListener('click', clearCurrentBestellungen);
+    document.getElementById('validate-bestellungen')?.addEventListener('click', validateCurrentBestellungen);
 }
 
 /**
@@ -197,9 +284,10 @@ function setupLayoutEventListeners() {
         renderMenuplan();
     });
     
-    // Initial Mobile Detection
+    // Window Resize
     window.addEventListener('resize', () => {
-        setTimeout(updateMobileDetection, 100);
+        updateMobileDetection();
+        renderMenuplan();
     });
 }
 
@@ -209,152 +297,160 @@ function setupLayoutEventListeners() {
  */
 async function switchEinrichtung(einrichtungId) {
     try {
-        const einrichtungen = getAllEinrichtungen();
-        const einrichtung = einrichtungen.find(e => e.id === einrichtungId);
+        showLoading();
         
-        if (!einrichtung) {
-            showToast('Einrichtung nicht gefunden', 'error');
-            return;
+        // Neue Einrichtung aus allen verfügbaren holen
+        const alleEinrichtungen = await getAllEinrichtungen();
+        const neueEinrichtung = alleEinrichtungen.find(e => e.id === einrichtungId);
+        
+        if (!neueEinrichtung) {
+            throw new Error('Einrichtung nicht gefunden');
         }
         
-        // UI State aktualisieren
-        currentEinrichtung = einrichtung;
+        currentEinrichtung = neueEinrichtung;
+        window.currentEinrichtung = neueEinrichtung; // Global verfügbar
         
-        // Einrichtungs-Info aktualisieren
-        const infoElement = document.getElementById('einrichtungs-info');
-        if (infoElement) {
-            infoElement.innerHTML = `
-                <i class="bi bi-building"></i>
-                <strong>${einrichtung.name}</strong>
-                <span class="badge bg-secondary ms-2">${einrichtung.kuerzel}</span>
-            `;
-        }
-        
-        // Button-Styling aktualisieren
+        // UI-Buttons aktualisieren
         document.querySelectorAll('.einrichtung-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`[data-einrichtung-id="${einrichtungId}"]`)?.classList.add('active');
         
-        // Neuen Menüplan laden
+        // Einrichtungs-Info aktualisieren
+        setupEinrichtungsSelector(await getAllEinrichtungen());
+        
+        // Bestellkontrollen aktualisieren
+        setupBestellControls();
+        
+        // Menüplan neu laden
         await loadAndDisplayMenuplan();
         
-        // Bewertungs-Modal mit neuer Einrichtung neu initialisieren
-        if (currentUser) {
-            initBewertungModal(currentUser, currentEinrichtung);
-        }
-        
-        showToast(`Einrichtung gewechselt: ${einrichtung.name}`, 'success');
+        showToast(`Zu ${neueEinrichtung.name} gewechselt`, 'success');
         
     } catch (error) {
         console.error('Fehler beim Wechseln der Einrichtung:', error);
         showToast('Fehler beim Wechseln der Einrichtung', 'error');
+    } finally {
+        hideLoading();
     }
 }
 
 /**
- * Navigiert zu einer anderen Kalenderwoche
- * @param {number} direction - Richtung (-1 für vorherige, +1 für nächste Woche)
+ * Navigiert zu einer anderen Woche
+ * @param {number} direction - Richtung (-1 = vorherige, +1 = nächste)
  */
 async function navigateWeek(direction) {
-    const newWeek = currentWeek + direction;
-    let newYear = currentYear;
-    
-    // Jahr-Wechsel berücksichtigen
-    if (newWeek < 1) {
-        newYear = currentYear - 1;
-        currentWeek = getWeeksInYear(newYear);
-    } else if (newWeek > getWeeksInYear(currentYear)) {
-        newYear = currentYear + 1;
-        currentWeek = 1;
-    } else {
-        currentWeek = newWeek;
-    }
-    
-    currentYear = newYear;
-    
-    // UI aktualisieren
-    updateWeekDisplay();
-    await loadAndDisplayMenuplan();
-}
-
-/**
- * Navigiert zur aktuellen Kalenderwoche
- */
-async function navigateToCurrentWeek() {
-    const today = new Date();
-    currentYear = today.getFullYear();
-    currentWeek = getWeekNumber(today);
-    
-    // UI aktualisieren
-    updateWeekDisplay();
-    await loadAndDisplayMenuplan();
-}
-
-/**
- * Lädt und zeigt den aktuellen Menüplan an
- */
-async function loadAndDisplayMenuplan() {
-    if (!currentEinrichtung) {
-        showError('Keine Einrichtung ausgewählt');
-        return;
-    }
-    
     try {
         showLoading();
         
-        // Menüplan von API laden
-        const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
+        currentWeek += direction;
         
-        if (!result.success) {
-            showError(result.message);
-            return;
+        // Jahr-Grenze prüfen
+        if (currentWeek < 1) {
+            currentYear--;
+            currentWeek = getWeeksInYear(currentYear);
+        } else if (currentWeek > getWeeksInYear(currentYear)) {
+            currentYear++;
+            currentWeek = 1;
         }
         
-        currentMenuplan = result.menuplan;
-        window.currentMenuPlan = currentMenuplan;
+        // Globale Variablen aktualisieren
+        window.currentWeek = currentWeek;
+        window.currentYear = currentYear;
         
-        // Rezept-Details laden
-        await loadMenuplanRecipes();
-        
-        // Menüplan rendern
-        renderMenuplan();
-        
-        hideLoading();
+        updateWeekDisplay();
+        setupBestellControls(); // Bestellkontrollen aktualisieren
+        await loadAndDisplayMenuplan();
         
     } catch (error) {
-        console.error('Fehler beim Laden des Menüplans:', error);
-        showError('Fehler beim Laden des Menüplans');
+        console.error('Fehler bei Wochennavigation:', error);
+        showToast('Fehler beim Laden der Woche', 'error');
+    } finally {
+        hideLoading();
     }
 }
 
 /**
- * Lädt die Rezept-Details für den aktuellen Menüplan
+ * Springt zur aktuellen Woche
+ */
+async function navigateToCurrentWeek() {
+    const now = new Date();
+    currentYear = now.getFullYear();
+    currentWeek = getWeekNumber(now);
+    
+    window.currentWeek = currentWeek;
+    window.currentYear = currentYear;
+    
+    updateWeekDisplay();
+    setupBestellControls();
+    await loadAndDisplayMenuplan();
+}
+
+/**
+ * Lädt und zeigt den Menüplan an
+ */
+async function loadAndDisplayMenuplan() {
+    try {
+        console.log(`📋 Lade Menüplan für KW ${currentWeek}/${currentYear}...`);
+        
+        if (!currentEinrichtung) {
+            throw new Error('Keine Einrichtung ausgewählt');
+        }
+        
+        // Menüplan laden
+        const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
+        if (!result.success) {
+            throw new Error(result.error || 'Fehler beim Laden des Menüplans');
+        }
+        
+        currentMenuplan = result.menuplan;
+        
+        // Rezepte laden
+        await loadMenuplanRecipes();
+        
+        // UI rendern
+        renderMenuplan();
+        
+        // Bestellungen laden (falls externe Einrichtung)
+        if (!currentEinrichtung.isIntern) {
+            const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+            loadBestellungenIntoUI(wochenschluessel);
+        }
+        
+        console.log('✅ Menüplan geladen und dargestellt');
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Laden des Menüplans:', error);
+        showError(error.message);
+    }
+}
+
+/**
+ * Lädt alle Rezepte für den aktuellen Menüplan
  */
 async function loadMenuplanRecipes() {
-    if (!currentMenuplan) return;
+    if (!currentMenuplan || !currentMenuplan.days) return;
     
     try {
+        // Alle Rezept-IDs sammeln
         const recipeIds = extractRecipeIds(currentMenuplan);
         
         if (recipeIds.length === 0) {
-            console.log('Keine Rezepte im Menüplan gefunden');
+            console.log('ℹ️ Keine Rezepte im Menüplan gefunden');
             return;
         }
         
+        // Rezepte laden
         const result = await loadRezepte(recipeIds);
-        
         if (result.success) {
-            // Rezepte in Cache speichern
-            result.rezepte.forEach(rezept => {
-                rezepteCache[rezept.id] = rezept;
-            });
-            console.log(`📋 ${result.rezepte.length} Rezepte in Cache geladen`);
+            rezepteCache = result.rezepte;
+            console.log(`✅ ${Object.keys(rezepteCache).length} Rezepte geladen`);
+        } else {
+            console.warn('⚠️ Fehler beim Laden der Rezepte:', result.error);
         }
         
     } catch (error) {
-        console.error('Fehler beim Laden der Rezepte:', error);
-        // Nicht kritisch - weitermachen ohne Details
+        console.error('❌ Fehler beim Laden der Rezepte:', error);
     }
 }
 
@@ -362,673 +458,340 @@ async function loadMenuplanRecipes() {
  * Rendert den Menüplan basierend auf Bildschirmgröße
  */
 function renderMenuplan() {
-    if (!currentMenuplan) return;
+    if (!currentMenuplan || !portalStammdaten) {
+        showError('Keine Daten zum Anzeigen verfügbar');
+        return;
+    }
     
     if (isMobile) {
-        renderMobileAccordion();
+        renderMobileAccordion(
+            currentMenuplan, 
+            portalStammdaten, 
+            currentEinrichtung, 
+            currentYear, 
+            currentWeek, 
+            rezepteCache,
+            istKategorieRelevantFuerEinrichtung,
+            extractVisibleCategories
+        );
     } else {
-        renderDesktopGrid();
+        renderDesktopCalendar(
+            currentMenuplan, 
+            portalStammdaten, 
+            currentEinrichtung, 
+            currentYear, 
+            currentWeek, 
+            rezepteCache,
+            istKategorieRelevantFuerEinrichtung,
+            extractVisibleCategories
+        );
     }
 }
 
 /**
- * Rendert die mobile Accordion-Ansicht
+ * Prüft ob eine Kategorie für die aktuelle Einrichtung relevant/sichtbar ist
+ * @param {string} categoryKey - Kategorie-Schlüssel
+ * @param {string} dayKey - Tag-Schlüssel
+ * @returns {boolean} True wenn Kategorie angezeigt werden soll
  */
-function renderMobileAccordion() {
-    if (!currentMenuplan || !portalStammdaten) return;
+/**
+ * Prüft ob eine Einrichtung eine Kategorie an einem Tag zugewiesen bekommen hat
+ * @param {string} categoryKey - Kategorie-Schlüssel (z.B. 'menu1', 'dessert')
+ * @param {string} dayKey - Tag-Schlüssel (z.B. 'montag', 'dienstag')
+ * @param {string} einrichtungId - ID der Einrichtung
+ * @returns {boolean} True wenn Einrichtung diese Kategorie zugewiesen bekommen hat
+ */
+function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
+    if (!currentMenuplan || !currentMenuplan.days || !currentMenuplan.days[dayKey]) {
+        return false;
+    }
     
-    const container = document.getElementById('mobile-accordion');
-    if (!container) return;
+    const dayData = currentMenuplan.days[dayKey];
+    const zuweisungen = dayData.Zuweisungen || {};
     
-    const kategorien = extractVisibleCategories();
-    const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-    const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+    // Für zusammengefasste "hauptspeise": prüfe menu1 ODER menu2
+    if (categoryKey === 'hauptspeise') {
+        const menu1Zuweisungen = zuweisungen['menu1'] || [];
+        const menu2Zuweisungen = zuweisungen['menu2'] || [];
+        return menu1Zuweisungen.includes(einrichtungId) || menu2Zuweisungen.includes(einrichtungId);
+    }
     
-    let accordionHtml = '<div class="accordion" id="mobile-menu-accordion">';
+    // Für normale Kategorien
+    const kategorieZuweisungen = zuweisungen[categoryKey] || [];
+    return kategorieZuweisungen.includes(einrichtungId);
+}
+
+function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, isMobile = false) {
+    if (!currentEinrichtung || !currentMenuplan) return false;
     
-    days.forEach((dayKey, index) => {
-        const dayData = currentMenuplan.days[dayKey];
-        if (!dayData) return;
-        
-        // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
-        const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
-                             currentEinrichtung.speiseplan[dayKey] &&
-                             (currentEinrichtung.speiseplan[dayKey].suppe || 
-                              currentEinrichtung.speiseplan[dayKey].hauptspeise || 
-                              currentEinrichtung.speiseplan[dayKey].dessert);
-        
-        // Mobile: Tage ohne Essen gar nicht anzeigen
-        if (!hatEssenAmTag) {
-            return;
+    // Für interne Einrichtungen: Alle Kategorien anzeigen
+    if (currentEinrichtung.isIntern) {
+        return true;
+    }
+    
+    // Speiseplan der Einrichtung für diesen Tag prüfen
+    const speiseplanTag = currentEinrichtung.speiseplan?.[dayKey];
+    if (!speiseplanTag) return false;
+    
+    // Spezielle Behandlung für Kindergarten und Schule
+    const istKindergartenOderSchule = ['Kindergartenkinder', 'Schüler'].includes(currentEinrichtung.personengruppe);
+    
+    if (istKindergartenOderSchule) {
+        // Für Kindergarten/Schule: menu1 und menu2 nicht einzeln anzeigen
+        if (['menu1', 'menu2'].includes(categoryKey)) {
+            return false;
         }
         
-        const monday = getMondayOfWeek(currentYear, currentWeek);
-        const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
-        const dateStr = formatDate(dayDate);
+        // Stattdessen "hauptspeise" als zusammengefasste Kategorie anzeigen
+        if (categoryKey === 'hauptspeise') {
+            return speiseplanTag.hauptspeise || false;
+        }
         
-        const isExpanded = index === 0; // Ersten Tag standardmäßig öffnen
+        // Für andere Kategorien: Standard-Kategorien IMMER anzeigen
+        const standardKategorien = ['suppe', 'dessert', 'hauptspeise'];
         
-        accordionHtml += `
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading-${dayKey}">
-                    <button 
-                        class="accordion-button ${isExpanded ? '' : 'collapsed'}" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#collapse-${dayKey}"
-                        aria-expanded="${isExpanded}" 
-                        aria-controls="collapse-${dayKey}"
-                    >
-                        <div class="w-100 d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">${dayNames[index]}</span>
-                            <small class="text-muted">${dateStr}</small>
-                        </div>
-                    </button>
-                </h2>
-                <div 
-                    id="collapse-${dayKey}" 
-                    class="accordion-collapse collapse ${isExpanded ? 'show' : ''}"
-                    aria-labelledby="heading-${dayKey}"
-                    data-bs-parent="#mobile-menu-accordion"
-                >
-                    <div class="accordion-body">
-                        ${renderMobileDayContent(dayData.Mahlzeiten || dayData, kategorien, dayKey)}
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    accordionHtml += '</div>';
-    container.innerHTML = accordionHtml;
-}
-
-/**
- * Rendert den Inhalt eines Tages für die mobile Ansicht
- * @param {object} dayData - Daten für den Tag
- * @param {string[]} categories - Kategorien
- * @returns {string} HTML für Tag-Inhalt
- */
-function renderMobileDayContent(dayData, categories, dayKey) {
-    if (!dayData || !categories) return '';
-    
-    const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-    const dayIndex = days.indexOf(dayKey);
-    const monday = getMondayOfWeek(currentYear, currentWeek);
-    const dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
-    
-    // Prüfe ob die aktuelle Einrichtung an diesem Tag Essen bekommt
-    const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
-                         currentEinrichtung.speiseplan[dayKey] &&
-                         (currentEinrichtung.speiseplan[dayKey].suppe || 
-                          currentEinrichtung.speiseplan[dayKey].hauptspeise || 
-                          currentEinrichtung.speiseplan[dayKey].dessert);
-    
-    // Für mobile: Tage ohne Essen gar nicht anzeigen
-    if (!hatEssenAmTag) {
-        return '';
+        if (standardKategorien.includes(categoryKey)) {
+            // Sowohl Desktop als auch Mobile: alle Standard-Kategorien anzeigen
+            // Mobile filtert leere Kategorien später im Handler aus
+            return true;
+        }
+        
+        // Für spezielle Kategorien: nur anzeigen wenn im Speiseplan verfügbar
+        const kategorieMapping = {
+            'suppe': 'suppe',
+            'dessert': 'dessert'
+        };
+        
+        const speiseplanKategorie = kategorieMapping[categoryKey];
+        return speiseplanKategorie ? (speiseplanTag[speiseplanKategorie] || false) : false;
     }
     
-    let html = '';
+        // Für andere externe Einrichtungen: Standard-Kategorien IMMER anzeigen
+    const standardKategorien = ['suppe', 'menu1', 'menu2', 'dessert'];
     
-    // Kategorien durchgehen
-    Object.entries(categories).forEach(([categoryKey, categoryInfo]) => {
-        const recipes = dayData[categoryKey] || [];
-        const hasRecipes = recipes && recipes.length > 0;
-        
-        // Prüfe ob diese Kategorie für die Einrichtung relevant ist
-        const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey);
-        if (!istKategorieRelevant) return;
-        
-        html += `
-            <div class="category-section mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="category-title mb-0">
-                        <i class="${categoryInfo.icon} me-2"></i>
-                        ${categoryInfo.name}
-                    </h6>
-                    ${renderBewertungButton(dayKey, categoryKey, recipes, dayDate)}
-                </div>
-                
-                <div class="recipe-content">
-                    ${renderRecipeList(recipes)}
-                </div>
-                
-                ${renderBestellungFields(dayKey, categoryKey, recipes)}
-            </div>
-        `;
-    });
-    
-    return html;
-}
-
-/**
- * Rendert die Desktop-Grid-Ansicht
- */
-function renderDesktopGrid() {
-    if (!currentMenuplan || !portalStammdaten) return;
-    
-    const container = document.getElementById('desktop-grid');
-    if (!container) return;
-    
-    const kategorien = extractVisibleCategories();
-    const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-    const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-    
-    let gridHtml = `
-        <div class="grid-container">
-            <div class="grid-header">
-                <div class="grid-header-cell time-cell">Kategorie</div>
-    `;
-    
-    // Tages-Header mit Datum
-    days.forEach((dayKey, index) => {
-        const monday = getMondayOfWeek(currentYear, currentWeek);
-        const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
-        const dateStr = formatDate(dayDate);
-        
-        // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
-        const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
-                             currentEinrichtung.speiseplan[dayKey] &&
-                             (currentEinrichtung.speiseplan[dayKey].suppe || 
-                              currentEinrichtung.speiseplan[dayKey].hauptspeise || 
-                              currentEinrichtung.speiseplan[dayKey].dessert);
-        
-        const dayClass = hatEssenAmTag ? '' : 'no-food-day';
-        
-        gridHtml += `
-            <div class="grid-header-cell day-header ${dayClass}">
-                <div class="day-name">${dayNames[index]}</div>
-                <div class="day-date">${dateStr}</div>
-                ${!hatEssenAmTag ? '<div class="no-food-label">Kein Essen</div>' : ''}
-            </div>
-        `;
-    });
-    
-    gridHtml += '</div>';
-    
-    // Kategorien-Zeilen
-    Object.entries(kategorien).forEach(([categoryKey, categoryInfo]) => {
-        gridHtml += `
-            <div class="grid-row" data-kategorie="${categoryKey}">
-                <div class="grid-category-cell">
-                    <i class="${categoryInfo.icon} me-2"></i>
-                    ${categoryInfo.name}
-                </div>
-        `;
-        
-        days.forEach((dayKey, dayIndex) => {
-            const dayData = currentMenuplan.days[dayKey];
-            const recipes = dayData ? (dayData.Mahlzeiten ? dayData.Mahlzeiten[categoryKey] : dayData[categoryKey]) || [] : [];
-            
-            const monday = getMondayOfWeek(currentYear, currentWeek);
-            const dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
-            
-            // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
-            const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
-                                 currentEinrichtung.speiseplan[dayKey] &&
-                                 (currentEinrichtung.speiseplan[dayKey].suppe || 
-                                  currentEinrichtung.speiseplan[dayKey].hauptspeise || 
-                                  currentEinrichtung.speiseplan[dayKey].dessert);
-            
-            // Prüfe ob diese Kategorie für die Einrichtung relevant ist
-            const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey);
-            
-            const cellClass = `grid-content-cell ${!hatEssenAmTag ? 'no-food-day' : ''} ${!istKategorieRelevant ? 'category-not-relevant' : ''}`;
-            const showBewertungButton = hatEssenAmTag && istKategorieRelevant && recipes.length > 0;
-            
-            gridHtml += `
-                <div class="${cellClass}" data-day="${dayKey}" data-kategorie="${categoryKey}">
-                    <div class="recipe-content">
-                        ${renderRecipeList(recipes)}
-                    </div>
-                    ${showBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate) : ''}
-                    ${renderBestellungFields(dayKey, categoryKey, recipes)}
-                </div>
-            `;
-        });
-        
-        gridHtml += '</div>';
-    });
-    
-    gridHtml += '</div>';
-    container.innerHTML = gridHtml;
-}
-
-/**
- * Rendert eine Liste von Rezepten
- * @param {object[]} recipes - Array von Rezepten
- * @returns {string} HTML für Rezepte
- */
-function renderRecipeList(recipes) {
-    if (!recipes || recipes.length === 0) {
-        return ''; // Keine Anzeige bei leeren Kategorien
+    if (standardKategorien.includes(categoryKey)) {
+        // Sowohl Desktop als auch Mobile: alle Standard-Kategorien anzeigen
+        // Mobile filtert leere Kategorien später im Handler aus
+        return true;
     }
     
-    return recipes.map(recipe => {
-        const recipeData = rezepteCache[recipe.id] || recipe;
-        const name = recipeData.name || 'Unbekanntes Rezept';
-        const allergene = recipeData.allergene || [];
-        
-        return `
-            <div class="recipe-item">
-                <div class="recipe-content">
-                    <div class="recipe-name">${name}</div>
-                    ${allergene.length > 0 ? `
-                        <div class="allergen-icons">
-                            ${allergene.slice(0, 5).map(allergen => `
-                                <span class="allergen-icon" title="${allergen}">${allergen.charAt(0).toUpperCase()}</span>
-                            `).join('')}
-                            ${allergene.length > 5 ? '<span class="allergen-icon">+</span>' : ''}
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
+    // Für spezielle Kategorien: nur anzeigen wenn im Speiseplan verfügbar
+    const kategorieMapping = {
+        'suppe': 'suppe',
+        'menu1': 'hauptspeise',
+        'menu2': 'hauptspeise', 
+        'dessert': 'dessert'
+    };
+    
+    const speiseplanKategorie = kategorieMapping[categoryKey];
+    const istImSpeiseplan = speiseplanTag[speiseplanKategorie] || false;
+    
+    return istImSpeiseplan;
 }
 
 /**
- * Setup Event-Listener für mobile Accordion
+ * Extrahiert sichtbare Kategorien basierend auf Portal-Stammdaten in korrekter Reihenfolge
+ * @returns {object} Sichtbare Kategorien in der richtigen Reihenfolge
  */
-function setupMobileAccordionEvents() {
-    document.querySelectorAll('.day-header').forEach(header => {
-        header.addEventListener('click', (e) => {
-            const dayKey = header.dataset.day;
-            const content = document.querySelector(`.day-content[data-day="${dayKey}"]`);
-            const isExpanded = header.classList.contains('expanded');
-            
-            if (isExpanded) {
-                // Schließen
-                header.classList.remove('expanded');
-                content.classList.remove('expanded');
-            } else {
-                // Öffnen
-                header.classList.add('expanded');
-                content.classList.add('expanded');
+function extractVisibleCategories() {
+    if (!portalStammdaten || !portalStammdaten.kategorien) {
+        // Fallback wenn keine Portal-Stammdaten verfügbar - in korrekter Reihenfolge
+        const categories = {};
+        const reihenfolge = ['suppe', 'menu1', 'menu2', 'dessert'];
+        const fallbackData = {
+            'suppe': { name: 'Suppe', icon: '🍲' },
+            'menu1': { name: 'Menü 1', icon: '🍽️' },
+            'menu2': { name: 'Menü 2', icon: '🥘' },
+            'dessert': { name: 'Dessert', icon: '🍰' }
+        };
+        
+        reihenfolge.forEach(key => {
+            if (fallbackData[key]) {
+                categories[key] = fallbackData[key];
             }
         });
-    });
+        
+        return categories;
+    }
+    
+    const categories = {};
+    
+    // Spezielle Behandlung für Kindergarten und Schule
+    const istKindergartenOderSchule = currentEinrichtung && 
+        ['Kindergartenkinder', 'Schüler'].includes(currentEinrichtung.personengruppe);
+    
+    if (istKindergartenOderSchule) {
+        // Reihenfolge für Kindergarten/Schule: suppe, hauptspeise, dessert
+        const reihenfolge = ['suppe', 'hauptspeise', 'dessert'];
+        
+        reihenfolge.forEach(key => {
+            if (key === 'hauptspeise') {
+                // Zusammengefasste "hauptspeise" Kategorie hinzufügen
+                categories['hauptspeise'] = {
+                    name: 'Hauptspeise',
+                    icon: '🍽️',
+                    isZusammengefasst: true,
+                    quellKategorien: ['menu1', 'menu2']
+                };
+            } else if (portalStammdaten.kategorien[key]) {
+                // Normale Kategorien aus Stammdaten
+                const info = portalStammdaten.kategorien[key];
+                categories[key] = {
+                    name: info.name || key,
+                    icon: info.icon || getCategoryIcon(key),
+                    ...info
+                };
+            }
+        });
+    } else {
+        // Reihenfolge für andere: suppe, menu1, menu2, dessert
+        const reihenfolge = ['suppe', 'menu1', 'menu2', 'dessert'];
+        
+        reihenfolge.forEach(key => {
+            if (portalStammdaten.kategorien[key]) {
+                const info = portalStammdaten.kategorien[key];
+                categories[key] = {
+                    name: info.name || key,
+                    icon: info.icon || getCategoryIcon(key),
+                    ...info
+                };
+            }
+        });
+    }
+    
+    return categories;
 }
 
-/**
- * Aktualisiert die Mobile-Detection
- */
+// === Bestellaktionen ===
+
+function exportCurrentBestellungen() {
+    const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+    const exportData = exportBestellungen(wochenschluessel);
+    
+    if (!exportData) {
+        showToast('Keine Bestellungen zum Exportieren', 'warning');
+        return;
+    }
+    
+    // JSON-Download
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bestellungen-${currentEinrichtung.kuerzel}-KW${currentWeek}-${currentYear}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showToast('Bestellungen exportiert', 'success');
+}
+
+function clearCurrentBestellungen() {
+    if (!confirm('Alle Bestellungen für diese Woche löschen?')) return;
+    
+    const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+    clearBestellungen(wochenschluessel);
+    
+    // UI neu rendern
+    renderMenuplan();
+}
+
+function validateCurrentBestellungen() {
+    const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+    const validation = validateBestellungen(wochenschluessel);
+    
+    if (validation.valid) {
+        showToast('Alle Bestellungen sind gültig', 'success');
+    } else {
+        let message = 'Bestellprobleme gefunden:\n';
+        validation.errors.forEach(error => message += `- ${error}\n`);
+        if (validation.warnings.length > 0) {
+            message += '\nWarnungen:\n';
+            validation.warnings.forEach(warning => message += `- ${warning}\n`);
+        }
+        alert(message);
+    }
+}
+
+// === Layout & Event Listeners ===
+
 function updateMobileDetection() {
-    isMobile = window.innerWidth <= 768;
+    isMobile = window.innerWidth < 768;
+    
+    // Container sichtbarkeit umschalten
+    const mobileContainer = document.getElementById('mobile-accordion');
+    const desktopContainer = document.getElementById('desktop-calendar');
+    
+    if (mobileContainer) mobileContainer.style.display = isMobile ? 'block' : 'none';
+    if (desktopContainer) desktopContainer.style.display = isMobile ? 'none' : 'block';
 }
 
-/**
- * Aktualisiert die Wochen-Anzeige
- */
 function updateWeekDisplay() {
-    const display = document.getElementById('week-display');
-    if (display) {
+    const weekDisplay = document.getElementById('week-display');
+    if (weekDisplay) {
         const monday = getMondayOfWeek(currentYear, currentWeek);
         const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1000);
         
-        display.innerHTML = `
-            <strong>KW ${currentWeek}/${currentYear}</strong><br>
-            <small class="text-muted">${formatDate(monday)} - ${formatDate(sunday)}</small>
-        `;
+        weekDisplay.textContent = `KW ${currentWeek}/${currentYear} (${formatDate(monday)} - ${formatDate(sunday)})`;
     }
 }
 
-/**
- * Druckfunktion für den Menüplan
- */
-function printMenuplan() {
-    if (!currentMenuplan || !currentEinrichtung) {
-        showToast('Kein Menüplan zum Drucken verfügbar', 'error');
-        return;
-    }
-    
-    // Zusätzliche Informationen in den Titel
-    const originalTitle = document.title;
-    document.title = `Menüplan KW ${currentWeek}/${currentYear} - ${currentEinrichtung.name}`;
-    
-    window.print();
-    
-    // Titel zurücksetzen
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 100);
-}
+// === Hilfsfunktionen ===
 
-/**
- * PDF-Export (vereinfacht)
- */
-function exportToPDF() {
-    if (!currentMenuplan || !currentEinrichtung) {
-        showToast('Kein Menüplan zum Exportieren verfügbar', 'error');
-        return;
-    }
-    
-    // Vereinfachter PDF-Export über Browser-Druckfunktion
-    showToast('PDF-Export: Bitte "Als PDF speichern" im Druckdialog wählen', 'info');
-    printMenuplan();
-}
-
-/**
- * Loading-Spinner anzeigen
- */
 function showLoading() {
-    const spinner = document.getElementById('loading-spinner');
-    const wrapper = document.getElementById('menue-portal-wrapper');
-    
-    if (spinner) spinner.style.display = 'flex';
-    if (wrapper) wrapper.style.display = 'none';
+    const loader = document.getElementById('loading-indicator');
+    if (loader) loader.style.display = 'block';
 }
 
-/**
- * Loading-Spinner ausblenden
- */
 function hideLoading() {
-    const spinner = document.getElementById('loading-spinner');
-    const wrapper = document.getElementById('menue-portal-wrapper');
-    
-    if (spinner) spinner.style.display = 'none';
-    if (wrapper) wrapper.style.display = 'block';
+    const loader = document.getElementById('loading-indicator');
+    if (loader) loader.style.display = 'none';
 }
 
-/**
- * Fehlermeldung anzeigen
- * @param {string} message - Fehlermeldung
- */
 function showError(message) {
-    hideLoading();
-    
-    const errorDiv = document.getElementById('error-message');
-    const errorText = document.getElementById('error-text');
-    
-    if (errorDiv && errorText) {
-        errorText.textContent = message;
-        errorDiv.style.display = 'block';
+    const errorContainer = document.getElementById('error-container');
+    if (errorContainer) {
+        errorContainer.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        errorContainer.style.display = 'block';
+    } else {
+        showToast(message, 'error');
     }
-    
-    showToast(message, 'error');
 }
 
-/**
- * Hilfsfunktion: Kalenderwoche berechnen
- * @param {Date} date - Datum
- * @returns {number} Kalenderwoche
- */
+function printMenuplan() {
+    window.print();
+}
+
+function exportToPDF() {
+    showToast('PDF-Export wird implementiert...', 'info');
+}
+
 function getWeekNumber(date) {
-    const firstJan = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date - firstJan) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstJan.getDay() + 1) / 7);
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
 }
 
-/**
- * Hilfsfunktion: Anzahl Wochen im Jahr
- * @param {number} year - Jahr
- * @returns {number} Anzahl Wochen
- */
 function getWeeksInYear(year) {
-    const jan1 = new Date(year, 0, 1);
     const dec31 = new Date(year, 11, 31);
     return getWeekNumber(dec31);
 }
 
-/**
- * Rendert einen Bewertungs-Button für eine Kategorie
- * @param {string} dayKey - Wochentag-Key
- * @param {string} categoryKey - Kategorie-Key
- * @param {object[]} recipes - Rezepte der Kategorie
- * @param {Date} dayDate - Datum des Tages (optional, wird berechnet falls nicht gegeben)
- * @returns {string} HTML für Bewertungs-Button
- */
-function renderBewertungButton(dayKey, categoryKey, recipes, dayDate = null) {
-    if (!currentUser || !recipes || recipes.length === 0) {
-        return '';
-    }
-    
-    // Datum berechnen falls nicht gegeben
-    if (!dayDate) {
-        const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-        const dayIndex = days.indexOf(dayKey);
-        const monday = getMondayOfWeek(currentYear, currentWeek);
-        dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
-    }
-    
-    // Prüfen ob Datum bewertbar ist
-    const isDateRatable = istDatumBewertbar(dayDate);
-    const rezeptNamen = recipes.map(r => (rezepteCache[r.id] || r).name || 'Unbekanntes Rezept');
-    
-    const buttonId = `bewertung-btn-${dayKey}-${categoryKey}`;
-    
-    return `
-        <button 
-            type="button" 
-            class="bewertung-btn" 
-            id="${buttonId}"
-            data-day="${dayKey}"
-            data-kategorie="${categoryKey}"
-            data-datum="${dayDate.toISOString().split('T')[0]}"
-            data-rezepte='${JSON.stringify(rezeptNamen)}'
-            title="Kategorie bewerten"
-            ${!isDateRatable ? 'disabled' : ''}
-            onclick="handleBewertungClick('${dayKey}', '${categoryKey}', ${JSON.stringify(rezeptNamen).replace(/"/g, '&quot;')}, '${dayDate.toISOString()}')"
-        >
-            <i class="bi bi-star-fill"></i>
-        </button>
-    `;
-}
+// Global verfügbar machen für Event-Handler
+window.handleBewertungClick = function(dayKey, categoryKey, rezeptNamen, dateString) {
+    const date = new Date(dateString);
+    openBewertungModal(dayKey, categoryKey, rezeptNamen, date);
+};
 
-/**
- * Handler für Bewertungs-Button Clicks
- * @param {string} dayKey - Wochentag-Key
- * @param {string} categoryKey - Kategorie-Key
- * @param {string[]} rezeptNamen - Namen der Rezepte
- * @param {string} dateString - ISO-String des Datums
- */
-function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
-    const dayDate = new Date(dateString);
-    
-    console.log('🎯 Bewertungs-Button geklickt:', {
-        tag: dayKey,
-        kategorie: categoryKey,
-        rezepte: rezeptNamen,
-        datum: dayDate
-    });
-    
-    // Modal öffnen
-    openBewertungModal(dayKey, categoryKey, rezeptNamen, dayDate);
-}
-
-// Globale Handler-Funktion für onclick-Attribute verfügbar machen
-window.handleBewertungClick = handleBewertungClick;
-
-/**
- * Prüft ob eine Kategorie für die aktuelle Einrichtung relevant ist
- * @param {string} categoryKey - Kategorie-Schlüssel
- * @param {string} dayKey - Wochentag-Schlüssel
- * @returns {boolean} Ob die Kategorie relevant ist
- */
-function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey) {
-    if (!currentEinrichtung || !currentMenuplan) return false;
-    
-    // Interne Einrichtungen sehen alle Kategorien
-    if (currentEinrichtung.isIntern) return true;
-    
-    // Externe Einrichtungen: Prüfe Portal-Stammdaten
-    const personengruppe = currentEinrichtung.personengruppe;
-    let regelKey = 'extern'; // Standard für externe
-    
-    // Spezielle Regeln für Schulen und Kindergärten
-    if (portalStammdaten?.personengruppen_mapping?.mapping) {
-        const mapping = portalStammdaten.personengruppen_mapping.mapping;
-        if (mapping[personengruppe]) {
-            regelKey = mapping[personengruppe];
-        }
-    }
-    
-    // Für Schulen und Kindergärten: Prüfe Zuweisungen in KW.json
-    if (regelKey === 'schule' || regelKey === 'kindergarten') {
-        const dayData = currentMenuplan.days[dayKey];
-        if (dayData && dayData.Zuweisungen && dayData.Zuweisungen[categoryKey]) {
-            return dayData.Zuweisungen[categoryKey].includes(currentEinrichtung.id);
-        }
-        return false;
-    }
-    
-    // Für andere externe: Prüfe sichtbare Kategorien
-    const sichtbareKategorien = portalStammdaten?.einrichtungsregeln?.regeln?.[regelKey]?.sichtbare_kategorien || [];
-    return sichtbareKategorien.includes(categoryKey);
-}
-
-/**
- * Extrahiert die sichtbaren Kategorien für die aktuelle Einrichtung
- * @returns {object} Kategorien mit Namen und Icons
- */
-function extractVisibleCategories() {
-    if (!portalStammdaten || !currentMenuplan) return {};
-    
-    const kategorien = {};
-    
-    // Alle verfügbaren Kategorien aus dem Menüplan sammeln
-    const allCategories = new Set();
-    Object.values(currentMenuplan.days).forEach(dayData => {
-        if (dayData.Mahlzeiten) {
-            Object.keys(dayData.Mahlzeiten).forEach(cat => allCategories.add(cat));
-        } else {
-            Object.keys(dayData).forEach(cat => allCategories.add(cat));
-        }
-    });
-    
-    // Nur relevante Kategorien für die Einrichtung zurückgeben
-    allCategories.forEach(categoryKey => {
-        // Prüfe für mindestens einen Tag ob die Kategorie relevant ist
-        const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-        const istRelevant = days.some(dayKey => istKategorieRelevantFuerEinrichtung(categoryKey, dayKey));
-        
-        if (istRelevant) {
-            kategorien[categoryKey] = {
-                name: getCategoryName(categoryKey, portalStammdaten),
-                icon: getCategoryIcon(categoryKey, portalStammdaten)
-            };
-        }
-    });
-    
-    return kategorien;
-}
-
-/**
- * Rendert Bestellfelder für externe Einrichtungen
- * @param {string} dayKey - Wochentag-Schlüssel
- * @param {string} categoryKey - Kategorie-Schlüssel  
- * @param {object[]} recipes - Rezepte der Kategorie
- * @returns {string} HTML für Bestellfelder
- */
-function renderBestellungFields(dayKey, categoryKey, recipes) {
-    // Nur für externe Einrichtungen
-    if (!currentEinrichtung || currentEinrichtung.isIntern || !recipes || recipes.length === 0) {
-        return '';
-    }
-    
-    // Nur für Hauptspeisen (menu1, menu2) Bestellfelder anzeigen
-    if (!['menu1', 'menu2'].includes(categoryKey)) {
-        return '';
-    }
-    
-    const gruppen = currentEinrichtung.gruppen || [];
-    if (gruppen.length === 0) return '';
-    
-    let html = `
-        <div class="bestellung-container mt-3">
-            <h6 class="bestellung-title">
-                <i class="bi bi-cart3 me-2"></i>
-                Bestellung für ${formatDate(new Date())}
-            </h6>
-    `;
-    
-    gruppen.forEach(gruppe => {
-        html += `
-            <div class="gruppe-bestellung mb-2">
-                <label class="form-label small">
-                    ${gruppe.name} (${gruppe.anzahl} Personen)
-                </label>
-                <div class="input-group input-group-sm">
-                    <input 
-                        type="number" 
-                        class="form-control bestellung-input" 
-                        data-day="${dayKey}"
-                        data-kategorie="${categoryKey}"
-                        data-gruppe="${gruppe.name}"
-                        min="0" 
-                        max="${gruppe.anzahl}"
-                        placeholder="Anzahl"
-                        onchange="handleBestellungChange(this)"
-                    >
-                    <span class="input-group-text">von ${gruppe.anzahl}</span>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    return html;
-}
-
-/**
- * Handler für Bestellungs-Änderungen
- * @param {HTMLElement} input - Input-Element
- */
-function handleBestellungChange(input) {
-    const dayKey = input.dataset.day;
-    const categoryKey = input.dataset.kategorie;
-    const gruppe = input.dataset.gruppe;
-    const anzahl = parseInt(input.value) || 0;
-    
-    console.log('🛒 Bestellung geändert:', {
-        tag: dayKey,
-        kategorie: categoryKey,
-        gruppe: gruppe,
-        anzahl: anzahl
-    });
-    
-    // Automatische Suppe/Dessert-Berechnung triggern
-    updateAutomaticBestellungen(dayKey, categoryKey, gruppe, anzahl);
-    
-    // TODO: Bestellung speichern/validieren
-}
-
-/**
- * Aktualisiert automatische Bestellungen für Suppe und Dessert
- * @param {string} dayKey - Wochentag-Schlüssel
- * @param {string} categoryKey - Hauptspeise-Kategorie
- * @param {string} gruppe - Gruppenname
- * @param {number} anzahl - Bestellte Anzahl
- */
-function updateAutomaticBestellungen(dayKey, categoryKey, gruppe, anzahl) {
-    if (!currentEinrichtung || !currentEinrichtung.speiseplan) return;
-    
-    const speiseplan = currentEinrichtung.speiseplan[dayKey];
-    if (!speiseplan) return;
-    
-    // Automatische Suppe-Bestellung
-    if (speiseplan.suppe) {
-        const suppeInput = document.querySelector(
-            `input[data-day="${dayKey}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`
-        );
-        if (suppeInput) {
-            suppeInput.value = anzahl;
-            console.log(`🥣 Automatische Suppe-Bestellung: ${anzahl} für ${gruppe}`);
-        }
-    }
-    
-    // Automatische Dessert-Bestellung  
-    if (speiseplan.dessert) {
-        const dessertInput = document.querySelector(
-            `input[data-day="${dayKey}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`
-        );
-        if (dessertInput) {
-            dessertInput.value = anzahl;
-            console.log(`🍰 Automatische Dessert-Bestellung: ${anzahl} für ${gruppe}`);
-        }
-    }
-}
-
-// Globale Handler-Funktionen verfügbar machen
-window.handleBestellungChange = handleBestellungChange;
+// Module als globale Variablen verfügbar machen
+window.currentWeek = currentWeek;
+window.currentYear = currentYear;
+window.showToast = showToast;
+window.istKategorieZugewiesen = istKategorieZugewiesen;
