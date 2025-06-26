@@ -719,8 +719,14 @@
     animation: slideInFromTop 0.5s ease-out;
 }
 
-.grid-content-cell:hover .bewertung-btn {
+/* Bewertungs-Buttons im normalen Menü-Portal permanent sichtbar */
+.grid-content-cell .bewertung-btn {
     opacity: 1;
+}
+
+.grid-content-cell:hover .bewertung-btn {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
 }
 
 /* Desktop: Grid-Content-Cell Hover-Effekt für bessere UX */

@@ -3,7 +3,25 @@
   "jahr": 2025,
   "erstellt_am": "2025-06-26T12:43:20.613Z",
   "bewertungen": {
-    "montag": {},
+    "montag": {
+      "suppe": [
+        {
+          "id": "e330ac67-5574-49e6-af86-b9b05c871335",
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "einrichtung_id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "einrichtung_name": "Hendrik Fischer",
+          "rezepte": [
+            "Hefebier"
+          ],
+          "geschmack": 3,
+          "optik": 3,
+          "verbesserungsvorschlag": "Top du sau!",
+          "timestamp": "2025-06-26T12:58:42.169Z",
+          "menueplan_datum": "2025-06-22"
+        }
+      ]
+    },
     "dienstag": {},
     "mittwoch": {},
     "donnerstag": {

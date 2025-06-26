@@ -32,7 +32,7 @@ let portalStammdaten = null;
  * @param {object} user - Aktueller Benutzer
  * @param {object[]} einrichtungen - Verfügbare Einrichtungen
  */
-export async function initMenuePortalUI(user, einrichtungen, options = {}) {
+export async function initMenuePortalUI(user, einrichtungen) {
     try {
         console.log('🎨 Menü-Portal UI wird initialisiert...');
         
@@ -66,17 +66,6 @@ export async function initMenuePortalUI(user, einrichtungen, options = {}) {
             await loadAndDisplayMenuplan();
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
-        }
-        
-        // Bewertungs-Fokus-Modus verarbeiten
-        if (options.focusMode === 'bewertungen') {
-            console.log('🎯 Bewertungs-Fokus-Modus: Hervorhebung aktiviert');
-            document.body.classList.add('bewertungs-fokus');
-            
-            // Nach dem Laden der UI die Bewertungs-Buttons hervorheben
-            setTimeout(() => {
-                highlightBewertungButtons();
-            }, 1000);
         }
         
         console.log('✅ Menü-Portal UI initialisiert');
@@ -775,44 +764,6 @@ function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
     
     // Modal öffnen
     openBewertungModal(dayKey, categoryKey, rezeptNamen, dayDate);
-}
-
-/**
- * Hebt Bewertungs-Buttons im Fokus-Modus hervor
- */
-function highlightBewertungButtons() {
-    // Alle Bewertungs-Buttons finden und hervorheben
-    const bewertungButtons = document.querySelectorAll('.bewertung-btn');
-    const aktiveBewertungButtons = document.querySelectorAll('.bewertung-btn:not([disabled])');
-    
-    console.log(`🔍 Bewertungs-Buttons gefunden: ${bewertungButtons.length} total, ${aktiveBewertungButtons.length} aktiv`);
-    
-    bewertungButtons.forEach((btn, index) => {
-        if (!btn.disabled) {
-            btn.classList.add('bewertung-highlight');
-            
-            // Kurzes Pulsieren zur Aufmerksamkeit
-            btn.style.animation = 'pulse 2s ease-in-out 3';
-            
-            // Parent Grid-Cell hervorheben für Desktop
-            const gridCell = btn.closest('.grid-content-cell');
-            if (gridCell) {
-                gridCell.classList.add('bewertung-cell-highlight');
-                console.log(`✅ Desktop Grid-Cell ${index + 1} hervorgehoben`);
-            }
-            
-            // Parent Category-Section hervorheben für Mobile
-            const categorySection = btn.closest('.category-section');
-            if (categorySection) {
-                categorySection.classList.add('bewertung-category-highlight');
-                console.log(`✅ Mobile Category-Section ${index + 1} hervorgehoben`);
-            }
-        } else {
-            console.log(`⚠️ Button ${index + 1} ist disabled`);
-        }
-    });
-    
-    console.log('✨ Bewertungs-Buttons hervorgehoben');
 }
 
 // Globale Handler-Funktion für onclick-Attribute verfügbar machen
