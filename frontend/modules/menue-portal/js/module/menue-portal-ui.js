@@ -32,7 +32,7 @@ let portalStammdaten = null;
  * @param {object} user - Aktueller Benutzer
  * @param {object[]} einrichtungen - Verfügbare Einrichtungen
  */
-export async function initMenuePortalUI(user, einrichtungen) {
+export async function initMenuePortalUI(user, einrichtungen, options = {}) {
     try {
         console.log('🎨 Menü-Portal UI wird initialisiert...');
         
@@ -66,6 +66,17 @@ export async function initMenuePortalUI(user, einrichtungen) {
             await loadAndDisplayMenuplan();
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
+        }
+        
+        // Bewertungs-Fokus-Modus verarbeiten
+        if (options.focusMode === 'bewertungen') {
+            console.log('🎯 Bewertungs-Fokus-Modus: Hervorhebung aktiviert');
+            document.body.classList.add('bewertungs-fokus');
+            
+            // Nach dem Laden der UI die Bewertungs-Buttons hervorheben
+            setTimeout(() => {
+                highlightBewertungButtons();
+            }, 1000);
         }
         
         console.log('✅ Menü-Portal UI initialisiert');
@@ -764,6 +775,23 @@ function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
     
     // Modal öffnen
     openBewertungModal(dayKey, categoryKey, rezeptNamen, dayDate);
+}
+
+/**
+ * Hebt Bewertungs-Buttons im Fokus-Modus hervor
+ */
+function highlightBewertungButtons() {
+    // Alle Bewertungs-Buttons finden und hervorheben
+    document.querySelectorAll('.bewertung-btn').forEach(btn => {
+        if (!btn.disabled) {
+            btn.classList.add('bewertung-highlight');
+            
+            // Kurzes Pulsieren zur Aufmerksamkeit
+            btn.style.animation = 'pulse 2s ease-in-out 3';
+        }
+    });
+    
+    console.log('✨ Bewertungs-Buttons hervorgehoben');
 }
 
 // Globale Handler-Funktion für onclick-Attribute verfügbar machen

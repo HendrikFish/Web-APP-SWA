@@ -61,9 +61,29 @@
     {
         "id": "menue-portal",
         "name": "Menü-Portal",
-        "description": "Ansicht der Menüpläne verschiedener Einrichtungen (Read-Only).",
+        "description": "Ansicht der Menüpläne verschiedener Einrichtungen mit Bewertungsfunktion.",
         "icon": "bi-eye",
         "path": "/modules/menue-portal/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch",
+            "Service",
+            "Stock",
+            "Schule",
+            "Kindergarten",
+            "LH",
+            "TZ",
+            "ER",
+            "extern"
+        ]
+    },
+    {
+        "id": "bewertungen",
+        "name": "Bewertungen",
+        "description": "Bewertung von Menükategorien mit Geschmack, Optik und Verbesserungsvorschlägen.",
+        "icon": "bi-star-fill",
+        "path": "/modules/menue-portal/index.html?focus=bewertungen",
         "roles": [
             "admin",
             "co-admin",

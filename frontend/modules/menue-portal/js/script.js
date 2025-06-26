@@ -27,6 +27,18 @@ async function initMenuePortal() {
     try {
         console.log('🚀 Menü-Portal wird initialisiert...');
         
+        // URL-Parameter prüfen für spezielle Modi
+        const urlParams = new URLSearchParams(window.location.search);
+        const focusMode = urlParams.get('focus');
+        
+        if (focusMode === 'bewertungen') {
+            console.log('🎯 Bewertungs-Fokus-Modus aktiviert');
+            // Bewertungs-spezifische Toast-Benachrichtigung
+            setTimeout(() => {
+                showToast('Bewertungs-Modus: Klicken Sie auf die grünen Sterne-Buttons neben den Kategorien, um Bewertungen abzugeben!', 'info', 8000);
+            }, 2000);
+        }
+        
         // 1. Header zuerst initialisieren und auf Promise warten
         const user = await initializeHeader();
         
@@ -41,7 +53,7 @@ async function initMenuePortal() {
         initMenuePortalAPI();
         
         // 4. UI-Module initialisieren mit dem User vom Header
-        await initMenuePortalUI(user, authResult.einrichtungen);
+        await initMenuePortalUI(user, authResult.einrichtungen, { focusMode });
         
         console.log('✅ Menü-Portal erfolgreich initialisiert');
         
