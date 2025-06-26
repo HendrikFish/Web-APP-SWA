@@ -43,6 +43,14 @@ async function loginUser(req, res) {
 
         // Überprüfe, ob der Benutzer existiert UND das Passwort übereinstimmt
         if (user && (await user.matchPassword(password))) {
+            // Zusätzliche Prüfung: Ist der Benutzer genehmigt?
+            if (!user.isApproved) {
+                return res.status(401).json({ 
+                    success: false,
+                    message: 'Ihr Account wurde noch nicht genehmigt.' 
+                });
+            }
+
             res.status(200).json({
                 _id: user._id,
                 firstName: user.firstName,

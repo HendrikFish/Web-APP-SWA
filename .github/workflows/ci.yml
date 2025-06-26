@@ -8,8 +8,11 @@ on:
 
 env:
   NODE_VERSION: '18.x'
-  MONGODB_URI: mongodb://localhost:27017/smartworkart_test
-  JWT_SECRET: test-secret-key-for-ci
+  # WICHTIG: Tests verwenden In-Memory MongoDB, nicht die Produktions-DB
+  MONGODB_URI: memory://test
+  JWT_SECRET: test-secret-key-for-ci-isolated-from-production
+  BACKEND_PORT: 3001
+  NODE_ENV: test
   LOG_LEVEL: error
 
 jobs:
@@ -72,10 +75,10 @@ jobs:
         sleep 10
         timeout 60 bash -c 'until nc -z localhost 27017; do sleep 1; done' || echo "MongoDB connection timeout"
         
-    - name: Run Backend Tests
+    - name: Run Backend Tests (Isolated)
       run: |
         cd backend
-        npm run test
+        npm run test:isolated
         
     - name: Run Backend Tests with Coverage
       run: |

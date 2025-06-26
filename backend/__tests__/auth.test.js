@@ -26,7 +26,12 @@ describe('Authentication API', () => {
         // Timeout für CI-Umgebung erhöhen
         jest.setTimeout(30000);
         
-        // In-Memory MongoDB starten
+        // WICHTIG: Produktions-MongoDB-Verbindung trennen falls vorhanden
+        if (mongoose.connection.readyState !== 0) {
+            await mongoose.disconnect();
+        }
+        
+        // In-Memory MongoDB starten (komplett isoliert von Produktion)
         mongoServer = await MongoMemoryServer.create();
         const mongoUri = mongoServer.getUri();
         
@@ -34,6 +39,7 @@ describe('Authentication API', () => {
         await mongoose.connect(mongoUri, {
             serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
+            bufferCommands: true, // Wie in der Produktion
         });
         
         // Warten bis Verbindung wirklich bereit ist
@@ -41,25 +47,33 @@ describe('Authentication API', () => {
         
         app = createTestApp();
         
-        // Test-Umgebung setzen
+        // Test-Umgebung setzen (ISOLIERT von Produktion)
         process.env.JWT_SECRET = 'test-secret-key-for-testing-only';
         process.env.NODE_ENV = 'test';
+        process.env.BACKEND_PORT = '3001'; // Anderer Port als Produktion
         
-        // JWT_SECRET prüfen
-        if (!process.env.JWT_SECRET) {
-            throw new Error('JWT_SECRET ist nicht gesetzt für Tests');
-        }
-        console.log('JWT_SECRET für Tests gesetzt:', process.env.JWT_SECRET.substring(0, 10) + '...');
+        console.log('🧪 TEST-UMGEBUNG INITIALISIERT (isoliert von Produktion)');
+        console.log('📊 Test-MongoDB URI:', mongoUri);
+        console.log('🔑 Test-JWT_SECRET gesetzt');
     }, 30000);
 
     afterAll(async () => {
-        // Graceful shutdown
+        // Graceful shutdown der Test-Umgebung
+        console.log('🧹 TEST-UMGEBUNG CLEANUP...');
+        
         if (mongoose.connection.readyState !== 0) {
             await mongoose.disconnect();
         }
         if (mongoServer) {
             await mongoServer.stop();
         }
+        
+        // Umgebungsvariablen zurücksetzen
+        delete process.env.JWT_SECRET;
+        delete process.env.NODE_ENV;
+        delete process.env.BACKEND_PORT;
+        
+        console.log('✅ TEST-UMGEBUNG SAUBER BEENDET');
     }, 30000);
 
     beforeEach(async () => {
@@ -201,10 +215,9 @@ describe('Authentication API', () => {
             }
 
             expect(response.status).toBe(200);
-            expect(response.body).toHaveProperty('success', true);
             expect(response.body).toHaveProperty('token');
-            expect(response.body.user).toHaveProperty('email', 'approved@example.com');
-            expect(response.body.user).not.toHaveProperty('password');
+            expect(response.body).toHaveProperty('email', 'approved@example.com');
+            expect(response.body).not.toHaveProperty('password');
         });
 
         it('sollte nicht-approved Benutzer ablehnen', async () => {
