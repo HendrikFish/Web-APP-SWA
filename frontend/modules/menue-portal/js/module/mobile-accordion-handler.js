@@ -157,21 +157,6 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
         // Rezepte aus dayData holen - unterstütze beide Strukturen (mit/ohne Mahlzeiten)
         let recipes = [];
         
-        if (categoryKey === 'hauptspeise' && categoryInfo.isZusammengefasst) {
-            // Für zusammengefasste "hauptspeise": Daten aus menu1 und menu2 kombinieren
-            const menu1Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
-            const menu2Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
-            recipes = [...menu1Recipes, ...menu2Recipes];
-        } else {
-            // Normale Kategorien
-            recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten[categoryKey] || []) : (dayData[categoryKey] || []);
-        }
-        
-        // Prüfe ob diese Kategorie für die Einrichtung relevant ist (Mobile = false, da wir alle Standard-Kategorien wollen)
-        const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, false);
-        
-        if (!istKategorieRelevant) return;
-        
         // Mobile: Kategorien anzeigen wenn im Speiseplan auf true (unabhängig von Zuweisungen)
         // Für Kindergarten/Schule: Nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" anzeigen
         const istKindergartenOderSchule = currentEinrichtung && 
@@ -182,16 +167,24 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
             const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
             const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
             
-            // Nur anzeigen wenn eine der beiden Kategorien zugewiesen ist
-            if (!istMenu1Zugewiesen && !istMenu2Zugewiesen) return;
-            
             // Rezepte aus der tatsächlich zugewiesenen Kategorie holen
             if (istMenu1Zugewiesen) {
                 recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
             } else if (istMenu2Zugewiesen) {
                 recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+            } else {
+                // Keine Zuweisung: leeres Array für Platzhalter "Noch nicht erzeugt"
+                recipes = [];
             }
+        } else {
+            // Normale Kategorien
+            recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten[categoryKey] || []) : (dayData[categoryKey] || []);
         }
+        
+        // Prüfe ob diese Kategorie für die Einrichtung relevant ist (Mobile = false, da wir alle Standard-Kategorien wollen)
+        const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, false);
+        
+        if (!istKategorieRelevant) return;
         
         html += `
             <div class="category-section mb-4">
@@ -309,8 +302,8 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
         return '';
     }
     
-    // Nur für Hauptspeisen (menu1, menu2, menu) Bestellfelder anzeigen
-    if (!['menu1', 'menu2', 'menu'].includes(categoryKey)) {
+    // Nur für Hauptspeisen (menu1, menu2, menu, hauptspeise) Bestellfelder anzeigen
+    if (!['menu1', 'menu2', 'menu', 'hauptspeise'].includes(categoryKey)) {
         return '';
     }
     
