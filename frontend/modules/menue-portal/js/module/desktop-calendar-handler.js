@@ -100,10 +100,18 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
         let recipes = [];
         
         if (categoryKey === 'hauptspeise' && categoryInfo.isZusammengefasst) {
-            // Für zusammengefasste "hauptspeise": Daten aus menu1 und menu2 kombinieren
-            const menu1Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
-            const menu2Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
-            recipes = [...menu1Recipes, ...menu2Recipes];
+            // Für Kindergarten/Schule: Nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" anzeigen
+            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+            
+            // Rezepte aus der tatsächlich zugewiesenen Kategorie holen
+            if (istMenu1Zugewiesen) {
+                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
+            } else if (istMenu2Zugewiesen) {
+                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+            } else {
+                recipes = []; // Keine Zuweisung
+            }
         } else {
             // Normale Kategorien
             recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten[categoryKey] || []) : (dayData[categoryKey] || []);
@@ -115,7 +123,15 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
         if (!istKategorieRelevant) return;
         
         // Prüfe ob Einrichtung diese Kategorie zugewiesen bekommen hat
-        const istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
+        let istZugewiesen = true;
+        if (categoryKey === 'hauptspeise' && categoryInfo.isZusammengefasst) {
+            // Für Kindergarten/Schule: Zuweisung prüfen basierend auf menu1 oder menu2
+            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+            istZugewiesen = istMenu1Zugewiesen || istMenu2Zugewiesen;
+        } else {
+            istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
+        }
         
         // Platzhalter-Logik: "Noch nicht gewählt" nur wenn zugewiesen aber leer
         let recipeContent = '';
@@ -240,8 +256,8 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
         return '';
     }
     
-    // Nur für Hauptspeisen (menu1, menu2, menu) Bestellfelder anzeigen
-    if (!['menu1', 'menu2', 'menu'].includes(categoryKey)) {
+    // Nur für Hauptspeisen (menu1, menu2, menu, hauptspeise) Bestellfelder anzeigen
+    if (!['menu1', 'menu2', 'menu', 'hauptspeise'].includes(categoryKey)) {
         return '';
     }
     

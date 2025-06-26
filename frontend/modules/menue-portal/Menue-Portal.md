@@ -4,6 +4,43 @@
 
 Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpläne verschiedener Einrichtungen einzusehen. Es unterstützt Multi-Einrichtungs-Zugriff und bietet sowohl eine mobile Accordion-Ansicht als auch eine Desktop-Grid-Darstellung. Zusätzlich bietet es umfassende Bewertungs- und Bestellfunktionalitäten.
 
+## Intelligente Kategorien-Darstellung
+
+### **Mobile-Ansicht (Smartphone)**
+**Grundprinzip**: Kategorien anzeigen wenn im **Speiseplan auf `true`** gesetzt, unabhängig von Zuweisungen
+
+**Verhalten**:
+- **Alle Kategorien** die im Speiseplan aktiviert sind (`suppe: true`, `dessert: true`, etc.)
+- **Platzhalter**: "Noch nicht erzeugt" wenn keine Rezepte vorhanden
+- **Kindergarten/Schule**: Zeigt nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" an
+
+### **Desktop-Ansicht (Tabelle)**
+**Grundprinzip**: Alle Standard-Kategorien für **Tabellen-Konsistenz** anzeigen
+
+**Verhalten**:
+- **Alle Standard-Kategorien** immer anzeigen (suppe, menu1, menu2, dessert)
+- **Zugewiesen + leer**: "Noch nicht gewählt"
+- **Nicht zugewiesen**: "-" (leere Karte)
+- **Kindergarten/Schule**: "Hauptspeise" statt separate Menüs
+
+### **Kindergarten/Schule Spezialbehandlung**
+- **Nicht kombinieren** von menu1+menu2 Rezepten
+- **Nur die zugewiesene** Kategorie anzeigen (menu1 ODER menu2)
+- **Umbenennung** zu "Hauptspeise" (verständlicher für Zielgruppe)
+- **Grund**: Vereinfachung, da sie nicht wissen dass es 2 Menüs gibt
+
+### **Beispiel-Szenarien**
+
+| Situation | Desktop | Mobile |
+|-----------|---------|--------|
+| **ER (Schüler) - Montag** | | |
+| - Speiseplan: suppe=true, dessert=true | Suppe: "Noch nicht gewählt" | Suppe: "Noch nicht erzeugt" |
+| - KW.json: menu2 zugewiesen | Hauptspeise: "Mozzarella-Tomate" | Hauptspeise: "Mozzarella-Tomate" |
+| | Dessert: "Noch nicht gewählt" | Dessert: "Noch nicht erzeugt" |
+| **Normale Einrichtung** | | |
+| - Speiseplan: alle=true | Alle 4 Kategorien sichtbar | Alle 4 Kategorien sichtbar |
+| - KW.json: nur menu1 zugewiesen | Menu1: Rezepte, Rest: Platzhalter | Menu1: Rezepte, Rest: Platzhalter |
+
 ## Funktionen
 
 ### 🔍 **Kernfunktionen**

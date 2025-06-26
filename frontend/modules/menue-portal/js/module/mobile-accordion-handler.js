@@ -172,24 +172,39 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
         
         if (!istKategorieRelevant) return;
         
-        // Prüfe ob Einrichtung diese Kategorie zugewiesen bekommen hat
-        const istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
+        // Mobile: Kategorien anzeigen wenn im Speiseplan auf true (unabhängig von Zuweisungen)
+        // Für Kindergarten/Schule: Nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" anzeigen
+        const istKindergartenOderSchule = currentEinrichtung && 
+            ['Kindergartenkinder', 'Schüler'].includes(currentEinrichtung.personengruppe);
         
-        // Mobile: Nicht zugewiesene Kategorien ausblenden
-        if (!istZugewiesen) return;
+        if (istKindergartenOderSchule && categoryKey === 'hauptspeise') {
+            // Für Kindergarten/Schule: Prüfe welche Kategorie (menu1 oder menu2) tatsächlich zugewiesen ist
+            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+            
+            // Nur anzeigen wenn eine der beiden Kategorien zugewiesen ist
+            if (!istMenu1Zugewiesen && !istMenu2Zugewiesen) return;
+            
+            // Rezepte aus der tatsächlich zugewiesenen Kategorie holen
+            if (istMenu1Zugewiesen) {
+                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
+            } else if (istMenu2Zugewiesen) {
+                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+            }
+        }
         
         html += `
             <div class="category-section mb-4">
                 <div class="category-header d-flex justify-content-between align-items-center mb-3">
                     <h6 class="category-title mb-0">
-                            <span class="category-icon me-2">${categoryInfo.icon}</span>
-                            ${categoryInfo.name}
-                        </h6>
+                        <span class="category-icon me-2">${categoryInfo.icon}</span>
+                        ${categoryInfo.name}
+                    </h6>
                     ${recipes.length > 0 ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate, currentEinrichtung, rezepteCache) : ''}
                 </div>
                 
                 <div class="recipe-content">
-                    ${recipes.length > 0 ? renderRecipeList(recipes, rezepteCache) : '<div class="no-recipes-info"><i class="bi bi-info-circle me-2"></i>Noch nicht gewählt</div>'}
+                    ${recipes.length > 0 ? renderRecipeList(recipes, rezepteCache) : '<div class="no-recipes-info"><i class="bi bi-info-circle me-2"></i>Noch nicht erzeugt</div>'}
                 </div>
                 
                 ${renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung)}

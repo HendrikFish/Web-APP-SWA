@@ -337,8 +337,7 @@
           "17cf0076-e28f-4a11-9b21-49ad01039650"
         ],
         "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
         ]
       }
     },
@@ -379,8 +378,7 @@
       },
       "Zuweisungen": {
         "menu1": [
-          "5409619a-b506-442f-a97d-182c354f2480",
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
+          "5409619a-b506-442f-a97d-182c354f2480"
         ],
         "menu2": [
           "17cf0076-e28f-4a11-9b21-49ad01039650",
@@ -425,7 +423,7 @@
             "dessert": false
           },
           "samstag": {
-            "suppe": true,
+            "suppe": false,
             "hauptspeise": false,
             "dessert": false
           },
@@ -437,7 +435,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -484,7 +482,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -531,7 +529,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -578,7 +576,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -625,7 +623,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -672,7 +670,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       },
       {
@@ -719,11 +717,11 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
+          "snapshotUpdatedAt": "2025-06-26T19:10:31.488Z"
         }
       }
     ],
-    "generatedAt": "2025-06-26T19:08:03.650Z",
+    "generatedAt": "2025-06-26T19:10:31.488Z",
     "categories": [
       {
         "id": "suppe",
@@ -780,7 +778,7 @@
       "action": "snapshot_update"
     }
   },
-  "updatedAt": "2025-06-26T19:08:05.215Z",
+  "updatedAt": "2025-06-26T19:10:33.035Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"
