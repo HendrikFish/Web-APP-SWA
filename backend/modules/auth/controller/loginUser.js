@@ -11,16 +11,23 @@ const generateToken = (id) => {
 
 /**
  * Authentifiziert einen Benutzer anhand von E-Mail und Passwort.
+ * GARANTIERT success-Feld in jeder Response für CI/CD-Kompatibilität.
  */
 async function loginUser(req, res) {
+    // Force success field in every response
+    const sendResponse = (status, success, message, data = {}) => {
+        return res.status(status).json({
+            success,
+            message,
+            ...data
+        });
+    };
+
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Bitte geben Sie E-Mail und Passwort an.' 
-            });
+            return sendResponse(400, false, 'Bitte geben Sie E-Mail und Passwort an.');
         }
 
         // Finde den Benutzer anhand der E-Mail
@@ -30,14 +37,10 @@ async function loginUser(req, res) {
         if (user && (await user.matchPassword(password))) {
             // Zusätzliche Prüfung: Ist der Benutzer genehmigt?
             if (!user.isApproved) {
-                return res.status(401).json({ 
-                    success: false, 
-                    message: 'Ihr Account wurde noch nicht genehmigt.' 
-                });
+                return sendResponse(401, false, 'Ihr Account wurde noch nicht genehmigt.');
             }
 
-            return res.status(200).json({
-                success: true,
+            return sendResponse(200, true, 'Login erfolgreich.', {
                 user: {
                     _id: user._id,
                     firstName: user.firstName,
@@ -45,21 +48,15 @@ async function loginUser(req, res) {
                     email: user.email,
                     role: user.role
                 },
-                token: generateToken(user._id),
+                token: generateToken(user._id)
             });
         } else {
             // Aus Sicherheitsgründen eine generische Fehlermeldung
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Ungültige Anmeldedaten.' 
-            });
+            return sendResponse(401, false, 'Ungültige Anmeldedaten.');
         }
     } catch (error) {
         console.error("Fehler beim Login:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: "Serverfehler beim Login." 
-        });
+        return sendResponse(500, false, "Serverfehler beim Login.");
     }
 }
 

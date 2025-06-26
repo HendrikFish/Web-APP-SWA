@@ -2,27 +2,31 @@ const User = require('../../../models/User');
 
 /**
  * Registriert einen neuen Benutzer mit dem Status "nicht genehmigt".
+ * GARANTIERT success-Feld in jeder Response für CI/CD-Kompatibilität.
  */
 async function registerUser(req, res) {
+    // Force success field in every response
+    const sendResponse = (status, success, message, data = {}) => {
+        return res.status(status).json({
+            success,
+            message,
+            ...data
+        });
+    };
+
     try {
         const { firstName, lastName, email, password, customFields } = req.body;
 
         // Einfache Validierung
         if (!firstName || !lastName || !email || !password) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Bitte füllen Sie alle Felder aus.' 
-            });
+            return sendResponse(400, false, 'Bitte füllen Sie alle Felder aus.');
         }
 
         // Prüfen, ob der Benutzer bereits existiert
         const userExists = await User.findOne({ email });
 
         if (userExists) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.' 
-            });
+            return sendResponse(400, false, 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.');
         }
 
         // Neuen Benutzer erstellen (Passwort wird durch Mongoose-Middleware automatisch gehasht)
@@ -36,22 +40,13 @@ async function registerUser(req, res) {
         });
 
         if (user) {
-            return res.status(201).json({
-                success: true,
-                message: 'Registrierungsanfrage erfolgreich gesendet. Sie wird nun von einem Administrator geprüft.'
-            });
+            return sendResponse(201, true, 'Registrierungsanfrage erfolgreich gesendet. Sie wird nun von einem Administrator geprüft.');
         } else {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Ungültige Benutzerdaten.' 
-            });
+            return sendResponse(400, false, 'Ungültige Benutzerdaten.');
         }
     } catch (error) {
         console.error("Fehler bei der Registrierung:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: "Serverfehler bei der Registrierung." 
-        });
+        return sendResponse(500, false, "Serverfehler bei der Registrierung.");
     }
 }
 
