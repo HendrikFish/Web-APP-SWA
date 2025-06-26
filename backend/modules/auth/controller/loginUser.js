@@ -11,52 +11,63 @@ const generateToken = (id) => {
 
 /**
  * Authentifiziert einen Benutzer anhand von E-Mail und Passwort.
- * GARANTIERT success-Feld in jeder Response für CI/CD-Kompatibilität.
  */
 async function loginUser(req, res) {
-    // Force success field in every response
-    const sendResponse = (status, success, message, data = {}) => {
-        return res.status(status).json({
-            success,
-            message,
-            ...data
+    console.log('🚀 LOGIN REQUEST RECEIVED:', {
+        email: req.body.email,
+        hasPassword: !!req.body.password,
+        JWT_SECRET: !!process.env.JWT_SECRET,
+        MONGODB_URI: !!process.env.MONGODB_URI
+    });
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Bitte geben Sie E-Mail und Passwort an.' 
         });
-    };
+    }
 
     try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return sendResponse(400, false, 'Bitte geben Sie E-Mail und Passwort an.');
-        }
-
         // Finde den Benutzer anhand der E-Mail
+        console.log('🔍 Suche User mit Email:', email);
         const user = await User.findOne({ email });
+        
+        console.log('🔍 USER LOOKUP RESULT:', {
+            email,
+            userFound: !!user,
+            userApproved: user ? user.isApproved : 'N/A',
+            hashedPassword: user ? user.password.substring(0, 20) + '...' : 'N/A'
+        });
 
         // Überprüfe, ob der Benutzer existiert UND das Passwort übereinstimmt
         if (user && (await user.matchPassword(password))) {
-            // Zusätzliche Prüfung: Ist der Benutzer genehmigt?
-            if (!user.isApproved) {
-                return sendResponse(401, false, 'Ihr Account wurde noch nicht genehmigt.');
-            }
-
-            return sendResponse(200, true, 'Login erfolgreich.', {
-                user: {
-                    _id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    role: user.role
-                },
-                token: generateToken(user._id)
+            res.status(200).json({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role, // Einzelne Rolle statt Array
+                token: generateToken(user._id),
             });
         } else {
             // Aus Sicherheitsgründen eine generische Fehlermeldung
-            return sendResponse(401, false, 'Ungültige Anmeldedaten.');
+            res.status(401).json({ 
+                success: false,
+                message: 'Ungültige Anmeldedaten.' 
+            });
         }
     } catch (error) {
-        console.error("Fehler beim Login:", error);
-        return sendResponse(500, false, "Serverfehler beim Login.");
+        console.error("❌ DETAILED LOGIN ERROR:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
+        res.status(500).json({ 
+            success: false,
+            message: "Serverfehler beim Login." 
+        });
     }
 }
 

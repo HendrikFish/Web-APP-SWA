@@ -40,6 +40,7 @@ export async function loginUser(email, password) {
         // KRITISCHE KORREKTUR: Speichere die Benutzerinformationen im localStorage.
         if (data && data.token) {
             localStorage.setItem('userInfo', JSON.stringify(data));
+            localStorage.setItem('token', data.token); // Auch Token separat speichern für Kompatibilität
         }
 
         return data;
