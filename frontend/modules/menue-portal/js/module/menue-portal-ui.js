@@ -847,20 +847,29 @@ window.handleBewertungClick = handleBewertungClick;
  * @returns {boolean} Ob die Kategorie relevant ist
  */
 function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey) {
-    if (!currentEinrichtung || !currentMenuplan) return false;
+    if (!currentEinrichtung || !currentMenuplan) {
+        console.log(`❌ Keine Einrichtung oder Menüplan für ${categoryKey}/${dayKey}`);
+        return false;
+    }
     
     // Interne Einrichtungen sehen alle Kategorien
-    if (currentEinrichtung.isIntern) return true;
+    if (currentEinrichtung.isIntern) {
+        console.log(`✅ ${categoryKey}/${dayKey}: Interne Einrichtung - alle Kategorien sichtbar`);
+        return true;
+    }
     
     // Externe Einrichtungen: Prüfe Portal-Stammdaten
     const personengruppe = currentEinrichtung.personengruppe;
     let regelKey = 'extern'; // Standard für externe
+    
+    console.log(`🔍 ${categoryKey}/${dayKey}: Personengruppe = ${personengruppe}`);
     
     // Spezielle Regeln für Schulen und Kindergärten
     if (portalStammdaten?.personengruppen_mapping?.mapping) {
         const mapping = portalStammdaten.personengruppen_mapping.mapping;
         if (mapping[personengruppe]) {
             regelKey = mapping[personengruppe];
+            console.log(`🎯 ${categoryKey}/${dayKey}: Spezielle Regel = ${regelKey}`);
         }
     }
     
@@ -868,15 +877,20 @@ function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey) {
     if (regelKey === 'schule' || regelKey === 'kindergarten') {
         const dayData = currentMenuplan.days[dayKey];
         if (dayData && dayData.Zuweisungen && dayData.Zuweisungen[categoryKey]) {
-            // Prüfe ob die Einrichtung für diese Kategorie zugewiesen ist
-            return dayData.Zuweisungen[categoryKey].includes(currentEinrichtung.id);
+            const isAssigned = dayData.Zuweisungen[categoryKey].includes(currentEinrichtung.id);
+            console.log(`📚 ${categoryKey}/${dayKey}: Zuweisungs-Check = ${isAssigned}`, dayData.Zuweisungen[categoryKey]);
+            return isAssigned;
         }
+        console.log(`❌ ${categoryKey}/${dayKey}: Keine Zuweisungen gefunden`);
         return false;
     }
     
     // Für andere externe: Prüfe sichtbare Kategorien
     const sichtbareKategorien = portalStammdaten?.einrichtungsregeln?.regeln?.[regelKey]?.sichtbare_kategorien || [];
-    return sichtbareKategorien.includes(categoryKey);
+    const isVisible = sichtbareKategorien.includes(categoryKey);
+    console.log(`👁️ ${categoryKey}/${dayKey}: Sichtbare Kategorien Check = ${isVisible}`, sichtbareKategorien);
+    
+    return isVisible;
 }
 
 /**
@@ -887,7 +901,6 @@ function extractVisibleCategories() {
     if (!portalStammdaten || !currentMenuplan) return {};
     
     const kategorien = {};
-    const stammdaten = portalStammdaten.kategorie_definitionen || {};
     
     // Alle verfügbaren Kategorien aus dem Menüplan sammeln
     const allCategories = new Set();
@@ -899,11 +912,17 @@ function extractVisibleCategories() {
         }
     });
     
+    // Debug-Ausgabe
+    console.log('🔍 Alle gefundenen Kategorien:', Array.from(allCategories));
+    console.log('🏢 Aktuelle Einrichtung:', currentEinrichtung);
+    
     // Nur relevante Kategorien für die Einrichtung zurückgeben
     allCategories.forEach(categoryKey => {
         // Prüfe für mindestens einen Tag ob die Kategorie relevant ist
         const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
         const istRelevant = days.some(dayKey => istKategorieRelevantFuerEinrichtung(categoryKey, dayKey));
+        
+        console.log(`📋 Kategorie ${categoryKey} relevant:`, istRelevant);
         
         if (istRelevant) {
             kategorien[categoryKey] = {
@@ -913,6 +932,7 @@ function extractVisibleCategories() {
         }
     });
     
+    console.log('✅ Finale Kategorien:', kategorien);
     return kategorien;
 }
 
