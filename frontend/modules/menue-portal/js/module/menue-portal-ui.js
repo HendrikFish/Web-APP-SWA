@@ -375,50 +375,72 @@ function renderMenuplan() {
  * Rendert die mobile Accordion-Ansicht
  */
 function renderMobileAccordion() {
+    if (!currentMenuplan || !portalStammdaten) return;
+    
     const container = document.getElementById('mobile-accordion');
     if (!container) return;
     
+    const kategorien = extractVisibleCategories();
     const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-    // Verwende die sichtbaren Kategorien aus dem Menüplan
-    const categories = currentMenuplan.sichtbare_kategorien || ['suppe', 'menu1', 'menu2', 'dessert', 'abend'];
+    const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
     
-    let html = '<div class="mobile-accordion">';
+    let accordionHtml = '<div class="accordion" id="mobile-menu-accordion">';
     
     days.forEach((dayKey, index) => {
-        const dayData = currentMenuplan.days[dayKey] || {};
-        const dayName = getDayName(dayKey);
+        const dayData = currentMenuplan.days[dayKey];
+        if (!dayData) return;
+        
+        // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
+        const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
+                             currentEinrichtung.speiseplan[dayKey] &&
+                             (currentEinrichtung.speiseplan[dayKey].suppe || 
+                              currentEinrichtung.speiseplan[dayKey].hauptspeise || 
+                              currentEinrichtung.speiseplan[dayKey].dessert);
+        
+        // Mobile: Tage ohne Essen gar nicht anzeigen
+        if (!hatEssenAmTag) {
+            return;
+        }
+        
         const monday = getMondayOfWeek(currentYear, currentWeek);
         const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
-        const formattedDate = formatDate(dayDate);
+        const dateStr = formatDate(dayDate);
         
-        // Rezepte für diesen Tag zählen
-        const recipeCount = categories.reduce((count, cat) => {
-            return count + (dayData[cat] || []).length;
-        }, 0);
+        const isExpanded = index === 0; // Ersten Tag standardmäßig öffnen
         
-        html += `
-            <div class="day-accordion-section">
-                <div class="day-header" data-day="${dayKey}">
-                    <div class="day-title">
-                        <span>${dayName}</span>
-                        <small class="text-light">${formattedDate}</small>
-                        <span class="day-counter">${recipeCount} Rezept${recipeCount !== 1 ? 'e' : ''}</span>
+        accordionHtml += `
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-${dayKey}">
+                    <button 
+                        class="accordion-button ${isExpanded ? '' : 'collapsed'}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse-${dayKey}"
+                        aria-expanded="${isExpanded}" 
+                        aria-controls="collapse-${dayKey}"
+                    >
+                        <div class="w-100 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">${dayNames[index]}</span>
+                            <small class="text-muted">${dateStr}</small>
+                        </div>
+                    </button>
+                </h2>
+                <div 
+                    id="collapse-${dayKey}" 
+                    class="accordion-collapse collapse ${isExpanded ? 'show' : ''}"
+                    aria-labelledby="heading-${dayKey}"
+                    data-bs-parent="#mobile-menu-accordion"
+                >
+                    <div class="accordion-body">
+                        ${renderMobileDayContent(dayData.Mahlzeiten || dayData, kategorien, dayKey)}
                     </div>
-                    <i class="bi bi-chevron-down day-toggle-icon"></i>
-                </div>
-                
-                <div class="day-content" data-day="${dayKey}">
-                    ${renderMobileDayContent(dayData, categories, dayKey)}
                 </div>
             </div>
         `;
     });
     
-    html += '</div>';
-    container.innerHTML = html;
-    
-    // Event-Listener für Accordion
-    setupMobileAccordionEvents();
+    accordionHtml += '</div>';
+    container.innerHTML = accordionHtml;
 }
 
 /**
@@ -428,26 +450,51 @@ function renderMobileAccordion() {
  * @returns {string} HTML für Tag-Inhalt
  */
 function renderMobileDayContent(dayData, categories, dayKey) {
+    if (!dayData || !categories) return '';
+    
+    const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
+    const dayIndex = days.indexOf(dayKey);
+    const monday = getMondayOfWeek(currentYear, currentWeek);
+    const dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
+    
+    // Prüfe ob die aktuelle Einrichtung an diesem Tag Essen bekommt
+    const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
+                         currentEinrichtung.speiseplan[dayKey] &&
+                         (currentEinrichtung.speiseplan[dayKey].suppe || 
+                          currentEinrichtung.speiseplan[dayKey].hauptspeise || 
+                          currentEinrichtung.speiseplan[dayKey].dessert);
+    
+    // Für mobile: Tage ohne Essen gar nicht anzeigen
+    if (!hatEssenAmTag) {
+        return '';
+    }
+    
     let html = '';
     
-    categories.forEach(categoryKey => {
+    // Kategorien durchgehen
+    Object.entries(categories).forEach(([categoryKey, categoryInfo]) => {
         const recipes = dayData[categoryKey] || [];
-        const categoryName = getCategoryName(categoryKey, portalStammdaten);
-        const categoryIcon = getCategoryIcon(categoryKey, portalStammdaten);
+        const hasRecipes = recipes && recipes.length > 0;
         
-        // Bewertungs-Button nur anzeigen wenn Rezepte vorhanden sind
-        const hasBewertungButton = recipes.length > 0 && currentUser;
+        // Prüfe ob diese Kategorie für die Einrichtung relevant ist
+        const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey);
+        if (!istKategorieRelevant) return;
         
         html += `
-            <div class="category-section" data-day="${dayKey}" data-kategorie="${categoryKey}">
-                <div class="category-title">
-                    <span class="category-icon">${categoryIcon}</span>
-                    ${categoryName}
+            <div class="category-section mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="category-title mb-0">
+                        <i class="${categoryInfo.icon} me-2"></i>
+                        ${categoryInfo.name}
+                    </h6>
+                    ${renderBewertungButton(dayKey, categoryKey, recipes, dayDate)}
                 </div>
-                <div class="recipe-list">
+                
+                <div class="recipe-content">
                     ${renderRecipeList(recipes)}
                 </div>
-                ${hasBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes) : ''}
+                
+                ${renderBestellungFields(dayKey, categoryKey, recipes)}
             </div>
         `;
     });
@@ -459,69 +506,93 @@ function renderMobileDayContent(dayData, categories, dayKey) {
  * Rendert die Desktop-Grid-Ansicht
  */
 function renderDesktopGrid() {
+    if (!currentMenuplan || !portalStammdaten) return;
+    
     const container = document.getElementById('desktop-grid');
     if (!container) return;
     
+    const kategorien = extractVisibleCategories();
     const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
-    // Verwende die sichtbaren Kategorien aus dem Menüplan
-    const categories = currentMenuplan.sichtbare_kategorien || ['suppe', 'menu1', 'menu2', 'dessert', 'abend'];
+    const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
     
-    let html = '<div class="desktop-grid">';
+    let gridHtml = `
+        <div class="grid-container">
+            <div class="grid-header">
+                <div class="grid-header-cell time-cell">Kategorie</div>
+    `;
     
-    // Header-Zeile
-    html += '<div class="grid-header-cell grid-corner-cell">Kategorie</div>';
+    // Tages-Header mit Datum
     days.forEach((dayKey, index) => {
-        const dayName = getDayName(dayKey);
         const monday = getMondayOfWeek(currentYear, currentWeek);
         const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
-        const formattedDate = formatDate(dayDate);
+        const dateStr = formatDate(dayDate);
         
-        html += `
-            <div class="grid-header-cell">
-                <div>${dayName}</div>
-                <small class="text-muted">${formattedDate}</small>
+        // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
+        const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
+                             currentEinrichtung.speiseplan[dayKey] &&
+                             (currentEinrichtung.speiseplan[dayKey].suppe || 
+                              currentEinrichtung.speiseplan[dayKey].hauptspeise || 
+                              currentEinrichtung.speiseplan[dayKey].dessert);
+        
+        const dayClass = hatEssenAmTag ? '' : 'no-food-day';
+        
+        gridHtml += `
+            <div class="grid-header-cell day-header ${dayClass}">
+                <div class="day-name">${dayNames[index]}</div>
+                <div class="day-date">${dateStr}</div>
+                ${!hatEssenAmTag ? '<div class="no-food-label">Kein Essen</div>' : ''}
             </div>
         `;
     });
     
-    // Content-Zeilen
-    categories.forEach(categoryKey => {
-        const categoryName = getCategoryName(categoryKey, portalStammdaten);
-        const categoryIcon = getCategoryIcon(categoryKey, portalStammdaten);
-        
-        // Kategorie-Spalte
-        html += `
-            <div class="grid-kategorie-cell">
-                <span style="margin-right: 8px;">${categoryIcon}</span>
-                ${categoryName}
-            </div>
+    gridHtml += '</div>';
+    
+    // Kategorien-Zeilen
+    Object.entries(kategorien).forEach(([categoryKey, categoryInfo]) => {
+        gridHtml += `
+            <div class="grid-row" data-kategorie="${categoryKey}">
+                <div class="grid-category-cell">
+                    <i class="${categoryInfo.icon} me-2"></i>
+                    ${categoryInfo.name}
+                </div>
         `;
         
-        // Tag-Spalten
-        days.forEach((dayKey, index) => {
-            const dayData = currentMenuplan.days[dayKey] || {};
-            const recipes = dayData[categoryKey] || [];
+        days.forEach((dayKey, dayIndex) => {
+            const dayData = currentMenuplan.days[dayKey];
+            const recipes = dayData ? (dayData.Mahlzeiten ? dayData.Mahlzeiten[categoryKey] : dayData[categoryKey]) || [] : [];
             
-            // Datum für Bewertungs-Logik berechnen
             const monday = getMondayOfWeek(currentYear, currentWeek);
-            const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
+            const dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
             
-            // Bewertungs-Button nur anzeigen wenn Rezepte vorhanden und Benutzer angemeldet
-            const hasBewertungButton = recipes.length > 0 && currentUser && istDatumBewertbar(dayDate);
+            // Prüfe ob die Einrichtung an diesem Tag Essen bekommt
+            const hatEssenAmTag = currentEinrichtung && currentEinrichtung.speiseplan && 
+                                 currentEinrichtung.speiseplan[dayKey] &&
+                                 (currentEinrichtung.speiseplan[dayKey].suppe || 
+                                  currentEinrichtung.speiseplan[dayKey].hauptspeise || 
+                                  currentEinrichtung.speiseplan[dayKey].dessert);
             
-            html += `
-                <div class="grid-content-cell" data-day="${dayKey}" data-kategorie="${categoryKey}">
-                    <div class="recipe-list">
+            // Prüfe ob diese Kategorie für die Einrichtung relevant ist
+            const istKategorieRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey);
+            
+            const cellClass = `grid-content-cell ${!hatEssenAmTag ? 'no-food-day' : ''} ${!istKategorieRelevant ? 'category-not-relevant' : ''}`;
+            const showBewertungButton = hatEssenAmTag && istKategorieRelevant && recipes.length > 0;
+            
+            gridHtml += `
+                <div class="${cellClass}" data-day="${dayKey}" data-kategorie="${categoryKey}">
+                    <div class="recipe-content">
                         ${renderRecipeList(recipes)}
                     </div>
-                    ${hasBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate) : ''}
+                    ${showBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate) : ''}
+                    ${renderBestellungFields(dayKey, categoryKey, recipes)}
                 </div>
             `;
         });
+        
+        gridHtml += '</div>';
     });
     
-    html += '</div>';
-    container.innerHTML = html;
+    gridHtml += '</div>';
+    container.innerHTML = gridHtml;
 }
 
 /**
@@ -768,3 +839,198 @@ function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
 
 // Globale Handler-Funktion für onclick-Attribute verfügbar machen
 window.handleBewertungClick = handleBewertungClick;
+
+/**
+ * Prüft ob eine Kategorie für die aktuelle Einrichtung relevant ist
+ * @param {string} categoryKey - Kategorie-Schlüssel
+ * @param {string} dayKey - Wochentag-Schlüssel
+ * @returns {boolean} Ob die Kategorie relevant ist
+ */
+function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey) {
+    if (!currentEinrichtung || !currentMenuplan) return false;
+    
+    // Interne Einrichtungen sehen alle Kategorien
+    if (currentEinrichtung.isIntern) return true;
+    
+    // Externe Einrichtungen: Prüfe Portal-Stammdaten
+    const personengruppe = currentEinrichtung.personengruppe;
+    let regelKey = 'extern'; // Standard für externe
+    
+    // Spezielle Regeln für Schulen und Kindergärten
+    if (portalStammdaten?.personengruppen_mapping?.mapping) {
+        const mapping = portalStammdaten.personengruppen_mapping.mapping;
+        if (mapping[personengruppe]) {
+            regelKey = mapping[personengruppe];
+        }
+    }
+    
+    // Für Schulen und Kindergärten: Prüfe Zuweisungen in KW.json
+    if (regelKey === 'schule' || regelKey === 'kindergarten') {
+        const dayData = currentMenuplan.days[dayKey];
+        if (dayData && dayData.Zuweisungen && dayData.Zuweisungen[categoryKey]) {
+            // Prüfe ob die Einrichtung für diese Kategorie zugewiesen ist
+            return dayData.Zuweisungen[categoryKey].includes(currentEinrichtung.id);
+        }
+        return false;
+    }
+    
+    // Für andere externe: Prüfe sichtbare Kategorien
+    const sichtbareKategorien = portalStammdaten?.einrichtungsregeln?.regeln?.[regelKey]?.sichtbare_kategorien || [];
+    return sichtbareKategorien.includes(categoryKey);
+}
+
+/**
+ * Extrahiert die sichtbaren Kategorien für die aktuelle Einrichtung
+ * @returns {object} Kategorien mit Namen und Icons
+ */
+function extractVisibleCategories() {
+    if (!portalStammdaten || !currentMenuplan) return {};
+    
+    const kategorien = {};
+    const stammdaten = portalStammdaten.kategorie_definitionen || {};
+    
+    // Alle verfügbaren Kategorien aus dem Menüplan sammeln
+    const allCategories = new Set();
+    Object.values(currentMenuplan.days).forEach(dayData => {
+        if (dayData.Mahlzeiten) {
+            Object.keys(dayData.Mahlzeiten).forEach(cat => allCategories.add(cat));
+        } else {
+            Object.keys(dayData).forEach(cat => allCategories.add(cat));
+        }
+    });
+    
+    // Nur relevante Kategorien für die Einrichtung zurückgeben
+    allCategories.forEach(categoryKey => {
+        // Prüfe für mindestens einen Tag ob die Kategorie relevant ist
+        const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
+        const istRelevant = days.some(dayKey => istKategorieRelevantFuerEinrichtung(categoryKey, dayKey));
+        
+        if (istRelevant) {
+            kategorien[categoryKey] = {
+                name: getCategoryName(categoryKey, portalStammdaten),
+                icon: getCategoryIcon(categoryKey, portalStammdaten)
+            };
+        }
+    });
+    
+    return kategorien;
+}
+
+/**
+ * Rendert Bestellfelder für externe Einrichtungen
+ * @param {string} dayKey - Wochentag-Schlüssel
+ * @param {string} categoryKey - Kategorie-Schlüssel  
+ * @param {object[]} recipes - Rezepte der Kategorie
+ * @returns {string} HTML für Bestellfelder
+ */
+function renderBestellungFields(dayKey, categoryKey, recipes) {
+    // Nur für externe Einrichtungen
+    if (!currentEinrichtung || currentEinrichtung.isIntern || !recipes || recipes.length === 0) {
+        return '';
+    }
+    
+    // Nur für Hauptspeisen (menu1, menu2) Bestellfelder anzeigen
+    if (!['menu1', 'menu2'].includes(categoryKey)) {
+        return '';
+    }
+    
+    const gruppen = currentEinrichtung.gruppen || [];
+    if (gruppen.length === 0) return '';
+    
+    let html = `
+        <div class="bestellung-container mt-3">
+            <h6 class="bestellung-title">
+                <i class="bi bi-cart3 me-2"></i>
+                Bestellung für ${formatDate(new Date())}
+            </h6>
+    `;
+    
+    gruppen.forEach(gruppe => {
+        html += `
+            <div class="gruppe-bestellung mb-2">
+                <label class="form-label small">
+                    ${gruppe.name} (${gruppe.anzahl} Personen)
+                </label>
+                <div class="input-group input-group-sm">
+                    <input 
+                        type="number" 
+                        class="form-control bestellung-input" 
+                        data-day="${dayKey}"
+                        data-kategorie="${categoryKey}"
+                        data-gruppe="${gruppe.name}"
+                        min="0" 
+                        max="${gruppe.anzahl}"
+                        placeholder="Anzahl"
+                        onchange="handleBestellungChange(this)"
+                    >
+                    <span class="input-group-text">von ${gruppe.anzahl}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Handler für Bestellungs-Änderungen
+ * @param {HTMLElement} input - Input-Element
+ */
+function handleBestellungChange(input) {
+    const dayKey = input.dataset.day;
+    const categoryKey = input.dataset.kategorie;
+    const gruppe = input.dataset.gruppe;
+    const anzahl = parseInt(input.value) || 0;
+    
+    console.log('🛒 Bestellung geändert:', {
+        tag: dayKey,
+        kategorie: categoryKey,
+        gruppe: gruppe,
+        anzahl: anzahl
+    });
+    
+    // Automatische Suppe/Dessert-Berechnung triggern
+    updateAutomaticBestellungen(dayKey, categoryKey, gruppe, anzahl);
+    
+    // TODO: Bestellung speichern/validieren
+}
+
+/**
+ * Aktualisiert automatische Bestellungen für Suppe und Dessert
+ * @param {string} dayKey - Wochentag-Schlüssel
+ * @param {string} categoryKey - Hauptspeise-Kategorie
+ * @param {string} gruppe - Gruppenname
+ * @param {number} anzahl - Bestellte Anzahl
+ */
+function updateAutomaticBestellungen(dayKey, categoryKey, gruppe, anzahl) {
+    if (!currentEinrichtung || !currentEinrichtung.speiseplan) return;
+    
+    const speiseplan = currentEinrichtung.speiseplan[dayKey];
+    if (!speiseplan) return;
+    
+    // Automatische Suppe-Bestellung
+    if (speiseplan.suppe) {
+        const suppeInput = document.querySelector(
+            `input[data-day="${dayKey}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`
+        );
+        if (suppeInput) {
+            suppeInput.value = anzahl;
+            console.log(`🥣 Automatische Suppe-Bestellung: ${anzahl} für ${gruppe}`);
+        }
+    }
+    
+    // Automatische Dessert-Bestellung  
+    if (speiseplan.dessert) {
+        const dessertInput = document.querySelector(
+            `input[data-day="${dayKey}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`
+        );
+        if (dessertInput) {
+            dessertInput.value = anzahl;
+            console.log(`🍰 Automatische Dessert-Bestellung: ${anzahl} für ${gruppe}`);
+        }
+    }
+}
+
+// Globale Handler-Funktionen verfügbar machen
+window.handleBestellungChange = handleBestellungChange;
