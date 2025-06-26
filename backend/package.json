@@ -33,16 +33,17 @@
   "jest": {
     "testEnvironment": "node",
     "collectCoverageFrom": [
-      "modules/**/*.js",
-      "middleware/*.js",
+      "modules/auth/controller/loginUser.js",
+      "modules/auth/controller/registerUser.js",
+      "modules/auth/routes.js",
       "!**/node_modules/**"
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 5,
-        "functions": 5,
-        "lines": 5,
-        "statements": 5
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
       }
     }
   }
