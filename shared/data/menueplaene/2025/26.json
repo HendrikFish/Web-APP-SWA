@@ -426,18 +426,18 @@
           },
           "samstag": {
             "suppe": true,
-            "hauptspeise": true,
+            "hauptspeise": false,
             "dessert": false
           },
           "sonntag": {
             "suppe": false,
-            "hauptspeise": true,
+            "hauptspeise": false,
             "dessert": false
           }
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -484,7 +484,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -531,7 +531,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -578,7 +578,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -625,7 +625,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -672,7 +672,7 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       },
       {
@@ -719,11 +719,11 @@
         },
         "snapshotMetadata": {
           "originalDataTimestamp": null,
-          "snapshotUpdatedAt": "2025-06-26T16:33:48.440Z"
+          "snapshotUpdatedAt": "2025-06-26T19:08:03.650Z"
         }
       }
     ],
-    "generatedAt": "2025-06-26T16:33:48.440Z",
+    "generatedAt": "2025-06-26T19:08:03.650Z",
     "categories": [
       {
         "id": "suppe",
@@ -780,7 +780,7 @@
       "action": "snapshot_update"
     }
   },
-  "updatedAt": "2025-06-26T16:38:52.837Z",
+  "updatedAt": "2025-06-26T19:08:05.215Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"

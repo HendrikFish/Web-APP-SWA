@@ -37,12 +37,12 @@
       },
       "samstag": {
         "suppe": true,
-        "hauptspeise": true,
+        "hauptspeise": false,
         "dessert": false
       },
       "sonntag": {
         "suppe": false,
-        "hauptspeise": true,
+        "hauptspeise": false,
         "dessert": false
       }
     },
