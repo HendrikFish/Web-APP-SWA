@@ -377,6 +377,353 @@
     }
 }
 
+/* ===== BEWERTUNGS-MODAL STYLES ===== */
+
+/* Modal Overlay */
+.bewertung-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.bewertung-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* Modal Content */
+.bewertung-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Modal Header */
+.bewertung-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.bewertung-modal-header h3 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.bewertung-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.bewertung-modal-close:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+/* Modal Body */
+.bewertung-modal-body {
+    padding: 1.5rem;
+}
+
+/* Bewertungs-Info */
+.bewertung-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.bewertung-kategorie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.bewertung-kategorie strong {
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.bewertung-kategorie span {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.bewertung-rezepte {
+    margin-top: 0.75rem;
+}
+
+.bewertung-rezepte strong {
+    color: #495057;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.bewertung-rezepte ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #6c757d;
+}
+
+.bewertung-rezepte li {
+    margin-bottom: 0.25rem;
+}
+
+/* Bewertungs-Formular */
+.bewertung-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.bewertung-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bewertung-field label {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bewertung-field label .required {
+    color: #dc3545;
+}
+
+/* Sterne-Rating */
+.star-rating {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+.star-rating .star {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.3;
+    user-select: none;
+}
+
+.star-rating .star:hover,
+.star-rating .star.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.star-rating .star:hover {
+    filter: brightness(1.2);
+}
+
+.rating-text {
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Textarea */
+.bewertung-field textarea {
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s ease;
+}
+
+.bewertung-field textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.bewertung-field .form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Modal Footer */
+.bewertung-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #5a6268;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+/* Bewertungs-Button für Kategorien */
+.bewertung-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.grid-content-cell:hover .bewertung-btn {
+    opacity: 1;
+}
+
+.bewertung-btn:hover {
+    background: #218838;
+    transform: scale(1.1);
+}
+
+.bewertung-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Mobile Anpassungen für Modal */
+@media (max-width: 768px) {
+    .bewertung-modal-content {
+        width: 95%;
+        margin: 1rem;
+        max-height: 95vh;
+    }
+    
+    .bewertung-modal-header,
+    .bewertung-modal-body,
+    .bewertung-modal-footer {
+        padding: 1rem;
+    }
+    
+    .bewertung-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .star-rating .star {
+        font-size: 1.3rem;
+    }
+    
+    .bewertung-modal-footer {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .bewertung-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+    
+    /* Mobile Accordion - Bewertungs-Button */
+    .category-section {
+        position: relative;
+    }
+    
+    .category-section .bewertung-btn {
+        opacity: 1;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+}
+
 /* Utility Classes */
 .fade-in {
     animation: fadeIn 0.3s ease-in;

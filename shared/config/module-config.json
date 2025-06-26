@@ -69,8 +69,13 @@
             "co-admin",
             "Koch",
             "Service",
-            "Pflege",
-            "Leitung"
+            "Stock",
+            "Schule",
+            "Kindergarten",
+            "LH",
+            "TZ",
+            "ER",
+            "extern"
         ]
     }
 ]

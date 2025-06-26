@@ -14,9 +14,12 @@ import {
     loadPortalStammdaten
 } from './menue-portal-api.js';
 import { getAllEinrichtungen, getDefaultEinrichtung } from './menue-portal-auth.js';
+import { initBewertungModal, openBewertungModal } from './bewertung-modal.js';
+import { istDatumBewertbar } from './bewertung-api.js';
 
 // Globale UI-State
 let currentEinrichtung = null;
+let currentUser = null;
 let currentYear = new Date().getFullYear();
 let currentWeek = getWeekNumber(new Date());
 let currentMenuplan = null;
@@ -32,6 +35,9 @@ let portalStammdaten = null;
 export async function initMenuePortalUI(user, einrichtungen) {
     try {
         console.log('🎨 Menü-Portal UI wird initialisiert...');
+        
+        // Benutzer speichern
+        currentUser = user;
         
         // Portal-Stammdaten laden
         const stammdatenResult = await loadPortalStammdaten();
@@ -58,6 +64,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
         currentEinrichtung = getDefaultEinrichtung();
         if (currentEinrichtung) {
             await loadAndDisplayMenuplan();
+            // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
+            initBewertungModal(currentUser, currentEinrichtung);
         }
         
         console.log('✅ Menü-Portal UI initialisiert');
@@ -231,6 +239,11 @@ async function switchEinrichtung(einrichtungId) {
         // Neuen Menüplan laden
         await loadAndDisplayMenuplan();
         
+        // Bewertungs-Modal mit neuer Einrichtung neu initialisieren
+        if (currentUser) {
+            initBewertungModal(currentUser, currentEinrichtung);
+        }
+        
         showToast(`Einrichtung gewechselt: ${einrichtung.name}`, 'success');
         
     } catch (error) {
@@ -395,7 +408,7 @@ function renderMobileAccordion() {
                 </div>
                 
                 <div class="day-content" data-day="${dayKey}">
-                    ${renderMobileDayContent(dayData, categories)}
+                    ${renderMobileDayContent(dayData, categories, dayKey)}
                 </div>
             </div>
         `;
@@ -414,7 +427,7 @@ function renderMobileAccordion() {
  * @param {string[]} categories - Kategorien
  * @returns {string} HTML für Tag-Inhalt
  */
-function renderMobileDayContent(dayData, categories) {
+function renderMobileDayContent(dayData, categories, dayKey) {
     let html = '';
     
     categories.forEach(categoryKey => {
@@ -422,8 +435,11 @@ function renderMobileDayContent(dayData, categories) {
         const categoryName = getCategoryName(categoryKey, portalStammdaten);
         const categoryIcon = getCategoryIcon(categoryKey, portalStammdaten);
         
+        // Bewertungs-Button nur anzeigen wenn Rezepte vorhanden sind
+        const hasBewertungButton = recipes.length > 0 && currentUser;
+        
         html += `
-            <div class="category-section">
+            <div class="category-section" data-day="${dayKey}" data-kategorie="${categoryKey}">
                 <div class="category-title">
                     <span class="category-icon">${categoryIcon}</span>
                     ${categoryName}
@@ -431,6 +447,7 @@ function renderMobileDayContent(dayData, categories) {
                 <div class="recipe-list">
                     ${renderRecipeList(recipes)}
                 </div>
+                ${hasBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes) : ''}
             </div>
         `;
     });
@@ -481,15 +498,23 @@ function renderDesktopGrid() {
         `;
         
         // Tag-Spalten
-        days.forEach(dayKey => {
+        days.forEach((dayKey, index) => {
             const dayData = currentMenuplan.days[dayKey] || {};
             const recipes = dayData[categoryKey] || [];
             
+            // Datum für Bewertungs-Logik berechnen
+            const monday = getMondayOfWeek(currentYear, currentWeek);
+            const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
+            
+            // Bewertungs-Button nur anzeigen wenn Rezepte vorhanden und Benutzer angemeldet
+            const hasBewertungButton = recipes.length > 0 && currentUser && istDatumBewertbar(dayDate);
+            
             html += `
-                <div class="grid-content-cell">
+                <div class="grid-content-cell" data-day="${dayKey}" data-kategorie="${categoryKey}">
                     <div class="recipe-list">
                         ${renderRecipeList(recipes)}
                     </div>
+                    ${hasBewertungButton ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate) : ''}
                 </div>
             `;
         });
@@ -674,3 +699,72 @@ function getWeeksInYear(year) {
     const dec31 = new Date(year, 11, 31);
     return getWeekNumber(dec31);
 }
+
+/**
+ * Rendert einen Bewertungs-Button für eine Kategorie
+ * @param {string} dayKey - Wochentag-Key
+ * @param {string} categoryKey - Kategorie-Key
+ * @param {object[]} recipes - Rezepte der Kategorie
+ * @param {Date} dayDate - Datum des Tages (optional, wird berechnet falls nicht gegeben)
+ * @returns {string} HTML für Bewertungs-Button
+ */
+function renderBewertungButton(dayKey, categoryKey, recipes, dayDate = null) {
+    if (!currentUser || !recipes || recipes.length === 0) {
+        return '';
+    }
+    
+    // Datum berechnen falls nicht gegeben
+    if (!dayDate) {
+        const days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
+        const dayIndex = days.indexOf(dayKey);
+        const monday = getMondayOfWeek(currentYear, currentWeek);
+        dayDate = new Date(monday.getTime() + dayIndex * 24 * 60 * 60 * 1000);
+    }
+    
+    // Prüfen ob Datum bewertbar ist
+    const isDateRatable = istDatumBewertbar(dayDate);
+    const rezeptNamen = recipes.map(r => (rezepteCache[r.id] || r).name || 'Unbekanntes Rezept');
+    
+    const buttonId = `bewertung-btn-${dayKey}-${categoryKey}`;
+    
+    return `
+        <button 
+            type="button" 
+            class="bewertung-btn" 
+            id="${buttonId}"
+            data-day="${dayKey}"
+            data-kategorie="${categoryKey}"
+            data-datum="${dayDate.toISOString().split('T')[0]}"
+            data-rezepte='${JSON.stringify(rezeptNamen)}'
+            title="Kategorie bewerten"
+            ${!isDateRatable ? 'disabled' : ''}
+            onclick="handleBewertungClick('${dayKey}', '${categoryKey}', ${JSON.stringify(rezeptNamen).replace(/"/g, '&quot;')}, '${dayDate.toISOString()}')"
+        >
+            <i class="bi bi-star-fill"></i>
+        </button>
+    `;
+}
+
+/**
+ * Handler für Bewertungs-Button Clicks
+ * @param {string} dayKey - Wochentag-Key
+ * @param {string} categoryKey - Kategorie-Key
+ * @param {string[]} rezeptNamen - Namen der Rezepte
+ * @param {string} dateString - ISO-String des Datums
+ */
+function handleBewertungClick(dayKey, categoryKey, rezeptNamen, dateString) {
+    const dayDate = new Date(dateString);
+    
+    console.log('🎯 Bewertungs-Button geklickt:', {
+        tag: dayKey,
+        kategorie: categoryKey,
+        rezepte: rezeptNamen,
+        datum: dayDate
+    });
+    
+    // Modal öffnen
+    openBewertungModal(dayKey, categoryKey, rezeptNamen, dayDate);
+}
+
+// Globale Handler-Funktion für onclick-Attribute verfügbar machen
+window.handleBewertungClick = handleBewertungClick;

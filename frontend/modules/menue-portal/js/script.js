@@ -16,6 +16,10 @@ import { initMenuePortalAPI } from './module/menue-portal-api.js';
 import { initMenuePortalUI } from './module/menue-portal-ui.js';
 import { initMenuePortalAuth } from './module/menue-portal-auth.js';
 
+// Bewertungsmodule
+import './module/bewertung-api.js';
+import './module/bewertung-modal.js';
+
 /**
  * Hauptinitialisierung des Menü-Portals
  */
