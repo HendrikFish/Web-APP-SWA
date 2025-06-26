@@ -221,14 +221,26 @@ describe('Authentication API', () => {
         });
 
         it('sollte nicht-approved Benutzer ablehnen', async () => {
+            // Debug: Prüfen dass der User existiert aber nicht approved ist
+            const existingUser = await User.findOne({ email: 'pending@example.com' });
+            expect(existingUser).toBeTruthy();
+            expect(existingUser.isApproved).toBe(false);
+            
             const response = await request(app)
                 .post('/api/auth/login')
                 .send({
                     email: 'pending@example.com',
                     password: 'testPassword123'
-                })
-                .expect(401);
+                });
 
+            // Debug Info für Fehleranalyse
+            if (response.status !== 401) {
+                console.log('Expected 401, got:', response.status);
+                console.log('Response body:', JSON.stringify(response.body, null, 2));
+                console.log('User isApproved:', existingUser.isApproved);
+            }
+
+            expect(response.status).toBe(401);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toContain('genehmigt');
         });

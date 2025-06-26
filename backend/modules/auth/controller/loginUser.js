@@ -13,13 +13,6 @@ const generateToken = (id) => {
  * Authentifiziert einen Benutzer anhand von E-Mail und Passwort.
  */
 async function loginUser(req, res) {
-    console.log('🚀 LOGIN REQUEST RECEIVED:', {
-        email: req.body.email,
-        hasPassword: !!req.body.password,
-        JWT_SECRET: !!process.env.JWT_SECRET,
-        MONGODB_URI: !!process.env.MONGODB_URI
-    });
-
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -31,15 +24,7 @@ async function loginUser(req, res) {
 
     try {
         // Finde den Benutzer anhand der E-Mail
-        console.log('🔍 Suche User mit Email:', email);
         const user = await User.findOne({ email });
-        
-        console.log('🔍 USER LOOKUP RESULT:', {
-            email,
-            userFound: !!user,
-            userApproved: user ? user.isApproved : 'N/A',
-            hashedPassword: user ? user.password.substring(0, 20) + '...' : 'N/A'
-        });
 
         // Überprüfe, ob der Benutzer existiert UND das Passwort übereinstimmt
         if (user && (await user.matchPassword(password))) {
@@ -67,11 +52,7 @@ async function loginUser(req, res) {
             });
         }
     } catch (error) {
-        console.error("❌ DETAILED LOGIN ERROR:", {
-            message: error.message,
-            stack: error.stack,
-            name: error.name
-        });
+        console.error("Fehler beim Login:", error);
         res.status(500).json({ 
             success: false,
             message: "Serverfehler beim Login." 
