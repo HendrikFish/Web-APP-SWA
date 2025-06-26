@@ -129,6 +129,16 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
             const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
             const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
             istZugewiesen = istMenu1Zugewiesen || istMenu2Zugewiesen;
+            
+            // Debug-Logging
+            console.log(`Desktop Debug - ${dayKey} ${categoryKey}:`, {
+                einrichtungId: currentEinrichtung.id,
+                einrichtungName: currentEinrichtung.name,
+                istMenu1Zugewiesen,
+                istMenu2Zugewiesen,
+                istZugewiesen,
+                recipes: recipes.length
+            });
         } else {
             istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
         }
