@@ -68,7 +68,7 @@ async function createBewertung(req, res) {
         // Bewertungsdatei-Pfad
         const bewertungDateiPfad = path.join(
             __dirname, 
-            '../../../shared/data/portal/bewertungen',
+            '../../../../shared/data/portal/bewertungen',
             jahr.toString(),
             `${kalenderwoche}.json`
         );

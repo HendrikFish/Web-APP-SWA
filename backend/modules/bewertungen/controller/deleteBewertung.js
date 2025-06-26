@@ -28,7 +28,7 @@ async function deleteBewertung(req, res) {
         for (const jahr of jahre) {
             const jahresVerzeichnis = path.join(
                 __dirname, 
-                '../../../shared/data/portal/bewertungen',
+                '../../../../shared/data/portal/bewertungen',
                 jahr.toString()
             );
 

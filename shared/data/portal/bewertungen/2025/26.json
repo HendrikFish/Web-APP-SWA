@@ -20,6 +20,23 @@
           "timestamp": "2025-06-26T12:58:42.169Z",
           "menueplan_datum": "2025-06-22"
         }
+      ],
+      "menu": [
+        {
+          "id": "227cfe1b-5758-45c7-9e88-e1d549c47b5f",
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "einrichtung_id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "einrichtung_name": "Hendrik Fischer",
+          "rezepte": [
+            "Mozzarella-Tomate"
+          ],
+          "geschmack": 5,
+          "optik": 5,
+          "verbesserungsvorschlag": "dsfevfefvefgereferfef",
+          "timestamp": "2025-06-26T13:05:50.902Z",
+          "menueplan_datum": "2025-06-22"
+        }
       ]
     },
     "dienstag": {},

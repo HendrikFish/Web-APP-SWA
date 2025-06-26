@@ -22,9 +22,9 @@ async function getBewertungen(req, res) {
         }
 
         // Bewertungsdatei-Pfad
-        const bewertungDateiPfad = path.join(
-            __dirname, 
-            '../../../shared/data/portal/bewertungen',
+                const bewertungDateiPfad = path.join(
+            __dirname,
+            '../../../../shared/data/portal/bewertungen',
             jahr.toString(),
             `${kalenderwoche}.json`
         );
