@@ -8,42 +8,42 @@ const { getAuswertung } = require('./controller/getAuswertung');
 const { deleteBewertung } = require('./controller/deleteBewertung');
 
 // Middleware
-const { authMiddleware } = require('../../middleware/authMiddleware');
+const { protect } = require('../../middleware/authMiddleware');
 
 /**
  * @route POST /api/bewertungen
  * @desc Neue Bewertung erstellen
  * @access Private (angemeldete Benutzer)
  */
-router.post('/', authMiddleware, createBewertung);
-
-/**
- * @route GET /api/bewertungen/:year/:week
- * @desc Bewertungen für eine bestimmte KW abrufen
- * @access Private
- */
-router.get('/:year/:week', authMiddleware, getBewertungen);
+router.post('/', protect, createBewertung);
 
 /**
  * @route GET /api/bewertungen/auswertung/:year/:week
  * @desc Auswertung und Statistiken für eine KW
  * @access Private (nur Admin/Küchenpersonal)
  */
-router.get('/auswertung/:year/:week', authMiddleware, getAuswertung);
+router.get('/auswertung/:year/:week', protect, getAuswertung);
+
+/**
+ * @route GET /api/bewertungen/:year/:week
+ * @desc Bewertungen für eine bestimmte KW abrufen
+ * @access Private
+ */
+router.get('/:year/:week', protect, getBewertungen);
 
 /**
  * @route DELETE /api/bewertungen/:bewertungId
  * @desc Bewertung löschen (nur eigene Bewertungen)
  * @access Private
  */
-router.delete('/:bewertungId', authMiddleware, deleteBewertung);
+router.delete('/:bewertungId', protect, deleteBewertung);
 
 /**
  * @route GET /api/bewertungen/zeitfenster
  * @desc Verfügbare Bewertungs-Zeitfenster (letzte 10 Tage)
  * @access Private
  */
-router.get('/zeitfenster', authMiddleware, (req, res) => {
+router.get('/zeitfenster', protect, (req, res) => {
     try {
         const heute = new Date();
         const zehnTageZurueck = new Date();
