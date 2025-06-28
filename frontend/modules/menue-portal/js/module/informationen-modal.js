@@ -510,15 +510,7 @@ window.editInformation = function(informationId) {
     }, 100);
 };
 
-/**
- * Füllt das Formular mit bestehenden Daten
- * @param {object} information - Information-Objekt
- */
-function fillFormWithData(information) {
-    document.getElementById('information-titel').value = information.titel || '';
-    document.getElementById('information-inhalt').value = information.inhalt || '';
-    document.getElementById('information-prioritaet').value = information.prioritaet || 'normal';
-}
+// Funktion fillFormWithData wird aus informationen-modal-ui.js importiert
 
 /**
  * Löscht eine Information nach Bestätigung
