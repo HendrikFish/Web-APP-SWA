@@ -9,7 +9,7 @@ import { showToast } from '@shared/components/toast-notification/toast-notificat
  * Standard-Konfiguration für API-Aufrufe
  */
 const DEFAULT_CONFIG = {
-    timeout: 10000, // 10 Sekunden Timeout
+    timeout: 15000, // 15 Sekunden Timeout für bessere Stabilität
     retries: 3,     // 3 Wiederholungsversuche
     retryDelay: 1000 // 1 Sekunde Verzögerung zwischen Versuchen
 };
@@ -80,13 +80,20 @@ class ApiClient {
             
             // Timeout-Controller für Anfrage
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+            let isCompleted = false;
+            
+            const timeoutId = setTimeout(() => {
+                if (!isCompleted) {
+                    controller.abort('Request timeout');
+                }
+            }, this.config.timeout);
             
             const response = await fetch(fullUrl, {
                 ...requestOptions,
                 signal: controller.signal
             });
 
+            isCompleted = true;
             clearTimeout(timeoutId);
 
             // Response verarbeiten
@@ -138,7 +145,10 @@ class ApiClient {
 
         // Spezielle Fehlerbehandlung
         if (error.name === 'AbortError') {
-            throw new ApiError('REQUEST_TIMEOUT', 'Anfrage-Timeout erreicht', error);
+            const timeoutMessage = error.reason === 'Request timeout' 
+                ? 'Anfrage-Timeout erreicht'
+                : 'Anfrage wurde abgebrochen';
+            throw new ApiError('REQUEST_TIMEOUT', timeoutMessage, error);
         }
 
         if (error instanceof HttpError) {
@@ -147,8 +157,8 @@ class ApiClient {
             throw error;
         }
 
-        // Netzwerk-Fehler → Retry-Logic
-        if (attempt < this.config.retries && this.shouldRetry(error)) {
+        // Netzwerk-Fehler → Retry-Logic (aber nicht bei Timeout-Fehlern)
+        if (attempt < this.config.retries && this.shouldRetry(error) && error.name !== 'AbortError') {
             console.log(`🔄 Wiederhole Request in ${this.config.retryDelay}ms...`);
             await this.delay(this.config.retryDelay);
             return this.makeRequest(url, options, attempt + 1);
