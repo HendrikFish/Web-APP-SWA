@@ -160,48 +160,44 @@ export function renderMobileAccordion(
     accordionHtml += '</div>';
     container.innerHTML = accordionHtml;
     
-    // Bootstrap Accordion-Komponenten nach dem Rendern initialisieren
-    // Warte einen Tick, damit das DOM vollständig geladen ist
+    // Einfache, robuste Accordion-Funktionalität ohne Bootstrap-Konflikte
     setTimeout(() => {
-        const accordionItems = container.querySelectorAll('.accordion-item');
-        accordionItems.forEach(item => {
-            const button = item.querySelector('.accordion-button');
-            const collapse = item.querySelector('.accordion-collapse');
+        const accordionButtons = container.querySelectorAll('.accordion-button');
+        
+        accordionButtons.forEach(button => {
+            // Entferne alle Bootstrap-Event-Listener
+            button.removeAttribute('data-bs-toggle');
+            button.removeAttribute('data-bs-target');
             
-            if (button && collapse) {
-                // Bootstrap Collapse-Instanz erstellen
-                const bsCollapse = new bootstrap.Collapse(collapse, {
-                    toggle: false // Nicht automatisch öffnen
-                });
+            // Stelle sicher, dass alle Buttons initial collapsed sind
+            button.classList.add('collapsed');
+            button.setAttribute('aria-expanded', 'false');
+            
+            const targetId = button.getAttribute('aria-controls');
+            const targetCollapse = container.querySelector(`#${targetId}`);
+            
+            if (targetCollapse) {
+                // Stelle sicher, dass alle Collapses initial geschlossen sind
+                targetCollapse.classList.remove('show');
                 
-                // Event-Listener für Button-Klicks
+                // Eigener Click-Handler
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     
                     const isExpanded = button.getAttribute('aria-expanded') === 'true';
                     
                     if (isExpanded) {
                         // Schließen
-                        bsCollapse.hide();
                         button.classList.add('collapsed');
                         button.setAttribute('aria-expanded', 'false');
+                        targetCollapse.classList.remove('show');
                     } else {
                         // Öffnen
-                        bsCollapse.show();
                         button.classList.remove('collapsed');
                         button.setAttribute('aria-expanded', 'true');
+                        targetCollapse.classList.add('show');
                     }
-                });
-                
-                // Event-Listener für Collapse-Events
-                collapse.addEventListener('shown.bs.collapse', () => {
-                    button.classList.remove('collapsed');
-                    button.setAttribute('aria-expanded', 'true');
-                });
-                
-                collapse.addEventListener('hidden.bs.collapse', () => {
-                    button.classList.add('collapsed');
-                    button.setAttribute('aria-expanded', 'false');
                 });
             }
         });
