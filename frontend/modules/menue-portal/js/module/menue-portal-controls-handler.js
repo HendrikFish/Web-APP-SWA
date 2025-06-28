@@ -9,10 +9,12 @@ import {
 import { 
     isMobileView,
     updateMobileDetection,
-    updateWeekDisplay,
+    updateWeekDisplay
+} from './menue-portal-ui-utils.js';
+import { 
     getMondayOfWeek,
     formatDate
-} from './menue-portal-ui-utils.js';
+} from './menue-portal-api.js';
 
 // Controls State
 let eventListenersInitialized = false;
