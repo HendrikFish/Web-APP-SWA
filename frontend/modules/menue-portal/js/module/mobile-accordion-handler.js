@@ -138,7 +138,7 @@ export function renderMobileAccordion(
                                         
                                         const istRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, false);
                                         return count + (istRelevant ? recipes.length : 0);
-                                    }, 0)} Gerichte
+                                    }, 0)} Komponente/n
                                 </span>
                             </div>
                         </div>
