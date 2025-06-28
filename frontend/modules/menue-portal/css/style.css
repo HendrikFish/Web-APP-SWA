@@ -1407,16 +1407,40 @@
 
 /* Mobile Anpassungen für Informations-Modal */
 @media (max-width: 768px) {
+    .information-modal {
+        /* Touch-Scrolling aktivieren */
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+    }
+    
     .information-modal-content {
         width: 95%;
-        margin: 1rem;
-        max-height: 95vh;
+        margin: 0.5rem;
+        max-height: 98vh; /* Mehr Platz nutzen */
+        display: flex;
+        flex-direction: column;
+        /* Touch-Scrolling für den Content */
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .information-modal-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Bessere Touch-Behandlung */
+        touch-action: pan-y;
     }
     
     .information-modal-header,
-    .information-modal-body,
     .information-modal-footer {
+        flex-shrink: 0; /* Header und Footer fixiert */
         padding: 1rem;
+    }
+    
+    .information-modal-body {
+        padding: 1rem;
+        /* Explizite Scroll-Eigenschaften für bessere Mobile-Performance */
+        overscroll-behavior: contain;
     }
     
     .information-modal-header h3 {
@@ -1437,6 +1461,17 @@
         width: 28px;
         height: 28px;
         font-size: 0.7rem;
+    }
+    
+    /* Formular-Elemente für Touch optimieren */
+    .information-field .form-control {
+        min-height: 44px; /* Bessere Touch-Targets */
+        font-size: 16px; /* Verhindert iOS Zoom bei Input-Focus */
+    }
+    
+    .information-field textarea {
+        min-height: 120px;
+        resize: none; /* Resize deaktivieren auf Mobile */
     }
 }
 

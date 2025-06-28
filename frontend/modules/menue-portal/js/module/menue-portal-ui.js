@@ -391,27 +391,123 @@ function setupInformationEventListeners() {
     
     // Event-Listener für Information-Updates
     window.addEventListener('informationCreated', (e) => {
-        // UI neu laden um neue Information anzuzeigen
+        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
         loadInformationenData().then(() => {
-            renderMenuplan();
+            updateInformationButtons();
         });
     });
     
     window.addEventListener('informationUpdated', (e) => {
-        // UI neu laden um aktualisierte Information anzuzeigen
+        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
         loadInformationenData().then(() => {
-            renderMenuplan();
+            updateInformationButtons();
         });
     });
     
     window.addEventListener('informationDeleted', (e) => {
-        // UI neu laden um gelöschte Information zu verstecken
+        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
         loadInformationenData().then(() => {
-            renderMenuplan();
+            updateInformationButtons();
         });
     });
     
     console.log('📋 Informations-Event-Listener erfolgreich registriert');
+}
+
+/**
+ * Aktualisiert nur die Informations-Button-Zustände ohne UI-Neurendierung
+ */
+function updateInformationButtons() {
+    console.log('🔄 Aktualisiere nur Informations-Button-Zustände...');
+    
+    try {
+        const informationenData = window.currentInformationenData || {};
+        
+        // Alle Informations-Buttons finden
+        const allInfoButtons = document.querySelectorAll('.information-btn, .information-btn-desktop');
+        
+        allInfoButtons.forEach(button => {
+            // Tag und Kategorie des Buttons ermitteln
+            const categoryElement = button.closest('.category-section, .grid-content-cell');
+            if (!categoryElement) return;
+            
+            const dayKey = categoryElement.getAttribute('data-day') || getDayFromButton(categoryElement);
+            const categoryKey = categoryElement.getAttribute('data-category') || getCategoryFromButton(categoryElement);
+            
+            if (!dayKey || !categoryKey) return;
+            
+            // Prüfen ob Informationen für diesen Tag vorhanden sind
+            const tagInformationen = informationenData[dayKey] || [];
+            const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
+            
+            // Button-Zustand entsprechend setzen
+            if (activeInformationen.length > 0) {
+                button.classList.add('has-info');
+            } else {
+                button.classList.remove('has-info');
+            }
+        });
+        
+        console.log('✅ Informations-Button-Zustände erfolgreich aktualisiert');
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Aktualisieren der Informations-Button-Zustände:', error);
+    }
+}
+
+/**
+ * Hilfsfunktion: Ermittelt Tag-Key aus Button-Element
+ */
+function getDayFromButton(element) {
+    // Verschiedene Strategien versuchen
+    let dayKey = element.getAttribute('data-day');
+    if (dayKey) return dayKey;
+    
+    // In Accordion-Structure
+    const accordionItem = element.closest('.accordion-item');
+    if (accordionItem) {
+        dayKey = accordionItem.getAttribute('data-day');
+        if (dayKey) return dayKey;
+    }
+    
+    // In Desktop-Grid
+    const dayCard = element.closest('.day-card');
+    if (dayCard) {
+        dayKey = dayCard.getAttribute('data-day');
+        if (dayKey) return dayKey;
+    }
+    
+    // Fallback: aus DOM-Struktur ableiten
+    const dayHeader = element.closest('[data-day]');
+    if (dayHeader) {
+        return dayHeader.getAttribute('data-day');
+    }
+    
+    return null;
+}
+
+/**
+ * Hilfsfunktion: Ermittelt Kategorie-Key aus Button-Element
+ */
+function getCategoryFromButton(element) {
+    // Verschiedene Strategien versuchen
+    let categoryKey = element.getAttribute('data-category');
+    if (categoryKey) return categoryKey;
+    
+    // In Category-Section
+    const categorySection = element.closest('.category-section');
+    if (categorySection) {
+        categoryKey = categorySection.getAttribute('data-category');
+        if (categoryKey) return categoryKey;
+    }
+    
+    // Fallback: aus DOM-Struktur ableiten
+    const categoryElement = element.closest('[data-category]');
+    if (categoryElement) {
+        return categoryElement.getAttribute('data-category');
+    }
+    
+    return null;
 }
 
 /**

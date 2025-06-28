@@ -40,5 +40,66 @@
         "einrichtung_name": "Hendrik Fischer"
       }
     ]
+  },
+  "dienstag": {
+    "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": [
+      {
+        "id": "8894d5a8-aea6-4f06-8012-dda0aefafbf3",
+        "titel": "edrr",
+        "inhalt": "edeefrefrfrfrfrtftrfr",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:34:45.985Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:34:45.985Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "a631322f-f86e-4538-88b5-5341c48a0c15",
+        "titel": "Hendlbrust",
+        "inhalt": "dcefcefcrfcvrfvcrfcvrf",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:36:31.202Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:36:31.202Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "b7c25a28-aac7-42ea-aeae-31bbda06c157",
+        "titel": "efcfecrefcrefcrefc",
+        "inhalt": "efcrefcrefcrefcredfcrefc",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:36:41.706Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:36:41.706Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      }
+    ]
   }
 }

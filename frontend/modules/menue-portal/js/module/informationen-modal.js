@@ -121,7 +121,18 @@ export function closeInformationModal() {
     const modal = document.getElementById('information-modal');
     if (modal) {
         modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        
+        // Mobile: Body-Position und Scroll wiederherstellen
+        if (window.innerWidth <= 768) {
+            const scrollY = modal.getAttribute('data-scroll-y') || '0';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.top = '';
+            document.body.style.overflow = 'auto';
+            window.scrollTo(0, parseInt(scrollY));
+        } else {
+            document.body.style.overflow = 'auto';
+        }
     }
     
     // State zurücksetzen
@@ -349,7 +360,20 @@ function showModal() {
     const modal = document.getElementById('information-modal');
     if (modal) {
         modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        
+        // Mobile: Body-Overflow nur auf Desktop blockieren
+        if (window.innerWidth > 768) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Mobile: Body-Scrolling erlauben für bessere Touch-Erfahrung
+            document.body.style.overflow = 'auto';
+            // Prevent scroll-behind für Hintergrund-Content
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.top = `-${window.scrollY}px`;
+            // Scroll-Position für später speichern
+            modal.setAttribute('data-scroll-y', window.scrollY.toString());
+        }
         
         // Focus auf erstes Input
         setTimeout(() => {
