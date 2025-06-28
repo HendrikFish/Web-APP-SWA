@@ -67,12 +67,28 @@ class ApiClient {
      * Führt einen HTTP-Request mit Retry-Logic aus
      */
     async makeRequest(url, options = {}, attempt = 1) {
-        const fullUrl = url.startsWith('/') ? `${this.baseURL}${url}` : url;
+        let fullUrl = url.startsWith('/') ? `${this.baseURL}${url}` : url;
+        
+        // Query-Parameter verarbeiten
+        if (options.params && Object.keys(options.params).length > 0) {
+            const urlParams = new URLSearchParams();
+            Object.entries(options.params).forEach(([key, value]) => {
+                if (value !== null && value !== undefined) {
+                    urlParams.append(key, value);
+                }
+            });
+            const queryString = urlParams.toString();
+            if (queryString) {
+                fullUrl += (fullUrl.includes('?') ? '&' : '?') + queryString;
+            }
+        }
         
         const requestOptions = {
             headers: this.getHeaders(options.headers),
             timeout: this.config.timeout,
-            ...options
+            ...options,
+            // params sollten nicht an fetch weitergegeben werden
+            params: undefined
         };
 
         try {

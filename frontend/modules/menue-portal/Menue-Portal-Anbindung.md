@@ -14,6 +14,7 @@ Das Menue-Portal-Modul nutzt verschiedene Datenquellen:
   - `/api/user/current` - Aktueller Benutzer mit Einrichtungszuordnungen
   - `/api/menueplan/{year}/{week}` - Menüplan für spezifische Woche
   - `/api/portal/stammdaten` - Portal-spezifische Stammdaten
+  - `/api/informationen` - Informations-CRUD-Operationen (NEU - Januar 2026)
 
 - **Shared-Data:**
   - `shared/data/portal/portal-stammdaten.json` - Kategorien und Konfiguration
@@ -68,7 +69,57 @@ Das Menue-Portal-Modul nutzt verschiedene Datenquellen:
 }
 ```
 
-## 4. Wichtige Backend-Controller
+## 4. Informations-API-Datenstruktur (NEU - Januar 2026)
+
+### Informations-CRUD-Endpunkte
+- **GET** `/api/informationen?jahr=2025&kalenderwoche=26&einrichtung_id=xyz` - Informationen laden
+- **POST** `/api/informationen` - Neue Information erstellen
+- **PUT** `/api/informationen/:id` - Information bearbeiten
+- **DELETE** `/api/informationen/:id` - Information löschen
+
+### Informations-Datenstruktur
+```json
+{
+  "montag": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "titel": "Wichtiger Hinweis zum Menü",
+      "inhalt": "Heute gibt es eine Änderung beim Dessert...",
+      "prioritaet": "hoch",
+      "einrichtung_id": "einrichtung-abc-123",
+      "einrichtung_name": "Haus Sonnenschein",
+      "ersteller_id": "user-123",
+      "ersteller_name": "Max Mustermann",
+      "erstellt_am": "2025-01-26T10:30:00.000Z",
+      "aktualisiert_am": "2025-01-26T14:15:00.000Z",
+      "soft_deleted": false
+    }
+  ]
+}
+```
+
+### Prioritätsstufen
+- **kritisch**: Dringende Informationen (rot)
+- **hoch**: Wichtige Informationen (gelb)
+- **normal**: Standard-Informationen (blau)
+- **niedrig**: Optionale Informationen (grau)
+
+### API-Client Fix (Critical)
+**Problem behoben**: Query-Parameter wurden nicht korrekt übertragen (400 Bad Request)
+```javascript
+// URLSearchParams korrekt implementiert
+if (options.params && Object.keys(options.params).length > 0) {
+    const urlParams = new URLSearchParams();
+    Object.entries(options.params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+            urlParams.append(key, value);
+        }
+    });
+    fullUrl += '?' + urlParams.toString();
+}
+```
+
+## 5. Wichtige Backend-Controller
 
 - **`getPortalStammdaten.js`**: Liefert Portal-spezifische Konfigurationsdaten
 - **`getCurrentUser.js`**: Holt aktuellen Benutzer mit Einrichtungszuordnungen
@@ -95,6 +146,12 @@ export async function loadMenuplanForEinrichtung(einrichtungId, year, week);
 
 // Portal-Stammdaten abrufen
 export async function getPortalStammdaten();
+
+// Informations-CRUD-Operationen (NEU - Januar 2026)
+export async function loadInformationen(jahr, kalenderwoche, einrichtungId);
+export async function createInformation(informationData);
+export async function updateInformation(informationId, informationData);
+export async function deleteInformation(informationId);
 ```
 
 ### Performance-Optimierungen (Juni 2025)

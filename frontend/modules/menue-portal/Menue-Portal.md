@@ -89,6 +89,17 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 - **Benutzer-Authentifizierung**: Verknüpfung mit Benutzer und Einrichtung
 - **API-Integration**: Persistierung über Backend-API
 
+### 📋 **Informationssystem** (NEU - Januar 2026)
+- **Vollständiges CRUD-Management**: Erstellen, Anzeigen, Bearbeiten, Löschen von Informationen
+- **Zweistufiges Modal-System**: Übersichtsmodus und Formular-Modus für optimale UX
+- **Hauptspeisen-fokussiert**: Informations-Icon nur bei Hauptspeisen (`menu1`, `menu2`, `menu`, `hauptspeise`)
+- **Prioritätssystem**: 4 Stufen (kritisch, hoch, normal, niedrig) mit Farbcodierung
+- **Automatische Sortierung**: Informationen nach Priorität geordnet (kritisch zuerst)
+- **Metadata-Tracking**: Ersteller, Erstellungsdatum, letzte Bearbeitung
+- **Responsive Design**: Mobile und Desktop optimiert
+- **Event-basierte Updates**: Automatische UI-Aktualisierung nach Änderungen
+- **API-Integration**: RESTful Backend mit JSON-Persistierung
+
 ### 📦 **Bestellfunktionalität** (Nur externe Einrichtungen)
 - **Gruppenbasierte Bestellungen**: Bestellungen nach Bewohnergruppen organisiert
 - **Automatische Berechnungen**: Suppen und Desserts automatisch basierend auf Hauptspeisen
@@ -151,6 +162,8 @@ frontend/modules/menue-portal/
 │       ├── menue-portal-auth.js      # Authentifizierung
 │       ├── bewertung-api.js          # Bewertungs-API-Calls
 │       ├── bewertung-modal.js        # Bewertungs-Modal UI
+│       ├── informationen-api.js      # Informations-API-Calls (NEU)
+│       ├── informationen-modal.js    # Informations-Management-Modal (NEU)
 │       ├── bestellung-handler.js     # Bestellfunktionalität
 │       ├── mobile-accordion-handler.js # Mobile Accordion-Layout
 │       └── desktop-calendar-handler.js # Desktop Grid-Layout
@@ -183,6 +196,14 @@ Die UI ist in spezialisierte Handler aufgeteilt:
 - LocalStorage-Persistierung
 - Export/Import-Funktionalität
 - **Event-Delegation**: Optimierte Event-Behandlung
+
+#### **Informations Handler** (NEU - Januar 2026)
+- **CRUD-Operationen**: Vollständige Datenverwaltung für Informationen
+- **Zweistufiges Modal**: Übersicht und Formular-Modus mit seamloser Navigation
+- **API-Integration**: RESTful Backend-Kommunikation mit Query-Parameter-Fix
+- **Event-System**: Custom Events für UI-Updates (`informationCreated`, `informationUpdated`, `informationDeleted`)
+- **State Management**: Saubere Trennung zwischen Bearbeitung und Übersicht
+- **Prioritäts-Management**: Farbcodierte Prioritätsstufen mit automatischer Sortierung
 
 ### Performance-Optimierungen
 

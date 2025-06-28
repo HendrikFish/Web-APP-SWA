@@ -1,5 +1,182 @@
 # Menü-Portal Verbesserungen - Changelog
 
+## Januar 2026 - Informationssystem komplett implementiert
+
+### 🚀 Vollständiges Informations-Management-System
+
+**Problem**: Informations-Icon war überall sichtbar, aber Management-Funktionen fehlten
+- Icon-Click öffnete nur Erstellungsformular
+- Keine Übersicht über bestehende Informationen
+- Keine Bearbeitungsmöglichkeit für existierende Informationen
+- Keine Löschfunktion implementiert
+- API-Parameter wurden nicht korrekt übertragen (400 Bad Request)
+
+**Lösung**: Vollständiges CRUD-System mit zweistufigem Modal-Design
+
+#### ✅ **Informations-Icon optimiert**
+```javascript
+// Jetzt nur noch bei Hauptspeisen sichtbar
+if (!['menu1', 'menu2', 'menu', 'hauptspeise'].includes(categoryKey)) {
+    return ''; // Icon ausblenden
+}
+```
+
+#### ✅ **Zweistufiges Modal-System**
+1. **Übersichts-Modus**: Zeigt alle Informationen eines Tages
+2. **Formular-Modus**: Erstellen/Bearbeiten von Informationen
+
+```javascript
+// Management-Modal öffnen (Übersicht)
+openInformationManagementModal(dayKey, datum);
+
+// Direktes Erstellen
+openNewInformationModal(dayKey, datum);
+
+// Bearbeiten bestehender Information
+openEditInformationModal(information, tag, datum);
+```
+
+#### ✅ **API-Client erweitert**
+**Problem behoben**: Query-Parameter wurden nicht übertragen
+```javascript
+// VORHER: Parameter gingen verloren
+fetch('/api/informationen') // ❌ Keine Parameter
+
+// NACHHER: URLSearchParams korrekt implementiert
+if (options.params && Object.keys(options.params).length > 0) {
+    const urlParams = new URLSearchParams();
+    Object.entries(options.params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+            urlParams.append(key, value);
+        }
+    });
+    fullUrl += '?' + urlParams.toString();
+}
+// ✅ /api/informationen?jahr=2025&kalenderwoche=26&einrichtung_id=xyz
+```
+
+### 🎨 **Benutzerfreundliche Oberfläche**
+
+#### **Prioritätssystem mit Farbcodierung**
+```css
+.priority-kritisch { background-color: #f8d7da; color: #721c24; }
+.priority-hoch     { background-color: #fff3cd; color: #856404; }
+.priority-normal   { background-color: #d1ecf1; color: #0c5460; }
+.priority-niedrig  { background-color: #f8f9fa; color: #6c757d; }
+```
+
+#### **Automatische Sortierung**
+```javascript
+// Informationen nach Priorität sortieren
+const priorityOrder = { 'kritisch': 4, 'hoch': 3, 'normal': 2, 'niedrig': 1 };
+activeInformationen.sort((a, b) => priorityOrder[b.prioritaet] - priorityOrder[a.prioritaet]);
+```
+
+#### **Metadata-Anzeige**
+```html
+<div class="information-meta">
+    <i class="bi bi-person"></i> Erstellt von: ${info.ersteller_name}
+    <i class="bi bi-clock"></i> ${erstelltAm}
+    ${bearbeitetInfo} <!-- Wenn bearbeitet -->
+</div>
+```
+
+### 🔧 **Backend-Integration**
+
+#### **Vollständige CRUD-API**
+```javascript
+GET    /api/informationen?jahr=2025&kalenderwoche=26&einrichtung_id=xyz
+POST   /api/informationen
+PUT    /api/informationen/:id
+DELETE /api/informationen/:id
+```
+
+#### **JSON-Dateistruktur**
+```json
+{
+  "montag": [
+    {
+      "id": "uuid",
+      "titel": "Wichtiger Hinweis",
+      "inhalt": "Beschreibung...",
+      "prioritaet": "hoch",
+      "ersteller_name": "Admin System",
+      "erstellt_am": "2025-01-26T10:30:00.000Z",
+      "aktualisiert_am": "2025-01-26T14:15:00.000Z",
+      "soft_deleted": false
+    }
+  ]
+}
+```
+
+### 📱 **Responsive Design**
+
+#### **Mobile Optimierungen**
+```css
+@media (max-width: 768px) {
+    .information-header { flex-direction: column; }
+    .information-actions { width: 100%; justify-content: flex-end; }
+    .overview-footer .btn { width: 100%; }
+}
+```
+
+### 🔄 **Event-System & State Management**
+
+#### **Custom Events für UI-Updates**
+```javascript
+// Nach Erstellung/Bearbeitung/Löschung
+window.dispatchEvent(new CustomEvent('informationCreated', {
+    detail: { information, tag, datum }
+}));
+
+window.dispatchEvent(new CustomEvent('informationUpdated', {
+    detail: { information, tag, datum }
+}));
+
+window.dispatchEvent(new CustomEvent('informationDeleted', {
+    detail: { informationId, tag }
+}));
+```
+
+#### **Nahtlose Navigation**
+```javascript
+// Nach Speichern: Zurück zur Übersicht
+await loadAndDisplayInformationen(tag);
+showOverviewMode();
+
+// Zwischen Modi wechseln
+showFormMode();   // Formular anzeigen
+showOverviewMode(); // Übersicht anzeigen
+```
+
+### 🚨 **Breaking Changes**
+- `handleInformationClick()` öffnet jetzt Management-Modal statt Erstellungsformular
+- Neue CSS-Klassen für Informations-Management erforderlich
+
+### 📋 **Implementierte Features**
+
+- [x] ✅ Informations-Icon nur bei Hauptspeisen (`menu1`, `menu2`, `menu`, `hauptspeise`)
+- [x] ✅ Übersichtsmodus mit allen Informationen eines Tages
+- [x] ✅ CRUD-Operationen: Erstellen, Bearbeiten, Löschen
+- [x] ✅ Prioritätssystem mit Farbcodierung (kritisch, hoch, normal, niedrig)
+- [x] ✅ Automatische Sortierung nach Priorität
+- [x] ✅ Metadata-Anzeige (Ersteller, Datum, letzte Bearbeitung)
+- [x] ✅ Responsive Design für Mobile und Desktop
+- [x] ✅ API-Client Query-Parameter Fix (400 Bad Request behoben)
+- [x] ✅ Bestätigungsdialoge für Löschaktionen
+- [x] ✅ Nahtlose Navigation zwischen Übersicht und Formular
+- [x] ✅ Auto-Refresh nach Aktionen
+- [x] ✅ Event-System für UI-Updates
+
+### 🔧 **Git-Commits**
+1. `fix: API-Client Query-Parameter korrekt übertragen`
+2. `feat: Informations-Icon nur bei Hauptspeisen anzeigen`
+3. `feat: Vollständiges Informations-Management-Modal implementiert`
+4. `feat: CRUD-Operationen für Informationen hinzugefügt`
+5. `feat: Prioritätssystem mit Farbcodierung`
+6. `feat: Responsive Design für Informations-Modal`
+7. `docs: Dokumentation für Informationssystem aktualisiert`
+
 ## Dezember 2025 - Bestellungs-API Migration
 
 ### 🚀 LocalStorage → JSON-API Migration (Critical Update)

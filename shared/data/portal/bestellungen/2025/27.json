@@ -1,0 +1,84 @@
+{
+  "year": 2025,
+  "week": 27,
+  "erstellt_am": "2025-06-28T12:54:59.540Z",
+  "letzte_änderung": "2025-06-28T13:28:05.510Z",
+  "einrichtungen": {
+    "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
+      "info": {
+        "id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+        "name": "Hendrik Fischer",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "dd",
+            "anzahl": 8
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-28T13:28:05.510Z"
+      },
+      "tage": {
+        "dienstag": {
+          "hauptspeise": {
+            "dd": 8
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 8,
+        "durchschnitt_pro_tag": 8,
+        "höchster_tag": "dienstag",
+        "niedrigster_tag": "dienstag"
+      },
+      "bestellhistorie": []
+    },
+    "353f0eeb-48e7-4fc8-a667-abaff01046e8": {
+      "info": {
+        "id": "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+        "name": "Limberg",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "KR",
+            "anzahl": 10
+          },
+          {
+            "name": "KG",
+            "anzahl": 23
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-28T12:55:13.935Z"
+      },
+      "tage": {
+        "mittwoch": {
+          "hauptspeise": {
+            "KR": 10,
+            "KG": 3
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 13,
+        "durchschnitt_pro_tag": 13,
+        "höchster_tag": "mittwoch",
+        "niedrigster_tag": "mittwoch"
+      },
+      "bestellhistorie": []
+    }
+  },
+  "wochenstatistik": {
+    "gesamt_einrichtungen": 2,
+    "gesamt_bestellungen": 21,
+    "durchschnitt_pro_einrichtung": 10.5,
+    "einrichtungstypen": {
+      "extern": 2
+    }
+  },
+  "metadaten": {
+    "bestellfrist": null,
+    "lieferwoche": null,
+    "status": "offen",
+    "änderungen_erlaubt": true,
+    "export_historie": []
+  }
+}

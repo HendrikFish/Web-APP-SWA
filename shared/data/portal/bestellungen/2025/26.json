@@ -2,7 +2,7 @@
   "year": 2025,
   "week": 26,
   "erstellt_am": "2025-06-23T08:00:00.000Z",
-  "letzte_änderung": "2025-06-28T12:17:56.298Z",
+  "letzte_änderung": "2025-06-28T15:30:00.553Z",
   "einrichtungen": {
     "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
       "info": {
@@ -15,30 +15,40 @@
             "anzahl": 8
           }
         ],
-        "letzte_aktualisierung": "2025-06-28T12:17:56.298Z"
+        "letzte_aktualisierung": "2025-06-28T15:30:00.553Z"
       },
       "tage": {
         "dienstag": {
           "hauptspeise": {
-            "dd": 5
+            "dd": 2
+          }
+        },
+        "freitag": {
+          "hauptspeise": {
+            "dd": 4
           }
         },
         "mittwoch": {
           "hauptspeise": {
-            "dd": 3
+            "dd": 4
           }
         },
         "montag": {
           "hauptspeise": {
-            "dd": 2
+            "dd": 8
+          }
+        },
+        "donnerstag": {
+          "hauptspeise": {
+            "dd": 4
           }
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 10,
-        "durchschnitt_pro_tag": 3.3333333333333335,
-        "höchster_tag": "dienstag",
-        "niedrigster_tag": "montag"
+        "gesamt_bestellungen": 22,
+        "durchschnitt_pro_tag": 4.4,
+        "höchster_tag": "montag",
+        "niedrigster_tag": "dienstag"
       }
     },
     "353f0eeb-48e7-4fc8-a667-abaff01046e8": {
@@ -55,28 +65,52 @@
             "name": "KG",
             "anzahl": 23
           }
-        ]
+        ],
+        "letzte_aktualisierung": "2025-06-28T13:07:51.135Z"
       },
       "tage": {
         "dienstag": {
           "hauptspeise": {
-            "KR": 1,
+            "KR": 10,
             "KG": 6
+          }
+        },
+        "mittwoch": {
+          "hauptspeise": {
+            "KR": 3,
+            "KG": 2
+          }
+        },
+        "montag": {
+          "hauptspeise": {
+            "KR": 12,
+            "KG": 3
+          }
+        },
+        "freitag": {
+          "hauptspeise": {
+            "KR": 3
+          }
+        },
+        "donnerstag": {
+          "hauptspeise": {
+            "KR": 3,
+            "KG": 33
           }
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 7,
-        "durchschnitt_pro_tag": 7,
-        "höchster_tag": "dienstag",
-        "niedrigster_tag": "dienstag"
+        "gesamt_bestellungen": 75,
+        "durchschnitt_pro_tag": 15,
+        "höchster_tag": "donnerstag",
+        "niedrigster_tag": "freitag"
       }
     }
   },
   "wochenstatistik": {
     "gesamt_einrichtungen": 2,
-    "gesamt_bestellungen": 17,
-    "durchschnitt_pro_einrichtung": 8.5,
+    "gesamt_bestellungen": 97,
+    "durchschnitt_pro_einrichtung": 48.5,
     "einrichtungstypen": {
       "extern": 2
     }

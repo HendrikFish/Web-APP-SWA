@@ -16,6 +16,8 @@ import {
 import { getAllEinrichtungen, getDefaultEinrichtung } from './menue-portal-auth.js';
 import { initBewertungModal, openBewertungModal } from './bewertung-modal.js';
 import { istDatumBewertbar } from './bewertung-api.js';
+import { initInformationModal, openNewInformationModal, openInformationManagementModal } from './informationen-modal.js';
+import { getInformationen } from './informationen-api.js';
 import { renderMobileAccordion } from './mobile-accordion-handler.js';
 import { renderDesktopCalendar } from './desktop-calendar-handler.js';
 import { 
@@ -51,6 +53,8 @@ let portalStammdaten = null;
 let eventListenersInitialized = false; // Flag um mehrfache Event-Listener zu verhindern
 let loadMenuplanTimeout = null; // Debouncing für loadAndDisplayMenuplan
 let bestellControlsInitialized = false; // Flag für Bestellkontrollen Event-Listener
+let currentInformationenData = {}; // Informationsdaten für aktuelle Woche
+window.currentInformationenData = currentInformationenData; // Global verfügbar
 
 /**
  * Initialisiert die UI-Module
@@ -100,8 +104,15 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Layout Event-Listener
         setupLayoutEventListeners();
         
+        // Informations Event-Listener
+        setupInformationEventListeners();
+        
         // Standard-Einrichtung wählen und Menüplan laden
         currentEinrichtung = getDefaultEinrichtung();
+        console.log('🏢 Standard-Einrichtung ermittelt:', currentEinrichtung ? 
+            `${currentEinrichtung.name} (ID: ${currentEinrichtung.id})` : 
+            'KEINE EINRICHTUNG GEFUNDEN');
+            
         if (currentEinrichtung) {
             window.currentEinrichtung = currentEinrichtung; // Global verfügbar
             
@@ -111,6 +122,11 @@ export async function initMenuePortalUI(user, einrichtungen) {
             await loadAndDisplayMenuplan();
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
+            // Informations-Modal initialisieren
+            initInformationModal(currentUser, currentEinrichtung);
+        } else {
+            console.error('❌ Keine Standard-Einrichtung verfügbar!');
+            showError('Keine Einrichtung verfügbar');
         }
         
         console.log('✅ Menü-Portal UI initialisiert');
@@ -160,10 +176,10 @@ function setupEinrichtungsSelector(einrichtungen) {
             <div class="card-body">
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <h6 class="card-title mb-0">
-                        <i class="bi bi-building"></i> Einrichtung wählen:
-                    </h6>
-                    <div class="btn-group-sm d-flex flex-wrap gap-2" role="group">
-                        ${buttonsHtml}
+                    <i class="bi bi-building"></i> Einrichtung wählen:
+                </h6>
+                <div class="btn-group-sm d-flex flex-wrap gap-2" role="group">
+                    ${buttonsHtml}
                     </div>
                 </div>
             </div>
@@ -276,14 +292,14 @@ function setupBestellControls() {
         const actionContainer = document.querySelector('.action-buttons-container');
         if (actionContainer) {
             actionContainer.addEventListener('click', (e) => {
-                if (e.target.id === 'export-bestellungen') {
-                    exportCurrentBestellungen();
-                } else if (e.target.id === 'clear-bestellungen') {
-                    clearCurrentBestellungen();
-                } else if (e.target.id === 'validate-bestellungen') {
-                    validateCurrentBestellungen();
-                }
-            });
+            if (e.target.id === 'export-bestellungen') {
+                exportCurrentBestellungen();
+            } else if (e.target.id === 'clear-bestellungen') {
+                clearCurrentBestellungen();
+            } else if (e.target.id === 'validate-bestellungen') {
+                validateCurrentBestellungen();
+            }
+        });
         }
         bestellControlsInitialized = true;
         console.log('✅ Bestellkontrollen Event-Listener initialisiert');
@@ -320,19 +336,19 @@ function updateBestellControlsContent() {
                     KW ${currentWeek}/${currentYear}:
                 </span>
                 <button type="button" class="btn btn-outline-success btn-sm" id="export-bestellungen">
-                    <i class="bi bi-download me-1"></i>
+                        <i class="bi bi-download me-1"></i>
                     Export
-                </button>
+                    </button>
                 <button type="button" class="btn btn-outline-warning btn-sm" id="clear-bestellungen">
-                    <i class="bi bi-trash me-1"></i>
-                    Löschen
-                </button>
+                        <i class="bi bi-trash me-1"></i>
+                        Löschen
+                    </button>
                 <button type="button" class="btn btn-outline-info btn-sm" id="validate-bestellungen">
-                    <i class="bi bi-check-circle me-1"></i>
-                    Prüfen
-                </button>
-            </div>
-        `;
+                        <i class="bi bi-check-circle me-1"></i>
+                        Prüfen
+                    </button>
+        </div>
+    `;
         actionContainer.insertAdjacentHTML('afterbegin', bestellButtons);
     }
 }
@@ -364,6 +380,57 @@ function setupLayoutEventListeners() {
     
     eventListenersInitialized = true;
     console.log('✅ Layout Event-Listener initialisiert');
+}
+
+/**
+ * Informations-Event-Listener (nur einmal registrieren)
+ */
+function setupInformationEventListeners() {
+    // Globale Funktion für Information-Click verfügbar machen
+    window.handleInformationClick = handleInformationClick;
+    
+    // Event-Listener für Information-Updates
+    window.addEventListener('informationCreated', (e) => {
+        // UI neu laden um neue Information anzuzeigen
+        loadInformationenData().then(() => {
+            renderMenuplan();
+        });
+    });
+    
+    window.addEventListener('informationUpdated', (e) => {
+        // UI neu laden um aktualisierte Information anzuzeigen
+        loadInformationenData().then(() => {
+            renderMenuplan();
+        });
+    });
+    
+    window.addEventListener('informationDeleted', (e) => {
+        // UI neu laden um gelöschte Information zu verstecken
+        loadInformationenData().then(() => {
+            renderMenuplan();
+        });
+    });
+    
+    console.log('📋 Informations-Event-Listener erfolgreich registriert');
+}
+
+/**
+ * Globale Funktion für Information-Click-Handler
+ * @param {string} dayKey - Wochentag-Key
+ * @param {string} isoDate - ISO-Datum-String
+ */
+function handleInformationClick(dayKey, isoDate) {
+    try {
+        const datum = new Date(isoDate);
+        console.log(`📋 Information-Click für ${dayKey}, ${datum.toLocaleDateString()}`);
+        
+        // Öffne das Management-Modal (Übersicht + Bearbeitung/Erstellung)
+        openInformationManagementModal(dayKey, datum);
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Öffnen des Informations-Modals:', error);
+        showToast('Fehler beim Öffnen des Informations-Modals', 'error');
+    }
 }
 
 /**
@@ -470,27 +537,27 @@ async function navigateToCurrentWeek() {
     try {
         showLoading();
         
-        const now = new Date();
+    const now = new Date();
         const isoWeek = getISOWeek(now);
         
         // ISO-Jahr und -Woche verwenden (kann vom Kalenderjahr abweichen)
         currentYear = isoWeek.year;
         currentWeek = isoWeek.week;
-        
-        window.currentWeek = currentWeek;
-        window.currentYear = currentYear;
+    
+    window.currentWeek = currentWeek;
+    window.currentYear = currentYear;
         
         console.log(`📅 Heutige Woche: KW ${currentWeek}/${currentYear}`);
-        
-        updateWeekDisplay();
-        updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
+    
+    updateWeekDisplay();
+    updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
         
         // Bestellungen für neue Woche laden
         if (currentEinrichtung) {
             await loadBestellungenFromAPI();
         }
         
-        await loadAndDisplayMenuplan();
+    await loadAndDisplayMenuplan();
         
     } catch (error) {
         console.error('Fehler beim Navigieren zur aktuellen Woche:', error);
@@ -528,6 +595,9 @@ async function loadAndDisplayMenuplan() {
             // Rezepte laden
             await loadMenuplanRecipes();
             
+            // Informationen laden
+            await loadInformationenData();
+            
             // UI rendern
             renderMenuplan();
             
@@ -535,7 +605,7 @@ async function loadAndDisplayMenuplan() {
             if (!currentEinrichtung.isIntern) {
                 const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
                 setTimeout(() => {
-                    loadBestellungenIntoUI(wochenschluessel);
+                loadBestellungenIntoUI(wochenschluessel);
                 }, 200); // 200ms Delay für vollständiges DOM-Rendering
             }
             
@@ -574,6 +644,42 @@ async function loadMenuplanRecipes() {
         
     } catch (error) {
         console.error('❌ Fehler beim Laden der Rezepte:', error);
+    }
+}
+
+/**
+ * Lädt Informationen für die aktuelle Woche
+ */
+async function loadInformationenData() {
+    if (!currentEinrichtung || !currentYear || !currentWeek) {
+        console.warn('⚠️ Informationen können nicht geladen werden - fehlende Parameter:', {
+            currentEinrichtung: !!currentEinrichtung,
+            currentYear,
+            currentWeek
+        });
+        currentInformationenData = {};
+        window.currentInformationenData = {};
+        return;
+    }
+    
+    try {
+        console.log(`📋 Lade Informationen für KW ${currentWeek}/${currentYear}, Einrichtung: ${currentEinrichtung.name} (${currentEinrichtung.id})...`);
+        
+        const result = await getInformationen(currentYear, currentWeek, currentEinrichtung.id);
+        if (result.success) {
+            currentInformationenData = result.informationen;
+            window.currentInformationenData = currentInformationenData; // Global verfügbar
+            console.log(`✅ Informationen geladen:`, Object.keys(currentInformationenData).length, 'Tage');
+        } else {
+            console.warn('⚠️ Keine Informationen für diese Woche gefunden');
+            currentInformationenData = {};
+            window.currentInformationenData = {};
+        }
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Informationen:', error);
+        currentInformationenData = {};
+        window.currentInformationenData = {};
     }
 }
 
@@ -922,7 +1028,7 @@ function printMenuplan() {
         // Kurz warten, damit Layout vollständig gerendert wird
         setTimeout(() => {
             // Drucken
-            window.print();
+    window.print();
             
             // Nach dem Drucken (oder wenn Druckdialog geschlossen wird) Original-Layout wiederherstellen
             setTimeout(() => {

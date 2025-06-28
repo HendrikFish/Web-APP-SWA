@@ -1103,11 +1103,7 @@
     transform: scale(1.1);
 }
 
-.bewertung-btn:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.5;
-}
+/* Disabled-Regel entfernt - Bewertungsbuttons werden bei nicht-bewertbaren Daten komplett ausgeblendet */
 
 /* Mobile Anpassungen für Modal */
 @media (max-width: 768px) {
@@ -1156,6 +1152,282 @@
         opacity: 1;
         top: 0.75rem;
         right: 0.75rem;
+    }
+}
+
+/* ===== INFORMATIONS-MODAL STYLES ===== */
+
+/* Modal Overlay */
+.information-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+.information-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* Modal Content */
+.information-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Modal Header */
+.information-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.information-modal-header h3 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.information-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.information-modal-close:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+/* Modal Body */
+.information-modal-body {
+    padding: 1.5rem;
+}
+
+/* Informations-Info */
+.information-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.information-tag-datum {
+    color: #495057;
+}
+
+.information-tag-datum strong {
+    margin-right: 0.5rem;
+}
+
+/* Informations-Formular */
+.information-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.information-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.information-field label {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.information-field label .required {
+    color: #dc3545;
+}
+
+.information-field .form-control {
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+}
+
+.information-field .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.information-field textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Modal Footer */
+.information-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Informations-Button für Kategorien */
+.information-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+}
+
+.information-btn:hover {
+    background: #5a6268;
+    transform: scale(1.1);
+}
+
+.information-btn.has-info {
+    background: #007bff;
+    animation: infoGlow 2s ease-in-out infinite;
+}
+
+@keyframes infoGlow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+    }
+}
+
+/* Desktop: Informations-Button */
+.information-btn-desktop {
+    padding: 4px 8px;
+    border: 1px solid #6c757d;
+    background: white;
+    color: #6c757d;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+.information-btn-desktop:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.information-btn-desktop.has-info {
+    border-color: #007bff;
+    background: #007bff;
+    color: white;
+}
+
+/* Info gelesen Card */
+.info-gelesen-card {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border: 1px solid #2196f3;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.info-gelesen-card:hover {
+    background: linear-gradient(135deg, #bbdefb, #90caf9);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.info-gelesen-card .card-title {
+    color: #1976d2;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Mobile Anpassungen für Informations-Modal */
+@media (max-width: 768px) {
+    .information-modal-content {
+        width: 95%;
+        margin: 1rem;
+        max-height: 95vh;
+    }
+    
+    .information-modal-header,
+    .information-modal-body,
+    .information-modal-footer {
+        padding: 1rem;
+    }
+    
+    .information-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .information-modal-footer {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .information-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
     }
 }
 
@@ -1791,12 +2063,7 @@
     color: white;
 }
 
-.bewertung-btn-desktop:disabled {
-    background: #f8f9fa;
-    border-color: #dee2e6;
-    color: #6c757d;
-    cursor: not-allowed;
-}
+/* Disabled-Regel entfernt - Desktop-Bewertungsbuttons werden bei nicht-bewertbaren Daten komplett ausgeblendet */
 
 /* Desktop Bestellcontainer */
 .bestellung-container-desktop {
@@ -2059,5 +2326,242 @@
         background-size: 200% 100%;
         border-radius: 0.25rem;
         animation: placeholderShimmer 1.5s infinite;
+    }
+}
+
+/* ===== ERWEITERTE INFORMATIONS-MODAL STYLES ===== */
+
+/* Übersichts-Sektion */
+.information-overview {
+    display: block;
+}
+
+.information-overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.information-overview-header h4 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.information-overview-header h4 i {
+    margin-right: 0.5rem;
+    font-size: 1.25rem;
+}
+
+/* Informationen-Liste */
+.information-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.information-item {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.information-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.information-item:last-child {
+    margin-bottom: 0;
+}
+
+.information-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.information-priority {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    text-transform: capitalize;
+}
+
+.information-priority.priority-kritisch {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.information-priority.priority-hoch {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.information-priority.priority-normal {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.information-priority.priority-niedrig {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #e9ecef;
+}
+
+.information-priority i {
+    margin-right: 0.375rem;
+    font-size: 1rem;
+}
+
+.information-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.information-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+.information-content {
+    margin-bottom: 0;
+}
+
+.information-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #212529;
+    line-height: 1.4;
+}
+
+.information-text {
+    margin: 0 0 0.75rem 0;
+    color: #495057;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.information-meta {
+    padding-top: 0.5rem;
+    border-top: 1px solid #f1f3f4;
+}
+
+.information-meta i {
+    margin-right: 0.25rem;
+    font-size: 0.8rem;
+}
+
+/* Keine Informationen Anzeige */
+.no-informationen {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.no-informationen i {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.no-informationen p {
+    color: #495057;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.no-informationen small {
+    color: #6c757d;
+}
+
+/* Formular-Sektion */
+.information-form-section {
+    display: none;
+}
+
+/* Modal Footer Modi */
+.overview-footer,
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    .information-overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .information-overview-header h4 {
+        font-size: 1rem;
+    }
+    
+    .information-item {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .information-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .information-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .information-priority {
+        font-size: 0.8rem;
+    }
+    
+    .information-title {
+        font-size: 0.95rem;
+    }
+    
+    .information-text {
+        font-size: 0.85rem;
+    }
+    
+    .information-list {
+        max-height: 300px;
+    }
+    
+    .no-informationen {
+        padding: 1.5rem 1rem;
+    }
+    
+    .overview-footer,
+    .form-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .overview-footer .btn,
+    .form-footer .btn {
+        width: 100%;
     }
 } 

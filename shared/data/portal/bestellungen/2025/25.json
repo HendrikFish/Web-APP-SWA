@@ -1,0 +1,56 @@
+{
+  "year": 2025,
+  "week": 25,
+  "erstellt_am": "2025-06-28T12:35:21.271Z",
+  "letzte_änderung": "2025-06-28T12:35:21.272Z",
+  "einrichtungen": {
+    "353f0eeb-48e7-4fc8-a667-abaff01046e8": {
+      "info": {
+        "id": "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+        "name": "Limberg",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "KR",
+            "anzahl": 10
+          },
+          {
+            "name": "KG",
+            "anzahl": 23
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-28T12:35:21.272Z"
+      },
+      "tage": {
+        "mittwoch": {
+          "hauptspeise": {
+            "KG": 5,
+            "KR": 4
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 9,
+        "durchschnitt_pro_tag": 9,
+        "höchster_tag": "mittwoch",
+        "niedrigster_tag": "mittwoch"
+      },
+      "bestellhistorie": []
+    }
+  },
+  "wochenstatistik": {
+    "gesamt_einrichtungen": 1,
+    "gesamt_bestellungen": 9,
+    "durchschnitt_pro_einrichtung": 9,
+    "einrichtungstypen": {
+      "extern": 1
+    }
+  },
+  "metadaten": {
+    "bestellfrist": null,
+    "lieferwoche": null,
+    "status": "offen",
+    "änderungen_erlaubt": true,
+    "export_historie": []
+  }
+}

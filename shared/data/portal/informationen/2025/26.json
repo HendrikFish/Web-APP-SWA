@@ -1,0 +1,25 @@
+{
+  "mittwoch": {
+    "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": [
+      {
+        "id": "96772e71-984e-4f02-bca6-18d0f327a2e6",
+        "titel": "Kein Essen Sportfest",
+        "inhalt": "Kein Essen Schicken da Sportfest",
+        "prioritaet": "hoch",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:13:04.341Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:23:55.213Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      }
+    ]
+  }
+}

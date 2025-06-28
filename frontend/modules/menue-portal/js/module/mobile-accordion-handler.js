@@ -301,7 +301,10 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
                         <span class="category-icon me-2">${categoryInfo.icon}</span>
                         ${categoryInfo.name}
                     </h6>
-                    ${recipes.length > 0 ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate, currentEinrichtung, rezepteCache) : ''}
+                    <div class="category-actions">
+                        ${renderMobileInformationButton(dayKey, categoryKey, dayDate, currentEinrichtung, window.currentInformationenData || {})}
+                        ${recipes.length > 0 ? renderBewertungButton(dayKey, categoryKey, recipes, dayDate, currentEinrichtung, rezepteCache) : ''}
+                    </div>
                 </div>
                 
                 <div class="recipe-content">
@@ -372,10 +375,13 @@ function renderBewertungButton(dayKey, categoryKey, recipes, dayDate, currentEin
         return '';
     }
     
-    // Prüfen ob Datum bewertbar ist
+    // Prüfen ob Datum bewertbar ist - wenn nicht, Button komplett ausblenden
     const isDateRatable = istDatumBewertbar(dayDate);
-    const rezeptNamen = recipes.map(r => (rezepteCache[r.id] || r).name || 'Unbekanntes Rezept');
+    if (!isDateRatable) {
+        return '';
+    }
     
+    const rezeptNamen = recipes.map(r => (rezepteCache[r.id] || r).name || 'Unbekanntes Rezept');
     const buttonId = `bewertung-btn-${dayKey}-${categoryKey}`;
     
     return `
@@ -388,10 +394,54 @@ function renderBewertungButton(dayKey, categoryKey, recipes, dayDate, currentEin
             data-datum="${dayDate.toISOString().split('T')[0]}"
             data-rezepte='${JSON.stringify(rezeptNamen)}'
             title="Kategorie bewerten"
-            ${!isDateRatable ? 'disabled' : ''}
             onclick="handleBewertungClick('${dayKey}', '${categoryKey}', ${JSON.stringify(rezeptNamen).replace(/"/g, '&quot;')}, '${dayDate.toISOString()}')"
         >
             <i class="bi bi-star-fill"></i>
+        </button>
+    `;
+}
+
+/**
+ * Rendert einen Informations-Button für Mobile
+ * @param {string} dayKey - Wochentag-Key
+ * @param {string} categoryKey - Kategorie-Key
+ * @param {Date} dayDate - Datum des Tages
+ * @param {object} currentEinrichtung - Aktuelle Einrichtung
+ * @param {object} informationenData - Informationen-Daten
+ * @returns {string} HTML für Informations-Button
+ */
+function renderMobileInformationButton(dayKey, categoryKey, dayDate, currentEinrichtung, informationenData) {
+    const currentUser = window.currentUser;
+    
+    if (!currentUser) {
+        return '';
+    }
+    
+    // Informations-Button nur bei Hauptspeisen anzeigen
+    if (!['menu1', 'menu2', 'menu', 'hauptspeise'].includes(categoryKey)) {
+        return '';
+    }
+    
+    // Prüfen ob Informationen für diesen Tag existieren
+    const tagInformationen = informationenData[dayKey] || [];
+    const hasInfo = tagInformationen.filter(info => !info.soft_deleted).length > 0;
+    
+    const buttonId = `information-btn-mobile-${dayKey}-${categoryKey}`;
+    const buttonClass = hasInfo ? 'information-btn has-info' : 'information-btn';
+    const iconClass = hasInfo ? 'bi bi-info-circle-fill' : 'bi bi-info-circle';
+    const title = hasInfo ? 'Information vorhanden - klicken zum Bearbeiten' : 'Neue Information erstellen';
+    
+    return `
+        <button 
+            type="button" 
+            class="${buttonClass}" 
+            id="${buttonId}"
+            data-day="${dayKey}"
+            data-datum="${dayDate.toISOString().split('T')[0]}"
+            title="${title}"
+            onclick="handleInformationClick('${dayKey}', '${dayDate.toISOString()}')"
+        >
+            <i class="${iconClass}"></i>
         </button>
     `;
 }
