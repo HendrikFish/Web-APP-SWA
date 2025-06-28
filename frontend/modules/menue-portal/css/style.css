@@ -102,6 +102,7 @@
         font-weight: 600;
         border-radius: 0.75rem 0.75rem 0 0;
         transition: all 0.3s ease;
+        position: relative;
     }
 
     .menu-day-accordion .accordion-button:not(.collapsed) {
@@ -115,6 +116,62 @@
         border-color: #007bff;
     }
 
+    /* Accordion Header Content Layout */
+    .accordion-header-content {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    /* Standard Layout (geschlossen) */
+    .menu-day-accordion .accordion-button.collapsed .day-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu-day-accordion .accordion-button.collapsed .day-meta {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Expanded Layout (geöffnet) */
+    .menu-day-accordion .accordion-button:not(.collapsed) .accordion-header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .menu-day-accordion .accordion-button:not(.collapsed) .day-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        order: 1;
+    }
+
+    .menu-day-accordion .accordion-button:not(.collapsed) .day-meta {
+        display: flex;
+        align-items: center;
+        order: 3;
+    }
+
+    /* Datum-Styling beim Öffnen */
+    .menu-day-accordion .accordion-button:not(.collapsed) .day-date {
+        color: white !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        opacity: 1 !important;
+        order: 2;
+        margin: 0.25rem 0;
+        text-align: center;
+    }
+
+    /* Pfeil-Abstand zum Recipe-Count */
+    .menu-day-accordion .accordion-button::after {
+        margin-left: 1rem;
+        flex-shrink: 0;
+    }
+
     /* Day Info Layout */
     .day-info .day-name {
         font-size: 1.1rem;
@@ -124,6 +181,7 @@
     .day-info .day-date {
         font-size: 0.85rem;
         opacity: 0.8;
+        transition: all 0.3s ease;
     }
 
     /* Recipe Count Badge */
@@ -133,6 +191,7 @@
         border-radius: 1rem;
         font-weight: 500;
         transition: all 0.2s ease;
+        margin-right: 0.5rem;
     }
 
     .menu-day-accordion .accordion-button:not(.collapsed) .recipe-count {
