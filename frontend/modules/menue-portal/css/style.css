@@ -1357,12 +1357,16 @@
     
     .input-group .bestellung-save-btn-mobile {
         flex: 0 0 auto;
-        min-width: 38px;
-        padding: 0.375rem 0.5rem;
+        min-width: 32px;
+        max-width: 32px;
+        padding: 0.375rem 0.25rem;
         border-left: 1px solid #dee2e6;
         border-radius: 0 0.375rem 0.375rem 0;
-        font-size: 1rem;
+        font-size: 0.875rem;
         line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Kompakte Darstellung für mobile Bestellgruppen */
