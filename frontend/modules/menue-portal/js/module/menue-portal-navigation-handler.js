@@ -61,6 +61,10 @@ export async function switchEinrichtung(einrichtungId, callbacks = {}) {
         // Globale State-Updates
         window.currentEinrichtung = neueEinrichtung;
         
+        // Einrichtung für künftige Sitzungen speichern
+        localStorage.setItem('menue-portal-last-einrichtung', neueEinrichtung.id);
+        console.log('💾 Einrichtung gespeichert für künftige Sitzungen:', neueEinrichtung.name);
+        
         // UI-Callbacks ausführen
         if (callbacks.updateActiveEinrichtungButton) callbacks.updateActiveEinrichtungButton();
         if (callbacks.updateEinrichtungsInfo) callbacks.updateEinrichtungsInfo();

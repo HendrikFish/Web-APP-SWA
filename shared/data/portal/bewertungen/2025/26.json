@@ -37,6 +37,23 @@
           "timestamp": "2025-06-26T13:05:50.902Z",
           "menueplan_datum": "2025-06-22"
         }
+      ],
+      "dessert": [
+        {
+          "id": "58d599ee-ddd7-476b-a222-a6334f8bdd44",
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "einrichtung_id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "einrichtung_name": "Hendrik Fischer",
+          "rezepte": [
+            "Radiesalat"
+          ],
+          "geschmack": 4,
+          "optik": 4,
+          "verbesserungsvorschlag": "Test hggvkuvkuhvuhv",
+          "timestamp": "2025-06-28T18:16:57.924Z",
+          "menueplan_datum": "2025-06-22"
+        }
       ]
     },
     "dienstag": {

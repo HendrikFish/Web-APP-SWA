@@ -254,10 +254,11 @@ export async function loadBestellungenFromAPI() {
             return;
         }
 
-        currentWeek = getCurrentWeek();
-        currentYear = getCurrentYear();
+        // BUGFIX: Verwende die angezeigte Woche/Jahr, nicht die aktuelle Kalenderwoche
+        currentWeek = window.currentWeek || getCurrentWeek();
+        currentYear = window.currentYear || getCurrentYear();
         
-        console.log(`📋 Lade Bestellungen für ${currentEinrichtung.name} aus JSON-API...`);
+        console.log(`📋 Lade Bestellungen für ${currentEinrichtung.name}, KW ${currentWeek}/${currentYear} aus JSON-API...`);
         
         const result = await loadBestellungenForEinrichtung(currentYear, currentWeek, currentEinrichtung.id);
         

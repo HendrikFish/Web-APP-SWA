@@ -2,7 +2,7 @@
   "year": 2025,
   "week": 26,
   "erstellt_am": "2025-06-23T08:00:00.000Z",
-  "letzte_änderung": "2025-06-28T16:46:09.145Z",
+  "letzte_änderung": "2025-06-28T18:21:00.925Z",
   "einrichtungen": {
     "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
       "info": {
@@ -15,7 +15,7 @@
             "anzahl": 8
           }
         ],
-        "letzte_aktualisierung": "2025-06-28T16:46:09.145Z"
+        "letzte_aktualisierung": "2025-06-28T18:18:45.229Z"
       },
       "tage": {
         "dienstag": {
@@ -35,7 +35,7 @@
         },
         "montag": {
           "hauptspeise": {
-            "dd": 8
+            "dd": 7
           }
         },
         "donnerstag": {
@@ -45,8 +45,8 @@
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 22,
-        "durchschnitt_pro_tag": 4.4,
+        "gesamt_bestellungen": 21,
+        "durchschnitt_pro_tag": 4.2,
         "höchster_tag": "montag",
         "niedrigster_tag": "dienstag"
       }
@@ -66,7 +66,7 @@
             "anzahl": 23
           }
         ],
-        "letzte_aktualisierung": "2025-06-28T13:07:51.135Z"
+        "letzte_aktualisierung": "2025-06-28T18:21:00.925Z"
       },
       "tage": {
         "dienstag": {
@@ -95,13 +95,14 @@
         "donnerstag": {
           "hauptspeise": {
             "KR": 3,
-            "KG": 33
+            "KG": 33,
+            "dd": 4
           }
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 75,
-        "durchschnitt_pro_tag": 15,
+        "gesamt_bestellungen": 79,
+        "durchschnitt_pro_tag": 15.8,
         "höchster_tag": "donnerstag",
         "niedrigster_tag": "freitag"
       }
@@ -109,8 +110,8 @@
   },
   "wochenstatistik": {
     "gesamt_einrichtungen": 2,
-    "gesamt_bestellungen": 97,
-    "durchschnitt_pro_einrichtung": 48.5,
+    "gesamt_bestellungen": 100,
+    "durchschnitt_pro_einrichtung": 50,
     "einrichtungstypen": {
       "extern": 2
     }

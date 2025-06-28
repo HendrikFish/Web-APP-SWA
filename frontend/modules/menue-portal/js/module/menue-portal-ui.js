@@ -164,6 +164,9 @@ export async function initMenuePortalUI(user, einrichtungen) {
         if (currentEinrichtung) {
             window.currentEinrichtung = currentEinrichtung; // Global verfügbar
             
+            // Standard-Einrichtung für künftige Sitzungen speichern
+            localStorage.setItem('menue-portal-last-einrichtung', currentEinrichtung.id);
+            
             // Bestellungen für die gewählte Einrichtung laden
             await loadBestellungenFromAPI();
             

@@ -170,11 +170,26 @@ export function hasAccessToEinrichtung(einrichtungId) {
 
 /**
  * Gibt die erste verfügbare Einrichtung zurück (für Standard-Auswahl)
+ * Versucht zuerst die zuletzt gewählte Einrichtung zu laden
  * @returns {object|null} Erste Einrichtung oder null
  */
 export function getDefaultEinrichtung() {
     const einrichtungen = window.currentEinrichtungen || [];
-    return einrichtungen.length > 0 ? einrichtungen[0] : null;
+    if (einrichtungen.length === 0) return null;
+    
+    // Versuche zuletzt gewählte Einrichtung aus LocalStorage zu laden
+    const lastEinrichtungId = localStorage.getItem('menue-portal-last-einrichtung');
+    if (lastEinrichtungId) {
+        const lastEinrichtung = einrichtungen.find(e => e.id === lastEinrichtungId);
+        if (lastEinrichtung) {
+            console.log('🔄 Zuletzt gewählte Einrichtung wiederhergestellt:', lastEinrichtung.name);
+            return lastEinrichtung;
+        }
+    }
+    
+    // Fallback: Erste Einrichtung
+    console.log('🏢 Standard-Einrichtung gewählt:', einrichtungen[0].name);
+    return einrichtungen[0];
 }
 
 /**
