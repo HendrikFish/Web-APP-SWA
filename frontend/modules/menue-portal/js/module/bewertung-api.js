@@ -2,6 +2,10 @@
 // Verwaltet alle Bewertungs-bezogenen API-Aufrufe
 
 import { apiClient } from '@shared/utils/api-client.js';
+import { createLogger } from './debug-logger.js';
+
+// Debug-Logger für dieses Modul
+const logger = createLogger('bewertung-api');
 
 /**
  * Erstellt eine neue Bewertung
@@ -11,16 +15,19 @@ import { apiClient } from '@shared/utils/api-client.js';
 export async function createBewertung(bewertungData) {
     try {
         console.log('📝 Erstelle neue Bewertung:', bewertungData);
+        logger.api('POST', '/api/bewertungen', bewertungData);
         
         const response = await apiClient.post('/api/bewertungen', bewertungData);
         
         if (response.success) {
             console.log('✅ Bewertung erfolgreich erstellt:', response.bewertung.id);
+            logger.success('Bewertung erfolgreich erstellt', { id: response.bewertung.id });
         }
         
         return response;
     } catch (error) {
         console.error('❌ Fehler beim Erstellen der Bewertung:', error);
+        logger.error('Fehler beim Erstellen der Bewertung', error);
         throw error;
     }
 }
@@ -34,14 +41,17 @@ export async function createBewertung(bewertungData) {
 export async function getBewertungen(year, week) {
     try {
         console.log(`📊 Lade Bewertungen für KW ${week}/${year}`);
+        logger.api('GET', `/api/bewertungen/${year}/${week}`);
         
         const response = await apiClient.get(`/api/bewertungen/${year}/${week}`);
         
         console.log(`✅ ${response.statistiken?.gesamtBewertungen || 0} Bewertungen geladen`);
+        logger.success(`${response.statistiken?.gesamtBewertungen || 0} Bewertungen geladen`, { year, week });
         
         return response;
     } catch (error) {
         console.error('❌ Fehler beim Laden der Bewertungen:', error);
+        logger.error('Fehler beim Laden der Bewertungen', error);
         throw error;
     }
 }
@@ -53,16 +63,19 @@ export async function getBewertungen(year, week) {
 export async function getZeitfenster() {
     try {
         console.log('📅 Lade Bewertungs-Zeitfenster');
+        logger.api('GET', '/api/bewertungen/zeitfenster');
         
         const response = await apiClient.get('/api/bewertungen/zeitfenster');
         
         if (response.success) {
             console.log(`✅ Zeitfenster: ${response.zeitfenster.von} bis ${response.zeitfenster.bis}`);
+            logger.success('Bewertungs-Zeitfenster geladen', response.zeitfenster);
         }
         
         return response;
     } catch (error) {
         console.error('❌ Fehler beim Laden des Zeitfensters:', error);
+        logger.error('Fehler beim Laden des Zeitfensters', error);
         throw error;
     }
 }
@@ -75,16 +88,19 @@ export async function getZeitfenster() {
 export async function deleteBewertung(bewertungId) {
     try {
         console.log('🗑️ Lösche Bewertung:', bewertungId);
+        logger.api('DELETE', `/api/bewertungen/${bewertungId}`);
         
         const response = await apiClient.delete(`/api/bewertungen/${bewertungId}`);
         
         if (response.success) {
             console.log('✅ Bewertung erfolgreich gelöscht');
+            logger.success('Bewertung erfolgreich gelöscht', { id: bewertungId });
         }
         
         return response;
     } catch (error) {
         console.error('❌ Fehler beim Löschen der Bewertung:', error);
+        logger.error('Fehler beim Löschen der Bewertung', error);
         throw error;
     }
 }

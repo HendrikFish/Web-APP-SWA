@@ -16,6 +16,9 @@ import { initMenuePortalAPI } from './module/menue-portal-api.js';
 import { initMenuePortalUI } from './module/menue-portal-ui.js';
 import { initMenuePortalAuth } from './module/menue-portal-auth.js';
 
+// Debug-System
+import { debug, loggers } from './module/debug-logger.js';
+
 // Bewertungsmodule
 import './module/bewertung-api.js';
 import './module/bewertung-modal.js';
@@ -36,6 +39,7 @@ import './module/desktop-calendar-handler.js';
 async function initMenuePortal() {
     try {
         console.log('🚀 Menü-Portal wird initialisiert...');
+        debug.info('Menü-Portal Initialisierung gestartet');
         
         // Bewertungs-Buttons sind jetzt standardmäßig sichtbar
         
@@ -56,9 +60,11 @@ async function initMenuePortal() {
         await initMenuePortalUI(user, authResult.einrichtungen);
         
         console.log('✅ Menü-Portal erfolgreich initialisiert');
+        debug.success('Menü-Portal erfolgreich initialisiert');
         
     } catch (error) {
         console.error('❌ Fehler bei der Initialisierung des Menü-Portals:', error);
+        debug.error('Fehler bei der Initialisierung des Menü-Portals', error);
         showError('Fehler beim Laden des Menü-Portals. Bitte Seite neu laden.');
     }
 }
