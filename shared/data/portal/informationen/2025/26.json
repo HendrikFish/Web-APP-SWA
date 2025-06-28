@@ -19,6 +19,25 @@
         "read": false,
         "soft_deleted": false,
         "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "9a1f413e-046d-45cb-9ba8-de4546b6f3f4",
+        "titel": "Test",
+        "inhalt": "Hilfe bei den Hausaufgaben",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:32:18.876Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-28T16:32:18.876Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
       }
     ]
   }

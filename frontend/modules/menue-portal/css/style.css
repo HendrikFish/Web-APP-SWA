@@ -1146,12 +1146,21 @@
     /* Mobile Accordion - Bewertungs-Button */
     .category-section {
         position: relative;
+        padding-top: 3rem; /* Mehr Platz für beide Buttons */
     }
     
     .category-section .bewertung-btn {
         opacity: 1;
         top: 0.75rem;
         right: 0.75rem;
+    }
+    
+    /* Mobile Informations-Button - links vom Bewertungs-Button */
+    .category-section .information-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 4rem; /* Links vom Bewertungs-Button mit Abstand */
+        opacity: 1;
     }
 }
 

@@ -22,7 +22,7 @@ export function showToast(message, type = 'info', duration = 4000) {
         toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
         toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-        toastContainer.style.zIndex = '1055';
+        toastContainer.style.zIndex = '10500';
         document.body.appendChild(toastContainer);
     }
 

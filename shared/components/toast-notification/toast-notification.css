@@ -5,7 +5,7 @@
 
 /* Toast-Container Positioning */
 .toast-container {
-    z-index: 1055 !important; /* Über Bootstrap Modals aber unter Bootstrap Offcanvas */
+    z-index: 10500 !important; /* Über Informations- und Bewertungs-Modals (10000) */
 }
 
 /* Toast Base Styles */

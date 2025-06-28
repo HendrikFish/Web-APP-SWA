@@ -128,6 +128,85 @@ export function closeInformationModal() {
     currentInformationData = null;
     isEditMode = false;
     resetModalForm();
+    
+    // Button-Zustände zurücksetzen
+    resetInformationButtonStates();
+}
+
+/**
+ * Setzt alle Informations-Button-Zustände zurück
+ */
+function resetInformationButtonStates() {
+    // Alle hervorgehobenen Informations-Buttons zurücksetzen
+    const highlightedButtons = document.querySelectorAll('.information-btn.has-info, .information-btn-desktop.has-info');
+    highlightedButtons.forEach(button => {
+        // Prüfe ob der Button wirklich Informationen hat, indem wir die aktuellen Daten prüfen
+        const categoryElement = button.closest('.category-section, .grid-content-cell');
+        if (categoryElement) {
+            const dayKey = categoryElement.getAttribute('data-day') || getDayFromElement(categoryElement);
+            const categoryKey = categoryElement.getAttribute('data-category') || getCategoryFromElement(categoryElement);
+            
+            if (dayKey && categoryKey) {
+                // Prüfe ob wirklich Informationen vorhanden sind
+                const informationenData = window.currentInformationenData || {};
+                const tagInformationen = informationenData[dayKey] || [];
+                const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
+                
+                if (activeInformationen.length === 0) {
+                    button.classList.remove('has-info');
+                }
+            }
+        }
+    });
+    
+    // Eventuelle Fokus-Hervorhebungen entfernen
+    const focusedElements = document.querySelectorAll('.information-focus, .information-highlight');
+    focusedElements.forEach(element => {
+        element.classList.remove('information-focus', 'information-highlight');
+    });
+}
+
+/**
+ * Hilfsfunktion: Ermittelt den Tag-Key aus einem DOM-Element
+ */
+function getDayFromElement(element) {
+    // Verschiedene Wege versuchen, den Tag zu finden
+    let dayKey = element.getAttribute('data-day');
+    if (dayKey) return dayKey;
+    
+    // Falls in Accordion-Structure
+    const accordionItem = element.closest('.accordion-item');
+    if (accordionItem) {
+        dayKey = accordionItem.getAttribute('data-day');
+        if (dayKey) return dayKey;
+    }
+    
+    // Falls in Desktop-Grid
+    const dayCard = element.closest('.day-card');
+    if (dayCard) {
+        dayKey = dayCard.getAttribute('data-day');
+        if (dayKey) return dayKey;
+    }
+    
+    return null;
+}
+
+/**
+ * Hilfsfunktion: Ermittelt den Kategorie-Key aus einem DOM-Element
+ */
+function getCategoryFromElement(element) {
+    // Verschiedene Wege versuchen, die Kategorie zu finden
+    let categoryKey = element.getAttribute('data-category');
+    if (categoryKey) return categoryKey;
+    
+    // Falls in Category-Section
+    const categorySection = element.closest('.category-section');
+    if (categorySection) {
+        categoryKey = categorySection.getAttribute('data-category');
+        if (categoryKey) return categoryKey;
+    }
+    
+    return null;
 }
 
 /**
