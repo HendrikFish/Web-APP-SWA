@@ -248,7 +248,7 @@ function renderDesktopBewertungButton(dayKey, categoryKey, recipes, dayDate, cur
 }
 
 /**
- * Rendert kompakte Bestellfelder für Desktop externe Einrichtungen
+ * Rendert Bestellfelder für Desktop externe Einrichtungen (Mobile-Layout)
  * @param {string} dayKey - Wochentag-Schlüssel
  * @param {string} categoryKey - Kategorie-Schlüssel  
  * @param {object[]} recipes - Rezepte der Kategorie
@@ -269,47 +269,48 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
     const gruppen = currentEinrichtung.gruppen || [];
     if (gruppen.length === 0) return '';
     
-    // Kompakte Desktop-Version
+    // Desktop mit Mobile-Layout-Stil
     let html = `
-        <div class="bestellung-container-desktop mt-2">
-            <small class="bestellung-title-desktop mb-1 d-block">
-                <i class="bi bi-cart3 me-1"></i>
-                Bestellung
-            </small>
+        <div class="bestellung-container bestellung-container-desktop mt-3">
+            <h6 class="bestellung-title">
+                <i class="bi bi-cart3 me-2"></i>
+                Bestellung für ${formatDate(new Date())}
+            </h6>
     `;
     
     gruppen.forEach((gruppe, index) => {
         const inputId = `bestellung-desktop-${dayKey}-${categoryKey}-${gruppe.name.replace(/\s+/g, '-').toLowerCase()}`;
         html += `
-            <div class="gruppe-bestellung-desktop mb-1">
-                <div class="d-flex align-items-center">
-                    <label for="${inputId}" class="gruppe-label me-2 mb-0">
-                        <small>${gruppe.name}:</small>
-                    </label>
+            <div class="gruppe-bestellung mb-2">
+                <label for="${inputId}" class="form-label small">
+                    ${gruppe.name} (${gruppe.anzahl} Personen)
+                </label>
+                <div class="input-group input-group-sm">
                     <input 
                         type="number" 
                         id="${inputId}"
-                        class="form-control form-control-sm bestellung-input-desktop" 
+                        class="form-control bestellung-input bestellung-input-desktop" 
                         data-day="${dayKey}"
                         data-kategorie="${categoryKey}"
                         data-gruppe="${gruppe.name}"
+                        data-max-anzahl="${gruppe.anzahl}"
                         min="0" 
                         max="${gruppe.anzahl}"
-                        placeholder="0"
-                        style="width: 70px; font-size: 0.95rem; text-align: center;"
+                        placeholder="Anzahl"
                         onchange="handleBestellungChange(this)"
-                        aria-describedby="${inputId}-max"
+                        oninput="validateMaxInput(this)"
+                        aria-describedby="${inputId}-hint"
+                        style="max-width: 80px; font-size: 1.1rem; text-align: center;"
                     >
-                    <small class="text-muted ms-1" id="${inputId}-max">von ${gruppe.anzahl}</small>
+                    <span class="input-group-text bestellung-max-indicator" id="${inputId}-hint">von ${gruppe.anzahl}</span>
                     <button 
                         type="button" 
-                        class="btn btn-outline-dark btn-sm ms-1 bestellung-save-btn-desktop"
+                        class="btn btn-outline-dark btn-sm bestellung-save-btn-desktop"
                         data-input-id="${inputId}"
                         onclick="manualSaveBestellungen()"
                         title="Bestellungen jetzt speichern"
-                        style="padding: 2px 6px; font-size: 0.7rem;"
                     >
-                        <i class="bi bi-check"></i>
+                        <i class="bi bi-check-lg"></i>
                     </button>
                 </div>
             </div>
@@ -317,10 +318,10 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
     });
     
     html += `
-            <div class="bestellung-actions-desktop mt-1">
-                <small class="text-muted" style="font-size: 0.7rem;">
+            <div class="bestellung-actions mt-2">
+                <small class="text-muted">
                     <i class="bi bi-info-circle me-1"></i>
-                    Auto-Save nach 1s
+                    Änderungen werden automatisch nach 1 Sekunde gespeichert
                 </small>
             </div>
         </div>
@@ -339,4 +340,16 @@ function renderNoFoodContent() {
             <small>Kein Essen verfügbar</small>
         </div>
     `;
+}
+
+/**
+ * Formatiert ein Datum für die Anzeige
+ * @param {Date} date - Zu formatierendes Datum
+ * @returns {string} Formatiertes Datum
+ */
+function formatDate(date) {
+    if (!date || !(date instanceof Date)) {
+        return new Date().toLocaleDateString('de-DE');
+    }
+    return date.toLocaleDateString('de-DE');
 } 
