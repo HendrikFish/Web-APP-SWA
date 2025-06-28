@@ -141,6 +141,9 @@ export function closeInformationModal() {
     resetInformationButtonStates();
 }
 
+// Globale Zuweisung für onclick-Handler
+window.closeInformationModal = closeInformationModal;
+
 /**
  * Setzt alle Informations-Button-Zustände zurück
  */
@@ -182,15 +185,8 @@ function resetInformationButtonStates() {
  * Setzt Event-Listener für das Modal auf
  */
 function setupModalEventListeners() {
-    // Globale Funktionen für onclick-Handler verfügbar machen
-    window.closeInformationModal = closeInformationModal;
-    window.submitInformation = submitInformation;
-    window.switchToNewForm = switchToNewForm;
-    window.backToOverview = backToOverview;
-    window.editInformation = editInformation;
-    window.deleteInformation = deleteInformationConfirm;
-    window.markAsRead = markAsRead;
-    window.expandInformation = expandInformation;
+    // Globale Funktionen für onclick-Handler sind bereits direkt als window.* definiert
+    // Hier könnten bei Bedarf weitere Event-Listener hinzugefügt werden
 }
 
 // Modal-Anzeige und Form-Reset jetzt im UI-Modul
