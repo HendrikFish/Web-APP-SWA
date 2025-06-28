@@ -69,7 +69,7 @@ export async function switchEinrichtung(einrichtungId, callbacks = {}) {
         // Bestellungen für neue Einrichtung laden
         await loadBestellungenFromAPI();
         
-        // Menüplan neu laden
+        // Menüplan neu laden (lädt automatisch auch Informationen)
         await loadAndDisplayMenuplan(callbacks);
         
         showToast(`Zu ${neueEinrichtung.name} gewechselt`, 'success');

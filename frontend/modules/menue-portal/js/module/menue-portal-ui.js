@@ -170,6 +170,10 @@ export async function initMenuePortalUI(user, einrichtungen) {
             await loadAndDisplayMenuplan({
                 renderMenuplan: renderMenuplanWrapper
             });
+            
+            // Informationen für die aktuelle Woche laden
+            await loadInformationenData(currentEinrichtung, currentYear, currentWeek);
+            
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
             // Informations-Modal initialisieren

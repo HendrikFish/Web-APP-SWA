@@ -9,14 +9,11 @@ import { openInformationManagementModal } from './informationen-modal.js';
 let currentInformationenData = {};
 
 /**
- * Initialisiert das Information-System
- * @param {object} einrichtung - Aktuelle Einrichtung
- * @param {number} year - Aktuelles Jahr
- * @param {number} week - Aktuelle Woche
+ * Initialisiert das Information-System (nur Event-Listener setup)
  */
-export function initInformationHandler(einrichtung, year, week) {
+export function initInformationHandler() {
     setupInformationEventListeners();
-    return loadInformationenData(einrichtung, year, week);
+    console.log('📋 Information-Handler initialisiert (ohne Daten-Laden)');
 }
 
 /**
