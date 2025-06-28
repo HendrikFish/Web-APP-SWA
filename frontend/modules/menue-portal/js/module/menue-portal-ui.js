@@ -269,6 +269,9 @@ function setupEinrichtungsSelector(einrichtungen) {
  * Aktualisiert nur die Einrichtungs-Info ohne Event-Listener neu zu registrieren
  */
 function updateEinrichtungsInfo() {
+    // Synchronisiere lokale Variable mit globaler Variable
+    currentEinrichtung = window.currentEinrichtung;
+    
     const infoElement = document.getElementById('einrichtungs-info');
     
     if (infoElement && currentEinrichtung) {
@@ -288,6 +291,9 @@ function updateEinrichtungsInfo() {
  * Aktualisiert die aktiven Button-Klassen ohne Event-Listener neu zu registrieren
  */
 function updateActiveEinrichtungButton() {
+    // Synchronisiere lokale Variable mit globaler Variable
+    currentEinrichtung = window.currentEinrichtung;
+    
     if (currentEinrichtung) {
         // Alle Buttons deaktivieren
         document.querySelectorAll('.einrichtung-btn').forEach(btn => {
