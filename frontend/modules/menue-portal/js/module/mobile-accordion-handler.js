@@ -437,7 +437,7 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
                     <input 
                         type="number" 
                         id="${inputId}"
-                        class="form-control bestellung-input" 
+                        class="form-control bestellung-input bestellung-input-mobile" 
                         data-day="${dayKey}"
                         data-kategorie="${categoryKey}"
                         data-gruppe="${gruppe.name}"
@@ -446,11 +446,13 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
                         placeholder="Anzahl"
                         onchange="handleBestellungChange(this)"
                         aria-describedby="${inputId}-hint"
+                        style="max-width: 80px; font-size: 1.1rem; text-align: center;"
                     >
                     <span class="input-group-text" id="${inputId}-hint">von ${gruppe.anzahl}</span>
                     <button 
                         type="button" 
-                        class="btn btn-outline-success btn-sm bestellung-save-btn"
+                        class="btn btn-outline-dark btn-sm bestellung-save-btn-mobile"
+                        data-input-id="${inputId}"
                         onclick="manualSaveBestellungen()"
                         title="Bestellungen jetzt speichern"
                     >

@@ -296,14 +296,15 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
                         min="0" 
                         max="${gruppe.anzahl}"
                         placeholder="0"
-                        style="width: 60px;"
+                        style="width: 70px; font-size: 0.95rem; text-align: center;"
                         onchange="handleBestellungChange(this)"
                         aria-describedby="${inputId}-max"
                     >
-                    <small class="text-muted ms-1" id="${inputId}-max">/${gruppe.anzahl}</small>
+                    <small class="text-muted ms-1" id="${inputId}-max">von ${gruppe.anzahl}</small>
                     <button 
                         type="button" 
-                        class="btn btn-outline-success btn-sm ms-1 bestellung-save-btn-desktop"
+                        class="btn btn-outline-dark btn-sm ms-1 bestellung-save-btn-desktop"
+                        data-input-id="${inputId}"
                         onclick="manualSaveBestellungen()"
                         title="Bestellungen jetzt speichern"
                         style="padding: 2px 6px; font-size: 0.7rem;"

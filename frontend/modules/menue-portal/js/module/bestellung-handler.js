@@ -143,6 +143,7 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
             if (input) {
                 input.value = anzahl;
                 applyInputStyling(input, anzahl, 'suppe');
+                updateSaveButtonState(input, anzahl);
             }
         });
     }
@@ -162,6 +163,7 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
             if (input) {
                 input.value = anzahl;
                 applyInputStyling(input, anzahl, 'dessert');
+                updateSaveButtonState(input, anzahl);
             }
         });
     }
@@ -182,6 +184,18 @@ function updateBestellungUI(day, kategorie, gruppe, anzahl) {
     [mobileInput, desktopInput].forEach(input => {
         if (input) {
             applyInputStyling(input, anzahl, kategorie);
+            updateSaveButtonState(input, anzahl);
+        }
+    });
+    
+    // Auch direkten Input-Event für sofortige Button-Updates hinzufügen
+    [mobileInput, desktopInput].forEach(input => {
+        if (input && !input.hasAttribute('data-button-listener')) {
+            input.setAttribute('data-button-listener', 'true');
+            input.addEventListener('input', function() {
+                const currentValue = parseInt(this.value) || 0;
+                updateSaveButtonState(this, currentValue);
+            });
         }
     });
     
@@ -350,6 +364,7 @@ export function loadBestellungenIntoUI(wochenschluessel) {
                         
                         // Visuelles Feedback für eingetragene Werte
                         applyInputStyling(input, anzahl, kategorie);
+                        updateSaveButtonState(input, anzahl);
                     }
                 });
             });
@@ -541,22 +556,57 @@ export async function manualSaveBestellungen() {
         await saveBestellungenToAPI(wochenschluessel);
         
         // Visuelles Feedback
-        document.querySelectorAll('.bestellung-save-btn, .bestellung-save-btn-desktop').forEach(btn => {
+        document.querySelectorAll('.bestellung-save-btn-mobile, .bestellung-save-btn-desktop').forEach(btn => {
             const originalContent = btn.innerHTML;
             btn.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
             btn.classList.add('btn-success');
-            btn.classList.remove('btn-outline-success');
+            btn.classList.remove('btn-outline-dark', 'has-value');
             
             setTimeout(() => {
                 btn.innerHTML = originalContent;
                 btn.classList.remove('btn-success');
-                btn.classList.add('btn-outline-success');
+                btn.classList.add('btn-outline-dark');
+                
+                // Button-Status basierend auf Input-Wert wiederherstellen
+                const inputId = btn.getAttribute('data-input-id');
+                if (inputId) {
+                    const input = document.getElementById(inputId);
+                    if (input && parseInt(input.value) > 0) {
+                        btn.classList.add('has-value');
+                    }
+                }
             }, 1500);
         });
         
     } catch (error) {
         console.error('❌ Fehler beim manuellen Speichern:', error);
         showToast('Fehler beim Speichern der Bestellungen', 'error');
+    }
+}
+
+/**
+ * Aktualisiert den Save-Button-Status basierend auf Input-Wert
+ * @param {HTMLInputElement} input - Input-Element
+ * @param {number} anzahl - Aktuelle Anzahl
+ */
+function updateSaveButtonState(input, anzahl) {
+    if (!input) return;
+    
+    // Finde den zugehörigen Save-Button
+    const inputContainer = input.closest('.input-group') || input.closest('.d-flex');
+    if (!inputContainer) return;
+    
+    const saveButton = inputContainer.querySelector('.bestellung-save-btn-mobile, .bestellung-save-btn-desktop');
+    if (!saveButton) return;
+    
+    // Button-Status basierend auf Wert aktualisieren
+    if (anzahl > 0) {
+        saveButton.classList.add('has-value');
+        saveButton.classList.remove('btn-outline-dark');
+        saveButton.classList.add('btn-success');
+    } else {
+        saveButton.classList.remove('has-value', 'btn-success');
+        saveButton.classList.add('btn-outline-dark');
     }
 }
 
