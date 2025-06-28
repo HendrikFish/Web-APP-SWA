@@ -35,6 +35,15 @@ import {
     initInformationHandler,
     loadInformationenData
 } from './menue-portal-information-handler.js';
+import { 
+    initNavigationHandler,
+    switchEinrichtung,
+    navigateWeek,
+    navigateToCurrentWeek,
+    loadAndDisplayMenuplan,
+    getCurrentMenuplan,
+    getRezepteCache
+} from './menue-portal-navigation-handler.js';
 import { renderMobileAccordion } from './mobile-accordion-handler.js';
 import { renderDesktopCalendar } from './desktop-calendar-handler.js';
 import { 
@@ -63,13 +72,11 @@ const currentISOWeek = (() => {
 
 let currentYear = currentISOWeek.year;
 let currentWeek = currentISOWeek.week;
-let currentMenuplan = null;
-let rezepteCache = {};
 let isMobile = false;
 let portalStammdaten = null;
 let eventListenersInitialized = false; // Flag um mehrfache Event-Listener zu verhindern
-let loadMenuplanTimeout = null; // Debouncing für loadAndDisplayMenuplan
 let bestellControlsInitialized = false; // Flag für Bestellkontrollen Event-Listener
+// currentMenuplan und rezepteCache jetzt in navigation-handler verwaltet
 // Informationsdaten jetzt in information-handler verwaltet
 
 /**
@@ -124,6 +131,15 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Informations-System initialisieren
         initInformationHandler();
         
+        // Navigation-Handler initialisieren
+        initNavigationHandler({
+            updateActiveEinrichtungButton,
+            updateEinrichtungsInfo,
+            setupBestellControls,
+            updateBestellControlsContent,
+            renderMenuplan
+        });
+        
         // Standard-Einrichtung wählen und Menüplan laden
         currentEinrichtung = getDefaultEinrichtung();
         console.log('🏢 Standard-Einrichtung ermittelt:', currentEinrichtung ? 
@@ -136,7 +152,9 @@ export async function initMenuePortalUI(user, einrichtungen) {
             // Bestellungen für die gewählte Einrichtung laden
             await loadBestellungenFromAPI();
             
-            await loadAndDisplayMenuplan();
+            await loadAndDisplayMenuplan({
+                renderMenuplan
+            });
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
             // Informations-Modal initialisieren
@@ -210,7 +228,12 @@ function setupEinrichtungsSelector(einrichtungen) {
     container.addEventListener('click', async (e) => {
         if (e.target.classList.contains('einrichtung-btn')) {
             const einrichtungId = e.target.dataset.einrichtungId;
-            await switchEinrichtung(einrichtungId);
+            await switchEinrichtung(einrichtungId, {
+                updateActiveEinrichtungButton,
+                updateEinrichtungsInfo,
+                setupBestellControls,
+                renderMenuplan
+            });
         }
     });
     
@@ -265,15 +288,24 @@ function setupControls() {
     const currentWeekBtn = document.getElementById('current-week');
     
     if (prevWeekBtn) {
-        prevWeekBtn.addEventListener('click', () => navigateWeek(-1));
+        prevWeekBtn.addEventListener('click', () => navigateWeek(-1, {
+            updateBestellControlsContent,
+            renderMenuplan
+        }));
     }
     
     if (nextWeekBtn) {
-        nextWeekBtn.addEventListener('click', () => navigateWeek(1));
+        nextWeekBtn.addEventListener('click', () => navigateWeek(1, {
+            updateBestellControlsContent,
+            renderMenuplan
+        }));
     }
     
     if (currentWeekBtn) {
-        currentWeekBtn.addEventListener('click', () => navigateToCurrentWeek());
+        currentWeekBtn.addEventListener('click', () => navigateToCurrentWeek({
+            updateBestellControlsContent,
+            renderMenuplan
+        }));
     }
     
     // Action Buttons
@@ -290,7 +322,9 @@ function setupControls() {
     }
     
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => loadAndDisplayMenuplan());
+        refreshBtn.addEventListener('click', () => loadAndDisplayMenuplan({
+            renderMenuplan
+        }));
     }
     
     // Bestellaktionen für externe Einrichtungen
@@ -407,219 +441,15 @@ function setupLayoutEventListeners() {
 
 // handleInformationClick jetzt in information-handler
 
-/**
- * Wechselt zu einer anderen Einrichtung
- * @param {string} einrichtungId - ID der neuen Einrichtung
- */
-async function switchEinrichtung(einrichtungId) {
-    try {
-        showLoading();
-        
-        // Neue Einrichtung aus allen verfügbaren holen
-        const alleEinrichtungen = await getAllEinrichtungen();
-        const neueEinrichtung = alleEinrichtungen.find(e => e.id === einrichtungId);
-        
-        if (!neueEinrichtung) {
-            throw new Error('Einrichtung nicht gefunden');
-        }
-        
-        currentEinrichtung = neueEinrichtung;
-        window.currentEinrichtung = neueEinrichtung; // Global verfügbar
-        
-        // UI aktualisieren ohne Event-Listener neu zu registrieren
-        updateActiveEinrichtungButton();
-        updateEinrichtungsInfo();
-        
-        // Bestellkontrollen aktualisieren
-        setupBestellControls();
-        
-        // Bestellungen für neue Einrichtung laden
-        await loadBestellungenFromAPI();
-        
-        // Menüplan neu laden
-        await loadAndDisplayMenuplan();
-        
-        showToast(`Zu ${neueEinrichtung.name} gewechselt`, 'success');
-        
-    } catch (error) {
-        console.error('Fehler beim Wechseln der Einrichtung:', error);
-        showToast('Fehler beim Wechseln der Einrichtung', 'error');
-    } finally {
-        hideLoading();
-    }
-}
+// switchEinrichtung jetzt in navigation-handler
 
-/**
- * Navigiert zu einer anderen Woche
- * @param {number} direction - Richtung (-1 = vorherige, +1 = nächste)
- */
-async function navigateWeek(direction) {
-    try {
-        showLoading();
-        
-        // Aktuelle Woche ändern
-        const newWeek = currentWeek + direction;
-        let newYear = currentYear;
-        
-        // Jahr-Grenze prüfen (ISO 8601-konform)
-        if (newWeek < 1) {
-            newYear--;
-            currentWeek = getWeeksInYear(newYear);
-            currentYear = newYear;
-        } else if (newWeek > getWeeksInYear(currentYear)) {
-            newYear++;
-            currentWeek = 1;
-            currentYear = newYear;
-        } else {
-            currentWeek = newWeek;
-        }
-        
-        // Sicherheitsprüfung: Falls die Werte noch immer ungültig sind
-        if (currentWeek < 1 || currentWeek > 53) {
-            console.warn('⚠️ Ungültige Kalenderwoche korrigiert:', currentWeek);
-            currentWeek = Math.max(1, Math.min(53, currentWeek));
-        }
-        
-        // Globale Variablen aktualisieren
-        window.currentWeek = currentWeek;
-        window.currentYear = currentYear;
-        
-        console.log(`📅 Navigation: KW ${currentWeek}/${currentYear}`);
-        
-        updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
-        updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
-        
-        // Bestellungen für neue Woche laden
-        if (currentEinrichtung) {
-            await loadBestellungenFromAPI();
-        }
-        
-        await loadAndDisplayMenuplan();
-        
-    } catch (error) {
-        console.error('Fehler bei Wochennavigation:', error);
-        showToast('Fehler beim Laden der Woche', 'error');
-    } finally {
-        hideLoading();
-    }
-}
+// navigateWeek jetzt in navigation-handler
 
-/**
- * Springt zur aktuellen Woche (ISO 8601-konform)
- */
-async function navigateToCurrentWeek() {
-    try {
-        showLoading();
-        
-    const now = new Date();
-        const isoWeek = getISOWeek(now);
-        
-        // ISO-Jahr und -Woche verwenden (kann vom Kalenderjahr abweichen)
-        currentYear = isoWeek.year;
-        currentWeek = isoWeek.week;
-    
-    window.currentWeek = currentWeek;
-    window.currentYear = currentYear;
-        
-        console.log(`📅 Heutige Woche: KW ${currentWeek}/${currentYear}`);
-    
-    updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
-    updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
-        
-        // Bestellungen für neue Woche laden
-        if (currentEinrichtung) {
-            await loadBestellungenFromAPI();
-        }
-        
-    await loadAndDisplayMenuplan();
-        
-    } catch (error) {
-        console.error('Fehler beim Navigieren zur aktuellen Woche:', error);
-        showToast('Fehler beim Laden der aktuellen Woche', 'error');
-    } finally {
-        hideLoading();
-    }
-}
+// navigateToCurrentWeek jetzt in navigation-handler
 
-/**
- * Lädt und zeigt den Menüplan an (mit Debouncing)
- */
-async function loadAndDisplayMenuplan() {
-    // Debouncing um mehrfache schnelle Aufrufe zu verhindern
-    if (loadMenuplanTimeout) {
-        clearTimeout(loadMenuplanTimeout);
-    }
-    
-    loadMenuplanTimeout = setTimeout(async () => {
-        try {
-            console.log(`📋 Lade Menüplan für KW ${currentWeek}/${currentYear}...`);
-            
-            if (!currentEinrichtung) {
-                throw new Error('Keine Einrichtung ausgewählt');
-            }
-            
-            // Menüplan laden
-            const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
-            if (!result.success) {
-                throw new Error(result.error || 'Fehler beim Laden des Menüplans');
-            }
-            
-            currentMenuplan = result.menuplan;
-            
-            // Rezepte laden
-            await loadMenuplanRecipes();
-            
-            // Informationen laden
-            await loadInformationenData(currentEinrichtung, currentYear, currentWeek);
-            
-            // UI rendern
-            renderMenuplan();
-            
-            // Bestellungen laden (falls externe Einrichtung) - mit Delay für vollständiges Rendering
-            if (!currentEinrichtung.isIntern) {
-                const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
-                setTimeout(() => {
-                loadBestellungenIntoUI(wochenschluessel);
-                }, 200); // 200ms Delay für vollständiges DOM-Rendering
-            }
-            
-            console.log('✅ Menüplan geladen und dargestellt');
-            
-        } catch (error) {
-            console.error('❌ Fehler beim Laden des Menüplans:', error);
-            showError(error.message);
-        }
-    }, 100); // 100ms Debounce
-}
+// loadAndDisplayMenuplan jetzt in navigation-handler
 
-/**
- * Lädt alle Rezepte für den aktuellen Menüplan
- */
-async function loadMenuplanRecipes() {
-    if (!currentMenuplan || !currentMenuplan.days) return;
-    
-    try {
-        // Alle Rezept-IDs sammeln
-        const recipeIds = extractRecipeIds(currentMenuplan);
-        
-        if (recipeIds.length === 0) {
-            console.log('ℹ️ Keine Rezepte im Menüplan gefunden');
-            return;
-        }
-        
-        // Rezepte laden
-        const result = await loadRezepte(recipeIds);
-        if (result.success) {
-            rezepteCache = result.rezepte;
-            console.log(`✅ ${Object.keys(rezepteCache).length} Rezepte geladen`);
-        } else {
-            console.warn('⚠️ Fehler beim Laden der Rezepte:', result.error);
-        }
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Laden der Rezepte:', error);
-    }
-}
+// loadMenuplanRecipes jetzt in navigation-handler
 
 // loadInformationenData jetzt in information-handler
 
@@ -627,6 +457,9 @@ async function loadMenuplanRecipes() {
  * Rendert den Menüplan basierend auf Bildschirmgröße
  */
 function renderMenuplan() {
+    const currentMenuplan = getCurrentMenuplan();
+    const rezepteCache = getRezepteCache();
+    
     if (!currentMenuplan || !portalStammdaten) {
         showError('Keine Daten zum Anzeigen verfügbar');
         return;
@@ -671,6 +504,7 @@ function renderMenuplan() {
  * @returns {boolean} True wenn Einrichtung diese Kategorie zugewiesen bekommen hat
  */
 function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
+    const currentMenuplan = getCurrentMenuplan();
     if (!currentMenuplan || !currentMenuplan.days || !currentMenuplan.days[dayKey]) {
         return false;
     }
@@ -702,6 +536,7 @@ function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
 }
 
 function istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, isMobile = false) {
+    const currentMenuplan = getCurrentMenuplan();
     if (!currentEinrichtung || !currentMenuplan) return false;
     
     // Für interne Einrichtungen: Alle Kategorien anzeigen
