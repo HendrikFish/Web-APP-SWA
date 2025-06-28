@@ -342,14 +342,4 @@ function renderNoFoodContent() {
     `;
 }
 
-/**
- * Formatiert ein Datum für die Anzeige
- * @param {Date} date - Zu formatierendes Datum
- * @returns {string} Formatiertes Datum
- */
-function formatDate(date) {
-    if (!date || !(date instanceof Date)) {
-        return new Date().toLocaleDateString('de-DE');
-    }
-    return date.toLocaleDateString('de-DE');
-} 
+ 
