@@ -165,10 +165,10 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
                     ${recipeContent}
                 </div>
                 
-                ${categoryKey === 'dessert' ? renderInfoGelesenCard(dayKey, dayDate, currentEinrichtung, window.currentInformationenData || {}) : ''}
-                
                 ${istZugewiesen ? renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung) : ''}
             </div>
+            
+            ${categoryKey === 'dessert' ? renderInfoGelesenCard(dayKey, dayDate, currentEinrichtung, window.currentInformationenData || {}) : ''}
         `;
     });
     

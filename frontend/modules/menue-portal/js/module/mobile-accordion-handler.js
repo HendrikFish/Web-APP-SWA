@@ -311,10 +311,10 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
                     ${recipes.length > 0 ? renderRecipeList(recipes, rezepteCache) : '<div class="no-recipes-info"><i class="bi bi-info-circle me-2"></i>Noch nicht erzeugt</div>'}
                 </div>
                 
-                ${categoryKey === 'dessert' ? renderMobileInfoGelesenCard(dayKey, dayDate, currentEinrichtung, window.currentInformationenData || {}) : ''}
-                
                 ${renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung)}
             </div>
+            
+            ${categoryKey === 'dessert' ? renderMobileInfoGelesenCard(dayKey, dayDate, currentEinrichtung, window.currentInformationenData || {}) : ''}
         `;
     });
     

@@ -297,8 +297,7 @@
     "portionen": 1,
     "zutaten": [
       {
-        "zutatId": "zutat-1750663837326-gy8o8iy",
-        "menge": 152,
+        "menge": 153,
         "einheit": "g"
       }
     ],
@@ -311,7 +310,8 @@
       "userId": "679f7a109d1d8b3535030897",
       "name": "Admin System"
     },
-    "isActive": true
+    "isActive": true,
+    "updatedAt": "2025-06-28T16:53:04.654Z"
   },
   {
     "id": "rezept-1750712140922-rqe006y",
