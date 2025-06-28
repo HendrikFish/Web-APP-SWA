@@ -1320,11 +1320,34 @@
 
 .week-navigation-compact {
     line-height: 1.2;
+    text-align: center;
 }
 
 .week-navigation-compact #week-display {
     color: #495057;
     letter-spacing: 0.25px;
+    text-align: center !important;
+}
+
+.week-navigation-compact .d-flex {
+    justify-content: center !important;
+}
+
+/* Navigation Buttons mit Border */
+.week-navigation-compact .btn {
+    border: 2px solid #6c757d;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.week-navigation-compact .btn:hover {
+    border-color: #495057;
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.week-navigation-compact .btn:active {
+    transform: translateY(0);
 }
 
 /* Verbesserte Einrichtungsauswahl - Buttons neben Titel */
@@ -1358,12 +1381,7 @@
     }
     
     .week-navigation-compact #week-display {
-        text-align: center !important;
         font-size: 0.875rem !important;
-    }
-    
-    .week-navigation-compact .d-flex {
-        justify-content: center !important;
     }
     
     /* Mobile: Einrichtungsauswahl vertikal */
