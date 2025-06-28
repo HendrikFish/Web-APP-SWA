@@ -595,9 +595,17 @@
         font-weight: bold !important;
     }
     
-    /* Zeige nur Desktop-Kalender */
-    #desktop-calendar {
+    /* Verstecke Mobile Ansicht im Druck */
+    #mobile-accordion {
+        display: none !important;
+    }
+    
+    /* Zeige nur Desktop-Kalender - erzwinge Sichtbarkeit */
+    #desktop-calendar,
+    #desktop-calendar.d-none,
+    #desktop-calendar.d-md-block {
         display: block !important;
+        visibility: visible !important;
     }
     
     /* Verstecke Wochenende (Samstag & Sonntag) */
@@ -610,9 +618,12 @@
     .desktop-calendar-grid {
         display: grid !important;
         grid-template-columns: repeat(5, 1fr) !important; /* 5 Spalten für Mo-Fr */
-        gap: 0.5rem !important;
+        gap: 0.75rem !important;
         max-width: 100% !important;
-        font-size: 0.85rem !important;
+        width: 100% !important;
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     
     /* Day Cards für Druck optimieren */
@@ -621,9 +632,13 @@
         border-radius: 8px !important;
         page-break-inside: avoid !important;
         background: white !important;
-        padding: 0.5rem !important;
+        padding: 0.6rem !important;
         height: auto !important;
-        min-height: 200px !important;
+        min-height: 240px !important;
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     /* Day Header */
@@ -650,24 +665,30 @@
     
     /* Category Sections */
     .category-section {
-        margin-bottom: 0.75rem !important;
+        margin-bottom: 0.8rem !important;
         border: 1px solid #ddd !important;
-        border-radius: 4px !important;
-        padding: 0.4rem !important;
+        border-radius: 6px !important;
+        padding: 0.5rem !important;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .category-header {
         background: #f8f9fa !important;
-        padding: 0.3rem !important;
-        border-radius: 3px !important;
-        margin-bottom: 0.3rem !important;
+        padding: 0.4rem !important;
+        border-radius: 4px !important;
+        margin-bottom: 0.4rem !important;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .category-title {
-        font-size: 0.9rem !important;
+        font-size: 0.95rem !important;
         font-weight: 600 !important;
         color: #000 !important;
         display: block !important;
+        visibility: visible !important;
+        margin: 0 !important;
     }
     
     .category-icon {
@@ -677,15 +698,19 @@
     
     /* Recipe Content */
     .recipe-content {
-        padding: 0.2rem !important;
+        padding: 0.3rem !important;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .recipe-item-desktop {
         border: 1px solid #000 !important;
         background: transparent !important;
-        padding: 0.3rem !important;
-        margin-bottom: 0.2rem !important;
-        border-radius: 3px !important;
+        padding: 0.4rem !important;
+        margin-bottom: 0.3rem !important;
+        border-radius: 4px !important;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .recipe-item-desktop:last-child {
@@ -693,11 +718,14 @@
     }
     
     .recipe-name {
-        font-size: 0.8rem !important;
+        font-size: 0.85rem !important;
         font-weight: 500 !important;
         color: #000 !important;
-        line-height: 1.2 !important;
+        line-height: 1.3 !important;
         display: block !important;
+        visibility: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     
     /* Leere Kategorien */
