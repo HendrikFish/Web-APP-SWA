@@ -13,6 +13,19 @@ import {
     getCategoryIcon,
     loadPortalStammdaten
 } from './menue-portal-api.js';
+import { 
+    isMobileView,
+    updateMobileDetection,
+    updateWeekDisplay,
+    showLoading,
+    hideLoading,
+    showError,
+    printMenuplan as printMenuplanUtil,
+    exportToPDF as exportToPDFUtil,
+    getISOWeek,
+    getWeekNumber,
+    getWeeksInYear
+} from './menue-portal-ui-utils.js';
 import { getAllEinrichtungen, getDefaultEinrichtung } from './menue-portal-auth.js';
 import { initBewertungModal, openBewertungModal } from './bewertung-modal.js';
 import { istDatumBewertbar } from './bewertung-api.js';
@@ -90,7 +103,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
         }
         
         // Mobile Detection
-        updateMobileDetection();
+        isMobile = isMobileView();
+        updateMobileDetection(isMobile, renderMenuplan);
         
         // Loading ausblenden
         hideLoading();
@@ -280,7 +294,7 @@ function setupControls() {
     setupBestellControls();
     
     // Aktuelle Woche anzeigen
-    updateWeekDisplay();
+    updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
 }
 
 /**
@@ -364,8 +378,8 @@ function setupLayoutEventListeners() {
     
     // Resize-Handler
     window.addEventListener('menue-portal:layout-change', () => {
-        updateMobileDetection();
-        renderMenuplan();
+        isMobile = isMobileView();
+        updateMobileDetection(isMobile, renderMenuplan);
     });
     
     // Window Resize mit Debouncing um Toast-Spam zu verhindern
@@ -373,8 +387,8 @@ function setupLayoutEventListeners() {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            updateMobileDetection();
-            renderMenuplan();
+            isMobile = isMobileView();
+            updateMobileDetection(isMobile, renderMenuplan);
         }, 250); // 250ms Debounce
     });
     
@@ -608,7 +622,7 @@ async function navigateWeek(direction) {
         
         console.log(`📅 Navigation: KW ${currentWeek}/${currentYear}`);
         
-        updateWeekDisplay();
+        updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
         updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
         
         // Bestellungen für neue Woche laden
@@ -645,7 +659,7 @@ async function navigateToCurrentWeek() {
         
         console.log(`📅 Heutige Woche: KW ${currentWeek}/${currentYear}`);
     
-    updateWeekDisplay();
+    updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
     updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
         
         // Bestellungen für neue Woche laden
@@ -1048,292 +1062,31 @@ function validateCurrentBestellungen() {
     }
 }
 
-// === Layout & Event Listeners ===
-
-function updateMobileDetection() {
-    isMobile = window.innerWidth < 768;
-    
-    // Container sichtbarkeit umschalten
-    const mobileContainer = document.getElementById('mobile-accordion');
-    const desktopContainer = document.getElementById('desktop-calendar');
-    
-    if (mobileContainer) mobileContainer.style.display = isMobile ? 'block' : 'none';
-    if (desktopContainer) desktopContainer.style.display = isMobile ? 'none' : 'block';
-}
-
-function updateWeekDisplay() {
-    const weekDisplay = document.getElementById('week-display');
-    if (weekDisplay) {
-        const monday = getMondayOfWeek(currentYear, currentWeek);
-        const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1000);
-        
-        weekDisplay.textContent = `KW ${currentWeek}/${currentYear} (${formatDate(monday)} - ${formatDate(sunday)})`;
-    }
-}
-
-// === Hilfsfunktionen ===
-
-function showLoading() {
-    const loader = document.getElementById('loading-indicator');
-    if (loader) loader.style.display = 'block';
-}
-
-function hideLoading() {
-    const loader = document.getElementById('loading-indicator');
-    if (loader) loader.style.display = 'none';
-}
-
-function showError(message) {
-    const errorContainer = document.getElementById('error-container');
-    if (errorContainer) {
-        errorContainer.innerHTML = `
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        errorContainer.style.display = 'block';
-    } else {
-        showToast(message, 'error');
-    }
-}
+// === Layout & Hilfsfunktionen jetzt in UI-Utils ===
 
 function printMenuplan() {
-    try {
-        // Aktuelle Layout-Einstellungen speichern
-        const originalIsMobile = isMobile;
-        const mobileContainer = document.getElementById('mobile-accordion');
-        const desktopContainer = document.getElementById('desktop-calendar');
-        
-        // Temporär Desktop-Layout erzwingen
-        isMobile = false;
-        
-        // Desktop-Kalender sichtbar machen und Mobile verstecken
-        if (mobileContainer) {
-            mobileContainer.style.display = 'none';
-        }
-        if (desktopContainer) {
-            desktopContainer.style.display = 'block';
-            desktopContainer.classList.remove('d-none');
-        }
-        
-        // Desktop-Menü rendern - DAS WAR DER FEHLENDE SCHRITT!
-        renderMenuplan();
-        
-        // Kurz warten, damit Layout vollständig gerendert wird
-        setTimeout(() => {
-            // Drucken
-    window.print();
-            
-            // Nach dem Drucken (oder wenn Druckdialog geschlossen wird) Original-Layout wiederherstellen
-            setTimeout(() => {
-                isMobile = originalIsMobile;
-                updateMobileDetection();
-                // Original-Layout auch neu rendern
-                renderMenuplan();
-            }, 1000);
-        }, 200);
-        
-    } catch (error) {
-        console.error('Fehler beim Drucken:', error);
-        showToast('Fehler beim Drucken', 'error');
-        
-        // Bei Fehler sicherstellen, dass Layout wiederhergestellt wird
-        updateMobileDetection();
-        renderMenuplan();
-    }
+    // Callback für Mobile-Detection-Update
+    const updateMobileCallback = () => {
+        isMobile = isMobileView();
+        updateMobileDetection(isMobile, renderMenuplan);
+    };
+    
+    // UI-Utils-Funktion verwenden (aus Import)
+    printMenuplanUtil(isMobile, renderMenuplan, updateMobileCallback);
 }
 
 function exportToPDF() {
-    try {
-        // Aktuelle Layout-Einstellungen speichern
-        const originalIsMobile = isMobile;
-        const mobileContainer = document.getElementById('mobile-accordion');
-        const desktopContainer = document.getElementById('desktop-calendar');
-        
-        // Desktop-Layout temporär erzwingen
-        isMobile = false;
-        if (mobileContainer) mobileContainer.style.display = 'none';
-        if (desktopContainer) {
-            desktopContainer.style.display = 'block';
-            desktopContainer.classList.remove('d-none');
-        }
-        
-        // Desktop-Menü rendern
-        renderMenuplan();
-        
-        // Kurz warten für vollständiges Rendering
-        setTimeout(() => {
-            // CSS-Styles sammeln
-            let allCSS = '';
-            
-            // Bootstrap und andere externe CSS über Links sammeln
-            const linkElements = document.querySelectorAll('link[rel="stylesheet"]');
-            const linkPromises = Array.from(linkElements).map(link => {
-                return fetch(link.href)
-                    .then(response => response.text())
-                    .catch(() => '');
-            });
-            
-            Promise.all(linkPromises).then(cssTexts => {
-                allCSS = cssTexts.join('\n');
-                
-                // Lokale Stylesheets hinzufügen
-                Array.from(document.styleSheets).forEach(sheet => {
-                    try {
-                        if (sheet.cssRules) {
-                            allCSS += Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
-                        }
-                    } catch (e) {
-                        console.warn('Stylesheet nicht zugänglich:', e);
-                    }
-                });
-                
-                // HTML-Inhalt für PDF vorbereiten
-                const printHTML = `<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menüplan KW ${currentWeek}/${currentYear} - ${currentEinrichtung?.name || 'Einrichtung'}</title>
-    <style>
-        ${allCSS}
-        
-        /* PDF-spezifische Optimierungen */
-        @media print {
-            body { margin: 0; padding: 20px; }
-            * { 
-                -webkit-print-color-adjust: exact !important; 
-                color-adjust: exact !important; 
-                print-color-adjust: exact !important;
-            }
-        }
-        
-        /* Inline-Styles für bessere Kompatibilität */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        .navbar { display: none !important; }
-        #mobile-accordion { display: none !important; }
-        #desktop-calendar { display: block !important; }
-    </style>
-</head>
-<body>
-    ${document.body.innerHTML}
-    <script>
-        // Direkt drucken wenn Seite geladen
-        window.onload = function() {
-            setTimeout(() => {
-                window.print();
-                // Fenster nach Druck schließen
-                window.onafterprint = function() {
-                    window.close();
-                };
-            }, 500);
-        };
-    </script>
-</body>
-</html>`;
-                
-                // Blob-URL erstellen (moderner Ansatz ohne document.write)
-                const blob = new Blob([printHTML], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                
-                // Neues Fenster mit Blob-URL öffnen
-                const printWindow = window.open(url, '_blank');
-                
-                if (!printWindow) {
-                    showToast('Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für PDF-Export.', 'warning');
-                    URL.revokeObjectURL(url);
-                } else {
-                    showToast('PDF-Export wird vorbereitet...', 'info');
-                    
-                    // URL nach 30 Sekunden freigeben
-                    setTimeout(() => {
-                        URL.revokeObjectURL(url);
-                    }, 30000);
-                }
-                
-            }).catch(error => {
-                console.error('Fehler beim Laden der CSS-Dateien:', error);
-                showToast('Fallback: Verwenden Sie den Drucken-Button.', 'warning');
-            });
-            
-            // Original-Layout nach PDF-Export wiederherstellen
-            setTimeout(() => {
-                isMobile = originalIsMobile;
-                updateMobileDetection();
-                renderMenuplan();
-            }, 1000);
-            
-        }, 200);
-        
-    } catch (error) {
-        console.error('Fehler beim PDF-Export:', error);
-        showToast('Fehler beim PDF-Export. Verwenden Sie den Drucken-Button.', 'error');
-        
-        // Bei Fehler sicherstellen, dass Layout wiederhergestellt wird
-        updateMobileDetection();
-        renderMenuplan();
-    }
-}
-
-/**
- * Berechnet die ISO 8601-konforme Kalenderwoche für ein Datum
- * @param {Date} date - Das Datum
- * @returns {object} Objekt mit { year, week } für korrektes Jahr/Woche-Mapping
- */
-function getISOWeek(date) {
-    const d = new Date(date.getTime());
-    d.setHours(0, 0, 0, 0);
-    
-    // Donnerstag der gleichen Woche finden (ISO 8601: Woche gehört zum Jahr des Donnerstags)
-    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
-    
-    // 1. Januar im Jahr des Donnerstags
-    const week1 = new Date(d.getFullYear(), 0, 1);
-    
-    // Berechne die Wochennummer
-    const weekNumber = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-    
-    return {
-        year: d.getFullYear(),
-        week: weekNumber
+    // Callback für Mobile-Detection-Update
+    const updateMobileCallback = () => {
+        isMobile = isMobileView();
+        updateMobileDetection(isMobile, renderMenuplan);
     };
+    
+    // UI-Utils-Funktion verwenden (aus Import)
+    exportToPDFUtil(currentWeek, currentYear, currentEinrichtung, isMobile, renderMenuplan, updateMobileCallback);
 }
 
-/**
- * Legacy-Funktion für Kompatibilität - gibt nur die Wochennummer zurück
- * @param {Date} date - Das Datum
- * @returns {number} Die Kalenderwoche (1-53)
- */
-function getWeekNumber(date) {
-    return getISOWeek(date).week;
-}
-
-/**
- * Berechnet die Anzahl der Wochen in einem Jahr nach ISO 8601
- * @param {number} year - Das Jahr
- * @returns {number} Die Anzahl der Wochen (52 oder 53)
- */
-function getWeeksInYear(year) {
-    // Der 4. Januar liegt immer in der ersten Woche des Jahres (ISO 8601)
-    const jan4 = new Date(year, 0, 4);
-    
-    // Der 28. Dezember liegt immer in der letzten Woche des Jahres
-    const dec28 = new Date(year, 11, 28);
-    
-    // Berechne die Woche des 28. Dezember
-    const lastWeek = getISOWeek(dec28);
-    
-    // Wenn das berechnete Jahr des 28.12. dem gewünschten Jahr entspricht,
-    // dann ist das die Anzahl der Wochen
-    if (lastWeek.year === year) {
-        return lastWeek.week;
-    }
-    
-    // Fallback: 52 Wochen (Standard)
-    return 52;
-}
+// ISO-Funktionen sind jetzt in UI-Utils verfügbar
 
 // Global verfügbar machen für Event-Handler
 window.handleBewertungClick = function(dayKey, categoryKey, rezeptNamen, dateString) {
