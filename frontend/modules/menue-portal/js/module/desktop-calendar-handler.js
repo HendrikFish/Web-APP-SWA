@@ -165,6 +165,8 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
                     ${recipeContent}
                 </div>
                 
+                ${categoryKey === 'dessert' ? renderInfoGelesenCard(dayKey, dayDate, currentEinrichtung, window.currentInformationenData || {}) : ''}
+                
                 ${istZugewiesen ? renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung) : ''}
             </div>
         `;
@@ -388,6 +390,47 @@ function renderNoFoodContent() {
         <div class="no-food-content text-center text-muted p-3">
             <i class="bi bi-x-circle mb-2 d-block" style="font-size: 1.5rem;"></i>
             <small>Kein Essen verfügbar</small>
+        </div>
+    `;
+}
+
+/**
+ * Rendert eine grüne Info-Karte wenn Informationen gelesen wurden
+ * @param {string} dayKey - Wochentag-Key
+ * @param {Date} dayDate - Datum des Tages
+ * @param {object} currentEinrichtung - Aktuelle Einrichtung
+ * @param {object} informationenData - Informationen-Daten
+ * @returns {string} HTML für Info-gelesen-Karte oder leer
+ */
+function renderInfoGelesenCard(dayKey, dayDate, currentEinrichtung, informationenData) {
+    const currentUser = window.currentUser;
+    
+    if (!currentUser || !informationenData) {
+        return '';
+    }
+    
+    // Prüfen ob Informationen für diesen Tag existieren und gelesen wurden
+    const tagInformationen = informationenData[dayKey] || [];
+    const gelesenInformationen = tagInformationen.filter(info => 
+        !info.soft_deleted && info.read === true
+    );
+    
+    if (gelesenInformationen.length === 0) {
+        return '';
+    }
+    
+    const anzahlGelesen = gelesenInformationen.length;
+    const mehrereInformationen = anzahlGelesen > 1;
+    
+    return `
+        <div class="info-gelesen-card mt-2" onclick="handleInformationClick('${dayKey}', '${dayDate.toISOString()}')">
+            <div class="card-title">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                ${mehrereInformationen 
+                    ? `${anzahlGelesen} Informationen gelesen` 
+                    : 'Information gelesen'
+                }
+            </div>
         </div>
     `;
 }

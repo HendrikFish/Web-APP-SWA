@@ -623,7 +623,7 @@ async function loadAndDisplayInformationen(tag) {
                         <div class="information-meta">
                             <small class="text-muted">
                                 <i class="bi bi-person"></i> Erstellt von: ${info.ersteller_name || 'Unbekannt'} |
-                                <i class="bi bi-clock"></i> ${new Date(info.erstellt_am).toLocaleString('de-DE')}
+                                <i class="bi bi-clock"></i> ${info.erstellt_am ? new Date(info.erstellt_am).toLocaleString('de-DE') : 'Datum unbekannt'}
                                 ${info.aktualisiert_am && info.aktualisiert_am !== info.erstellt_am ? 
                                     `| <i class="bi bi-pencil"></i> Bearbeitet: ${new Date(info.aktualisiert_am).toLocaleString('de-DE')}` : ''}
                             </small>

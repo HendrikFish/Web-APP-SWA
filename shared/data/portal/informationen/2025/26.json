@@ -16,7 +16,7 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:23:55.213Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
         "einrichtung_name": "Hendrik Fischer"
       },
