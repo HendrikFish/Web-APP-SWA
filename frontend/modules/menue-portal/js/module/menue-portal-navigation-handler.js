@@ -208,11 +208,15 @@ export async function loadAndDisplayMenuplan(callbacks = {}) {
             // Menüplan laden
             const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
             if (!result.success) {
+                console.error('❌ Menüplan-Laden fehlgeschlagen:', result.error);
+                currentMenuplan = null;
+                window.currentMenuplan = null;
                 throw new Error(result.error || 'Fehler beim Laden des Menüplans');
             }
             
             currentMenuplan = result.menuplan;
             window.currentMenuplan = currentMenuplan; // Global verfügbar
+            console.log('✅ Menüplan erfolgreich geladen:', !!currentMenuplan);
             
             // Rezepte laden
             await loadMenuplanRecipes();

@@ -301,6 +301,25 @@ function updateActiveEinrichtungButton() {
  * Rendert den Menüplan basierend auf Bildschirmgröße - Wrapper für Rendering-Handler
  */
 function renderMenuplanWrapper() {
+    console.log('🎨 Render Wrapper Debug:', {
+        isMobile,
+        portalStammdaten: !!portalStammdaten,
+        currentEinrichtung: currentEinrichtung ? currentEinrichtung.name : 'KEINE',
+        currentYear,
+        currentWeek
+    });
+    
+    // Parameter-Validation
+    if (!currentEinrichtung) {
+        console.warn('⚠️ Rendering ohne Einrichtung - warte auf Initialisierung');
+        return;
+    }
+    
+    if (!currentYear || !currentWeek) {
+        console.warn('⚠️ Rendering ohne Jahr/Woche - warte auf Initialisierung');
+        return;
+    }
+    
     renderMenuplan(isMobile, portalStammdaten, currentEinrichtung, currentYear, currentWeek);
 }
 

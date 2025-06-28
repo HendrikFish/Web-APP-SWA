@@ -19,8 +19,23 @@ export function renderMenuplan(isMobile, portalStammdaten, currentEinrichtung, c
     const currentMenuplan = getCurrentMenuplan();
     const rezepteCache = getRezepteCache();
     
-    if (!currentMenuplan || !portalStammdaten) {
-        showError('Keine Daten zum Anzeigen verfügbar');
+    console.log('🎨 Rendering Debug:', {
+        currentMenuplan: !!currentMenuplan,
+        portalStammdaten: !!portalStammdaten,
+        currentEinrichtung: !!currentEinrichtung,
+        currentYear,
+        currentWeek
+    });
+    
+    if (!currentMenuplan) {
+        console.warn('⚠️ Kein Menüplan verfügbar - zeige Fallback-Message');
+        showMenuplanLoadingState();
+        return;
+    }
+    
+    if (!portalStammdaten) {
+        console.warn('⚠️ Keine Portal-Stammdaten verfügbar - zeige Fallback-Message');
+        showError('Portal-Stammdaten konnten nicht geladen werden');
         return;
     }
     
@@ -46,6 +61,35 @@ export function renderMenuplan(isMobile, portalStammdaten, currentEinrichtung, c
             (categoryKey, dayKey, isMobile) => istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, currentEinrichtung, isMobile),
             () => extractVisibleCategories(portalStammdaten, currentEinrichtung)
         );
+    }
+}
+
+/**
+ * Zeigt einen Lade-Zustand an, wenn der Menüplan noch nicht verfügbar ist
+ */
+function showMenuplanLoadingState() {
+    // Sowohl Desktop als auch Mobile Container leeren und Loading-Message anzeigen
+    const desktopContainer = document.getElementById('desktop-calendar');
+    const mobileContainer = document.getElementById('mobile-accordion');
+    
+    const loadingHTML = `
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 300px;">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Lädt...</span>
+                </div>
+                <h5 class="text-muted">Menüplan wird geladen...</h5>
+                <p class="text-muted">Bitte haben Sie einen Moment Geduld.</p>
+            </div>
+        </div>
+    `;
+    
+    if (desktopContainer) {
+        desktopContainer.innerHTML = loadingHTML;
+    }
+    
+    if (mobileContainer) {
+        mobileContainer.innerHTML = loadingHTML;
     }
 }
 
