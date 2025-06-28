@@ -30,8 +30,20 @@ import {
 // Globale UI-State
 let currentEinrichtung = null;
 let currentUser = null;
-let currentYear = new Date().getFullYear();
-let currentWeek = getWeekNumber(new Date());
+
+// ISO 8601-konforme Initialisierung
+const currentISOWeek = (() => {
+    const now = new Date();
+    const d = new Date(now.getTime());
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    const week1 = new Date(d.getFullYear(), 0, 1);
+    const weekNumber = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    return { year: d.getFullYear(), week: weekNumber };
+})();
+
+let currentYear = currentISOWeek.year;
+let currentWeek = currentISOWeek.week;
 let currentMenuplan = null;
 let rezepteCache = {};
 let isMobile = false;
@@ -79,9 +91,6 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Loading ausblenden
         hideLoading();
         
-        // Bestellungen aus JSON-API laden (statt LocalStorage)
-        await loadBestellungenFromAPI();
-        
         // Einrichtungs-Selector setup
         setupEinrichtungsSelector(einrichtungen);
         
@@ -95,6 +104,10 @@ export async function initMenuePortalUI(user, einrichtungen) {
         currentEinrichtung = getDefaultEinrichtung();
         if (currentEinrichtung) {
             window.currentEinrichtung = currentEinrichtung; // Global verfügbar
+            
+            // Bestellungen für die gewählte Einrichtung laden
+            await loadBestellungenFromAPI();
+            
             await loadAndDisplayMenuplan();
             // Bewertungs-Modal nach dem Laden des Menüplans initialisieren
             initBewertungModal(currentUser, currentEinrichtung);
@@ -378,6 +391,9 @@ async function switchEinrichtung(einrichtungId) {
         // Bestellkontrollen aktualisieren
         setupBestellControls();
         
+        // Bestellungen für neue Einrichtung laden
+        await loadBestellungenFromAPI();
+        
         // Menüplan neu laden
         await loadAndDisplayMenuplan();
         
@@ -399,23 +415,43 @@ async function navigateWeek(direction) {
     try {
         showLoading();
         
-        currentWeek += direction;
+        // Aktuelle Woche ändern
+        const newWeek = currentWeek + direction;
+        let newYear = currentYear;
         
-        // Jahr-Grenze prüfen
-        if (currentWeek < 1) {
-            currentYear--;
-            currentWeek = getWeeksInYear(currentYear);
-        } else if (currentWeek > getWeeksInYear(currentYear)) {
-            currentYear++;
+        // Jahr-Grenze prüfen (ISO 8601-konform)
+        if (newWeek < 1) {
+            newYear--;
+            currentWeek = getWeeksInYear(newYear);
+            currentYear = newYear;
+        } else if (newWeek > getWeeksInYear(currentYear)) {
+            newYear++;
             currentWeek = 1;
+            currentYear = newYear;
+        } else {
+            currentWeek = newWeek;
+        }
+        
+        // Sicherheitsprüfung: Falls die Werte noch immer ungültig sind
+        if (currentWeek < 1 || currentWeek > 53) {
+            console.warn('⚠️ Ungültige Kalenderwoche korrigiert:', currentWeek);
+            currentWeek = Math.max(1, Math.min(53, currentWeek));
         }
         
         // Globale Variablen aktualisieren
         window.currentWeek = currentWeek;
         window.currentYear = currentYear;
         
+        console.log(`📅 Navigation: KW ${currentWeek}/${currentYear}`);
+        
         updateWeekDisplay();
         updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
+        
+        // Bestellungen für neue Woche laden
+        if (currentEinrichtung) {
+            await loadBestellungenFromAPI();
+        }
+        
         await loadAndDisplayMenuplan();
         
     } catch (error) {
@@ -427,19 +463,40 @@ async function navigateWeek(direction) {
 }
 
 /**
- * Springt zur aktuellen Woche
+ * Springt zur aktuellen Woche (ISO 8601-konform)
  */
 async function navigateToCurrentWeek() {
-    const now = new Date();
-    currentYear = now.getFullYear();
-    currentWeek = getWeekNumber(now);
-    
-    window.currentWeek = currentWeek;
-    window.currentYear = currentYear;
-    
-    updateWeekDisplay();
-    updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
-    await loadAndDisplayMenuplan();
+    try {
+        showLoading();
+        
+        const now = new Date();
+        const isoWeek = getISOWeek(now);
+        
+        // ISO-Jahr und -Woche verwenden (kann vom Kalenderjahr abweichen)
+        currentYear = isoWeek.year;
+        currentWeek = isoWeek.week;
+        
+        window.currentWeek = currentWeek;
+        window.currentYear = currentYear;
+        
+        console.log(`📅 Heutige Woche: KW ${currentWeek}/${currentYear}`);
+        
+        updateWeekDisplay();
+        updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
+        
+        // Bestellungen für neue Woche laden
+        if (currentEinrichtung) {
+            await loadBestellungenFromAPI();
+        }
+        
+        await loadAndDisplayMenuplan();
+        
+    } catch (error) {
+        console.error('Fehler beim Navigieren zur aktuellen Woche:', error);
+        showToast('Fehler beim Laden der aktuellen Woche', 'error');
+    } finally {
+        hideLoading();
+    }
 }
 
 /**
@@ -845,17 +902,62 @@ function exportToPDF() {
     showToast('PDF-Export wird implementiert...', 'info');
 }
 
-function getWeekNumber(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+/**
+ * Berechnet die ISO 8601-konforme Kalenderwoche für ein Datum
+ * @param {Date} date - Das Datum
+ * @returns {object} Objekt mit { year, week } für korrektes Jahr/Woche-Mapping
+ */
+function getISOWeek(date) {
+    const d = new Date(date.getTime());
+    d.setHours(0, 0, 0, 0);
+    
+    // Donnerstag der gleichen Woche finden (ISO 8601: Woche gehört zum Jahr des Donnerstags)
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    
+    // 1. Januar im Jahr des Donnerstags
+    const week1 = new Date(d.getFullYear(), 0, 1);
+    
+    // Berechne die Wochennummer
+    const weekNumber = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    
+    return {
+        year: d.getFullYear(),
+        week: weekNumber
+    };
 }
 
+/**
+ * Legacy-Funktion für Kompatibilität - gibt nur die Wochennummer zurück
+ * @param {Date} date - Das Datum
+ * @returns {number} Die Kalenderwoche (1-53)
+ */
+function getWeekNumber(date) {
+    return getISOWeek(date).week;
+}
+
+/**
+ * Berechnet die Anzahl der Wochen in einem Jahr nach ISO 8601
+ * @param {number} year - Das Jahr
+ * @returns {number} Die Anzahl der Wochen (52 oder 53)
+ */
 function getWeeksInYear(year) {
-    const dec31 = new Date(year, 11, 31);
-    return getWeekNumber(dec31);
+    // Der 4. Januar liegt immer in der ersten Woche des Jahres (ISO 8601)
+    const jan4 = new Date(year, 0, 4);
+    
+    // Der 28. Dezember liegt immer in der letzten Woche des Jahres
+    const dec28 = new Date(year, 11, 28);
+    
+    // Berechne die Woche des 28. Dezember
+    const lastWeek = getISOWeek(dec28);
+    
+    // Wenn das berechnete Jahr des 28.12. dem gewünschten Jahr entspricht,
+    // dann ist das die Anzahl der Wochen
+    if (lastWeek.year === year) {
+        return lastWeek.week;
+    }
+    
+    // Fallback: 52 Wochen (Standard)
+    return 52;
 }
 
 // Global verfügbar machen für Event-Handler
