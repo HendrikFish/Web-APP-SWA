@@ -117,7 +117,6 @@ export async function initMenuePortalUI(user, einrichtungen) {
         
         // Mobile Detection
         isMobile = isMobileView();
-        updateMobileDetection(isMobile, renderMenuplanWrapper);
         
         // Loading ausblenden
         hideLoading();
@@ -167,6 +166,9 @@ export async function initMenuePortalUI(user, einrichtungen) {
             // Standard-Einrichtung für künftige Sitzungen speichern
             localStorage.setItem('menue-portal-last-einrichtung', currentEinrichtung.id);
             
+            // TIMING-FIX: Mobile Detection erst jetzt aufrufen, nachdem currentEinrichtung gesetzt ist
+            updateMobileDetection(isMobile, renderMenuplanWrapper);
+            
             // Bestellungen für die gewählte Einrichtung laden
             await loadBestellungenFromAPI();
             
@@ -183,6 +185,10 @@ export async function initMenuePortalUI(user, einrichtungen) {
             initInformationModal(currentUser, currentEinrichtung);
         } else {
             console.error('❌ Keine Standard-Einrichtung verfügbar!');
+            
+            // FALLBACK: Mobile Detection trotzdem aufrufen für UI-Konsistenz
+            updateMobileDetection(isMobile, null); // null = kein Rendering
+            
             showError('Keine Einrichtung verfügbar');
         }
         
