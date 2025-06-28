@@ -351,6 +351,8 @@ function setupModalEventListeners() {
     window.backToOverview = backToOverview;
     window.editInformation = editInformation;
     window.deleteInformation = deleteInformationConfirm;
+    window.markAsRead = markAsRead;
+    window.expandInformation = expandInformation;
 }
 
 /**
@@ -566,35 +568,70 @@ async function loadAndDisplayInformationen(tag) {
         activeInformationen.sort((a, b) => priorityOrder[b.prioritaet] - priorityOrder[a.prioritaet]);
         
         // HTML für jede Information erstellen
-        const informationenHTML = activeInformationen.map(info => `
-            <div class="information-item" data-id="${info.id}">
-                <div class="information-header">
-                    <div class="information-priority priority-${info.prioritaet}">
-                        ${getPriorityIcon(info.prioritaet)} ${info.prioritaet.charAt(0).toUpperCase() + info.prioritaet.slice(1)}
+        const informationenHTML = activeInformationen.map(info => {
+            const istGelesen = info.read === true;
+            const istEigeneInformation = currentUser && info.ersteller_id === currentUser.id;
+            
+            // Gelesen-Status UI
+            const gelesenStatusHTML = istGelesen ? `
+                <div class="gelesen-status">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <small class="text-success">
+                        Gelesen von: ${info.gelesen_von?.benutzer_name || 'Unbekannt'} 
+                        am ${new Date(info.gelesen_von?.timestamp || info.erstellt_am).toLocaleString('de-DE')}
+                    </small>
+                </div>
+            ` : `
+                <div class="gelesen-status">
+                    <i class="bi bi-circle text-muted"></i>
+                    <small class="text-muted">Noch nicht gelesen</small>
+                    ${!istEigeneInformation ? `
+                        <button type="button" class="btn btn-sm btn-outline-success ms-2" onclick="markAsRead('${info.id}')">
+                            <i class="bi bi-check"></i> Als gelesen markieren
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            return `
+                <div class="information-item ${istGelesen ? 'gelesen' : 'ungelesen'}" data-id="${info.id}">
+                    <div class="information-header">
+                        <div class="information-priority priority-${info.prioritaet}">
+                            ${getPriorityIcon(info.prioritaet)} ${info.prioritaet.charAt(0).toUpperCase() + info.prioritaet.slice(1)}
+                        </div>
+                        <div class="information-actions">
+                            ${istEigeneInformation ? `
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="editInformation('${info.id}')">
+                                    <i class="bi bi-pencil-square"></i> Bearbeiten
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteInformation('${info.id}')">
+                                    <i class="bi bi-trash"></i> Löschen
+                                </button>
+                            ` : `
+                                <button type="button" class="btn btn-sm btn-outline-info" onclick="expandInformation('${info.id}')">
+                                    <i class="bi bi-eye"></i> Details anzeigen
+                                </button>
+                            `}
+                        </div>
                     </div>
-                    <div class="information-actions">
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="editInformation('${info.id}')">
-                            <i class="bi bi-pencil-square"></i> Bearbeiten
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteInformation('${info.id}')">
-                            <i class="bi bi-trash"></i> Löschen
-                        </button>
+                    <div class="information-content">
+                        <h5 class="information-title">${info.titel}</h5>
+                        <p class="information-text ${istGelesen ? '' : 'collapsed-text'}" id="text-${info.id}">
+                            ${info.inhalt}
+                        </p>
+                        ${gelesenStatusHTML}
+                        <div class="information-meta">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i> Erstellt von: ${info.ersteller_name || 'Unbekannt'} |
+                                <i class="bi bi-clock"></i> ${new Date(info.erstellt_am).toLocaleString('de-DE')}
+                                ${info.aktualisiert_am && info.aktualisiert_am !== info.erstellt_am ? 
+                                    `| <i class="bi bi-pencil"></i> Bearbeitet: ${new Date(info.aktualisiert_am).toLocaleString('de-DE')}` : ''}
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="information-content">
-                    <h5 class="information-title">${info.titel}</h5>
-                    <p class="information-text">${info.inhalt}</p>
-                    <div class="information-meta">
-                        <small class="text-muted">
-                            <i class="bi bi-person"></i> Erstellt von: ${info.ersteller_name || 'Unbekannt'} |
-                            <i class="bi bi-clock"></i> ${new Date(info.erstellt_am).toLocaleString('de-DE')}
-                            ${info.aktualisiert_am && info.aktualisiert_am !== info.erstellt_am ? 
-                                `| <i class="bi bi-pencil"></i> Bearbeitet: ${new Date(info.aktualisiert_am).toLocaleString('de-DE')}` : ''}
-                        </small>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
         
         informationList.innerHTML = informationenHTML;
         
@@ -797,4 +834,115 @@ function getPriorityIcon(prioritaet) {
         'niedrig': '<i class="bi bi-info-circle text-secondary"></i>'
     };
     return icons[prioritaet] || icons['normal'];
+}
+
+/**
+ * Markiert eine Information als gelesen
+ * @param {string} informationId - ID der Information
+ */
+window.markAsRead = async function(informationId) {
+    try {
+        console.log('👁️ Markiere Information als gelesen:', informationId);
+        
+        const response = await markInformationAsRead(informationId);
+        
+        if (response.success) {
+            showToast('Information als gelesen markiert!', 'success');
+            
+            // Informationen neu laden um Gelesen-Status zu aktualisieren
+            const tagDatumText = document.getElementById('information-tag-datum').textContent;
+            const [tagName] = tagDatumText.split(', ');
+            
+            const tagMap = {
+                'Montag': 'montag',
+                'Dienstag': 'dienstag', 
+                'Mittwoch': 'mittwoch',
+                'Donnerstag': 'donnerstag',
+                'Freitag': 'freitag',
+                'Samstag': 'samstag',
+                'Sonntag': 'sonntag'
+            };
+            
+            const tag = tagMap[tagName];
+            
+            // Globale Daten aktualisieren und UI neu laden
+            if (currentEinrichtung) {
+                await loadInformationenDataFromAPI();
+                await loadAndDisplayInformationen(tag);
+                
+                // Information-Button-Zustände auch aktualisieren
+                window.dispatchEvent(new CustomEvent('informationUpdated', {
+                    detail: { informationId, tag }
+                }));
+            }
+            
+        } else {
+            showToast(response.message || 'Fehler beim Markieren als gelesen', 'error');
+        }
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Markieren als gelesen:', error);
+        showToast('Netzwerkfehler beim Markieren als gelesen', 'error');
+    }
+};
+
+/**
+ * Zeigt/Versteckt die Details einer Information und markiert sie automatisch als gelesen
+ * @param {string} informationId - ID der Information
+ */
+window.expandInformation = async function(informationId) {
+    try {
+        const textElement = document.getElementById(`text-${informationId}`);
+        const informationItem = document.querySelector(`[data-id="${informationId}"]`);
+        
+        if (!textElement || !informationItem) return;
+        
+        const isCollapsed = textElement.classList.contains('collapsed-text');
+        
+        if (isCollapsed) {
+            // Details anzeigen
+            textElement.classList.remove('collapsed-text');
+            informationItem.classList.add('expanded');
+            
+            // Automatisch als gelesen markieren wenn Details angezeigt werden
+            if (informationItem.classList.contains('ungelesen')) {
+                await markAsRead(informationId);
+            }
+        } else {
+            // Details verstecken
+            textElement.classList.add('collapsed-text');
+            informationItem.classList.remove('expanded');
+        }
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Erweitern der Information:', error);
+    }
+};
+
+/**
+ * Lädt Informationen-Daten für die aktuelle Woche und Einrichtung
+ */
+async function loadInformationenDataFromAPI() {
+    try {
+        if (!currentEinrichtung) {
+            console.warn('⚠️ Keine Einrichtung ausgewählt für Informationen-Laden');
+            return;
+        }
+        
+        console.log(`📋 Lade Informationen für KW ${currentWeek}/${currentYear}, Einrichtung: ${currentEinrichtung.name}`);
+        
+        const result = await getInformationen(currentYear, currentWeek, currentEinrichtung.id);
+        
+        if (result.success) {
+            window.currentInformationenData = result.informationen || {};
+            console.log('✅ Informationen-Daten erfolgreich geladen:', Object.keys(window.currentInformationenData).length, 'Tage');
+        } else {
+            console.warn('⚠️ Keine Informationen verfügbar:', result.message);
+            window.currentInformationenData = {};
+        }
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Informationen-Daten:', error);
+        window.currentInformationenData = {};
+    }
 } 

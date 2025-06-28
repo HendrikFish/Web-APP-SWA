@@ -1405,6 +1405,70 @@
     margin: 0;
 }
 
+/* Information Item Gelesen-Status Styling */
+.information-item {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.information-item.gelesen {
+    background: linear-gradient(135deg, #f8f9fa, #e8f5e8);
+    border-color: #c3e6c3;
+}
+
+.information-item.ungelesen {
+    background: #fff;
+    border-left: 4px solid #ffc107;
+}
+
+.information-item.expanded {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Information Text Collapsed State */
+.information-text.collapsed-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.information-text.collapsed-text:hover {
+    color: #0066cc;
+}
+
+.information-text.collapsed-text::after {
+    content: " ... mehr anzeigen";
+    color: #0066cc;
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* Gelesen Status */
+.gelesen-status {
+    margin: 0.75rem 0;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.gelesen-status i {
+    font-size: 1.1rem;
+}
+
+.gelesen-status .btn-sm {
+    margin-left: auto;
+}
+
 /* Mobile Anpassungen für Informations-Modal */
 @media (max-width: 768px) {
     .information-modal {
