@@ -167,7 +167,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
             localStorage.setItem('menue-portal-last-einrichtung', currentEinrichtung.id);
             
             // TIMING-FIX: Mobile Detection erst jetzt aufrufen, nachdem currentEinrichtung gesetzt ist
-            updateMobileDetection(isMobile, renderMenuplanWrapper);
+            // ABER: OHNE Render-Callback während Initialisierung - Rendering kommt später
+            updateMobileDetection(isMobile, null);
             
             // Bestellungen für die gewählte Einrichtung laden
             await loadBestellungenFromAPI();
