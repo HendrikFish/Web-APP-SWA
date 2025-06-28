@@ -1157,7 +1157,8 @@
     }
     
     .gruppe-label {
-        font-size: 0.85rem !important;
+        font-size: 1rem !important;
+        font-weight: bold !important;
     }
 }
 
