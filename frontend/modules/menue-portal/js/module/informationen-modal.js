@@ -11,6 +11,23 @@ import {
     getISOWeek
 } from './informationen-api.js';
 
+// UI-Utilities aus eigenem Modul importieren
+import { 
+    createModalHTML,
+    showModal,
+    hideModal,
+    showOverviewMode,
+    showFormMode,
+    resetModalForm,
+    fillFormWithData,
+    setModalLabels,
+    setTagDatum,
+    getDayFromElement,
+    getCategoryFromElement,
+    getTagName,
+    formatDate
+} from './informationen-modal-ui.js';
+
 // Modal-State
 let currentInformationData = null;
 let isEditMode = false;
@@ -44,16 +61,16 @@ export function openInformationManagementModal(tag, datum) {
     isEditMode = false;
     currentInformationData = null;
     
-    // Tag-Datum setzen
-    document.getElementById('information-tag-datum').textContent = `${getTagName(tag)}, ${formatDate(datum)}`;
+    // Tag-Datum setzen (aus UI-Modul)
+    setTagDatum(`${getTagName(tag)}, ${formatDate(datum)}`);
     
     // Informationen für diesen Tag laden und anzeigen
     loadAndDisplayInformationen(tag);
     
-    // Übersichts-Modus aktivieren
+    // Übersichts-Modus aktivieren (aus UI-Modul)
     showOverviewMode();
     
-    // Modal anzeigen
+    // Modal anzeigen (aus UI-Modul)
     showModal();
 }
 
@@ -66,22 +83,19 @@ export function openNewInformationModal(tag, datum) {
     isEditMode = false;
     currentInformationData = null;
     
-    const modalTitle = document.getElementById('information-modal-title');
-    const submitBtn = document.getElementById('information-submit-btn');
+    // Modal-Labels setzen (aus UI-Modul)
+    setModalLabels('Neue Information erstellen', 'Information erstellen', 'plus-lg');
     
-    modalTitle.textContent = 'Neue Information erstellen';
-    submitBtn.innerHTML = '<i class="bi bi-plus-lg"></i> Information erstellen';
+    // Form-Daten setzen (aus UI-Modul)
+    setTagDatum(`${getTagName(tag)}, ${formatDate(datum)}`);
     
-    // Form-Daten setzen
-    document.getElementById('information-tag-datum').textContent = `${getTagName(tag)}, ${formatDate(datum)}`;
-    
-    // Form zurücksetzen
+    // Form zurücksetzen (aus UI-Modul)
     resetModalForm();
     
-    // Formular-Modus aktivieren
+    // Formular-Modus aktivieren (aus UI-Modul)
     showFormMode();
     
-    // Modal anzeigen
+    // Modal anzeigen (aus UI-Modul)
     showModal();
 }
 
@@ -95,22 +109,19 @@ export function openEditInformationModal(information, tag, datum) {
     isEditMode = true;
     currentInformationData = information;
     
-    const modalTitle = document.getElementById('information-modal-title');
-    const submitBtn = document.getElementById('information-submit-btn');
+    // Modal-Labels setzen (aus UI-Modul)
+    setModalLabels('Information bearbeiten', 'Information aktualisieren', 'pencil-square');
     
-    modalTitle.textContent = 'Information bearbeiten';
-    submitBtn.innerHTML = '<i class="bi bi-pencil-square"></i> Information aktualisieren';
+    // Form-Daten setzen (aus UI-Modul)
+    setTagDatum(`${getTagName(tag)}, ${formatDate(datum)}`);
     
-    // Form-Daten setzen
-    document.getElementById('information-tag-datum').textContent = `${getTagName(tag)}, ${formatDate(datum)}`;
-    
-    // Form mit bestehenden Daten füllen
+    // Form mit bestehenden Daten füllen (aus UI-Modul)
     fillFormWithData(information);
     
-    // Formular-Modus aktivieren
+    // Formular-Modus aktivieren (aus UI-Modul)
     showFormMode();
     
-    // Modal anzeigen
+    // Modal anzeigen (aus UI-Modul)
     showModal();
 }
 
@@ -118,22 +129,8 @@ export function openEditInformationModal(information, tag, datum) {
  * Schließt das Informations-Modal
  */
 export function closeInformationModal() {
-    const modal = document.getElementById('information-modal');
-    if (modal) {
-        modal.style.display = 'none';
-        
-        // Mobile: Body-Position und Scroll wiederherstellen
-        if (window.innerWidth <= 768) {
-            const scrollY = modal.getAttribute('data-scroll-y') || '0';
-            document.body.style.position = '';
-            document.body.style.width = '';
-            document.body.style.top = '';
-            document.body.style.overflow = 'auto';
-            window.scrollTo(0, parseInt(scrollY));
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-    }
+    // Modal verstecken (aus UI-Modul)
+    hideModal();
     
     // State zurücksetzen
     currentInformationData = null;
@@ -220,125 +217,7 @@ function getCategoryFromElement(element) {
     return null;
 }
 
-/**
- * Erstellt das Modal-HTML falls nicht vorhanden
- */
-function createModalHTML() {
-    if (document.getElementById('information-modal')) {
-        return;
-    }
-    
-    const modalHTML = `
-        <div id="information-modal" class="information-modal">
-            <div class="information-modal-overlay" onclick="closeInformationModal()"></div>
-            <div class="information-modal-content">
-                <div class="information-modal-header">
-                    <h3 id="information-modal-title">Information erstellen</h3>
-                    <button type="button" class="information-modal-close" onclick="closeInformationModal()">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                
-                <div class="information-modal-body">
-                    <div class="information-info">
-                        <div class="information-tag-datum">
-                            <strong>Tag:</strong>
-                            <span id="information-tag-datum">Tag, Datum</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Übersichts-Sektion für bestehende Informationen -->
-                    <div id="information-overview" class="information-overview" style="display: none;">
-                        <div class="information-overview-header">
-                            <h4>
-                                <i class="bi bi-info-circle-fill text-primary"></i>
-                                Bestehende Informationen
-                            </h4>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="switchToNewForm()">
-                                <i class="bi bi-plus-lg"></i> Neue Information
-                            </button>
-                        </div>
-                        <div id="information-list" class="information-list">
-                            <!-- Informationen werden hier geladen -->
-                        </div>
-                    </div>
-                    
-                    <!-- Formular-Sektion -->
-                    <div id="information-form-section" class="information-form-section">
-                        <form id="information-form" class="information-form">
-                            <!-- Titel -->
-                            <div class="information-field">
-                                <label for="information-titel">
-                                    <i class="bi bi-card-heading text-primary"></i>
-                                    Titel <span class="required">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="information-titel" 
-                                    name="titel"
-                                    class="form-control"
-                                    placeholder="Kurzer, aussagekräftiger Titel"
-                                    required
-                                    minlength="3"
-                                    maxlength="100">
-                            </div>
-                            
-                            <!-- Priorität -->
-                            <div class="information-field">
-                                <label for="information-prioritaet">
-                                    <i class="bi bi-exclamation-triangle text-warning"></i>
-                                    Priorität
-                                </label>
-                                <select id="information-prioritaet" name="prioritaet" class="form-control">
-                                    <option value="niedrig">Niedrig</option>
-                                    <option value="normal" selected>Normal</option>
-                                    <option value="hoch">Hoch</option>
-                                    <option value="kritisch">Kritisch</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Inhalt -->
-                            <div class="information-field">
-                                <label for="information-inhalt">
-                                    <i class="bi bi-card-text text-success"></i>
-                                    Inhalt <span class="required">*</span>
-                                </label>
-                                <textarea 
-                                    id="information-inhalt" 
-                                    name="inhalt"
-                                    rows="6"
-                                    class="form-control"
-                                    placeholder="Detaillierte Beschreibung..."
-                                    required
-                                    minlength="10"
-                                    maxlength="2000"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="information-modal-footer">
-                    <div id="overview-footer" class="overview-footer" style="display: none;">
-                        <button type="button" class="btn btn-secondary" onclick="closeInformationModal()">
-                            <i class="bi bi-x-lg"></i> Schließen
-                        </button>
-                    </div>
-                    <div id="form-footer" class="form-footer">
-                        <button type="button" class="btn btn-secondary" onclick="backToOverview()">
-                            <i class="bi bi-arrow-left"></i> Zurück
-                        </button>
-                        <button type="button" class="btn btn-primary" id="information-submit-btn" onclick="submitInformation()">
-                            <i class="bi bi-plus-lg"></i>
-                            Information erstellen
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-}
+// Modal-HTML-Erstellung jetzt im UI-Modul
 
 /**
  * Setzt Event-Listener für das Modal auf
@@ -355,46 +234,7 @@ function setupModalEventListeners() {
     window.expandInformation = expandInformation;
 }
 
-/**
- * Zeigt das Modal an
- */
-function showModal() {
-    const modal = document.getElementById('information-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        
-        // Mobile: Body-Overflow nur auf Desktop blockieren
-        if (window.innerWidth > 768) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            // Mobile: Body-Scrolling erlauben für bessere Touch-Erfahrung
-            document.body.style.overflow = 'auto';
-            // Prevent scroll-behind für Hintergrund-Content
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.top = `-${window.scrollY}px`;
-            // Scroll-Position für später speichern
-            modal.setAttribute('data-scroll-y', window.scrollY.toString());
-        }
-        
-        // Focus auf erstes Input
-        setTimeout(() => {
-            document.getElementById('information-titel').focus();
-        }, 100);
-    }
-}
-
-/**
- * Setzt das Modal-Formular zurück
- */
-function resetModalForm() {
-    document.getElementById('information-titel').value = '';
-    document.getElementById('information-inhalt').value = '';
-    document.getElementById('information-prioritaet').value = 'normal';
-    
-    // Submit-Button aktivieren
-    document.getElementById('information-submit-btn').disabled = false;
-}
+// Modal-Anzeige und Form-Reset jetzt im UI-Modul
 
 /**
  * Sammelt die Formular-Daten und sendet die Information
@@ -506,32 +346,7 @@ window.submitInformation = async function() {
     }
 };
 
-/**
- * Hilfsfunktion: Konvertiert Tag-Key zu deutschem Namen
- */
-function getTagName(tagKey) {
-    const tagNamen = {
-        'montag': 'Montag',
-        'dienstag': 'Dienstag',
-        'mittwoch': 'Mittwoch',
-        'donnerstag': 'Donnerstag',
-        'freitag': 'Freitag',
-        'samstag': 'Samstag',
-        'sonntag': 'Sonntag'
-    };
-    return tagNamen[tagKey] || tagKey;
-}
-
-/**
- * Hilfsfunktion: Formatiert Datum für Anzeige
- */
-function formatDate(date) {
-    return date.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
+// Hilfsfunktionen jetzt im UI-Modul verfügbar
 
 // ===== NEUE FUNKTIONEN FÜR INFORMATIONS-VERWALTUNG =====
 
@@ -646,28 +461,7 @@ async function loadAndDisplayInformationen(tag) {
     }
 }
 
-/**
- * Zeigt die Übersichts-Sektion an
- */
-function showOverviewMode() {
-    document.getElementById('information-overview').style.display = 'block';
-    document.getElementById('information-form-section').style.display = 'none';
-    document.getElementById('overview-footer').style.display = 'block';
-    document.getElementById('form-footer').style.display = 'none';
-    
-    // Modal-Titel anpassen
-    document.getElementById('information-modal-title').textContent = 'Informationen verwalten';
-}
-
-/**
- * Zeigt die Formular-Sektion an
- */
-function showFormMode() {
-    document.getElementById('information-overview').style.display = 'none';
-    document.getElementById('information-form-section').style.display = 'block';
-    document.getElementById('overview-footer').style.display = 'none';
-    document.getElementById('form-footer').style.display = 'block';
-}
+// Modus-Wechsel-Funktionen jetzt im UI-Modul verfügbar
 
 /**
  * Wechselt zur neuen Information erstellen
