@@ -40,38 +40,34 @@
                         
                         <!-- Wochennavigation - Kompakt -->
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center justify-content-md-end gap-3">
-                                <div class="week-navigation-compact">
-                                    <!-- 1. Zeile: KW und Datum -->
-                                    <div id="week-display" class="fw-bold text-center text-md-end mb-1" style="font-size: 0.95rem;">
-                                        <!-- Wird per JavaScript gefüllt -->
-                                    </div>
-                                    
-                                    <!-- 2. Zeile: Navigation Buttons -->
-                                    <div class="d-flex align-items-center justify-content-md-end gap-2">
-                                        <button id="prev-week" class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-chevron-left"></i>
-                                        </button>
-                                        
-                                        <button id="current-week" class="btn btn-outline-secondary btn-sm">
-                                            Heute
-                                        </button>
-                                        
-                                        <button id="next-week" class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-chevron-right"></i>
-                                        </button>
-                                    </div>
+                            <div class="week-navigation-compact">
+                                <!-- 1. Zeile: KW und Datum -->
+                                <div id="week-display" class="fw-bold text-center text-md-end mb-1" style="font-size: 0.95rem;">
+                                    <!-- Wird per JavaScript gefüllt -->
                                 </div>
                                 
-                                <!-- Loading Indicator rechts neben Navigation -->
-                                <div id="loading-indicator" class="loading-indicator-compact" style="display: none;">
-                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                        <span class="visually-hidden">Lade Menüplan...</span>
-                                    </div>
+                                <!-- 2. Zeile: Navigation Buttons -->
+                                <div class="d-flex align-items-center justify-content-md-end gap-2">
+                                    <button id="prev-week" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    
+                                    <button id="current-week" class="btn btn-outline-secondary btn-sm">
+                                        Heute
+                                    </button>
+                                    
+                                    <button id="next-week" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Animierter Loading-Streifen unter Header -->
+                <div id="loading-indicator" class="loading-progress-bar" style="display: none;">
+                    <div class="loading-progress-fill"></div>
                 </div>
             </div>
         </div>
