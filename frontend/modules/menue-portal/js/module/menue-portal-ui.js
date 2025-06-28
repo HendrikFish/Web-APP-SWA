@@ -42,6 +42,13 @@ import {
     istKategorieRelevantFuerEinrichtung,
     extractVisibleCategories
 } from './menue-portal-rendering-handler.js';
+import { 
+    initControlsHandler,
+    setupControls,
+    setupBestellControls,
+    updateBestellControlsContent,
+    setupLayoutEventListeners
+} from './menue-portal-controls-handler.js';
 // renderMobileAccordion und renderDesktopCalendar jetzt über rendering-handler
 import { 
     handleBestellungChange, 
@@ -71,8 +78,7 @@ let currentYear = currentISOWeek.year;
 let currentWeek = currentISOWeek.week;
 let isMobile = false;
 let portalStammdaten = null;
-let eventListenersInitialized = false; // Flag um mehrfache Event-Listener zu verhindern
-let bestellControlsInitialized = false; // Flag für Bestellkontrollen Event-Listener
+// eventListenersInitialized und bestellControlsInitialized jetzt in controls-handler verwaltet
 // currentMenuplan und rezepteCache jetzt in navigation-handler verwaltet
 // Informationsdaten jetzt in information-handler verwaltet
 
@@ -119,11 +125,23 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Einrichtungs-Selector setup
         setupEinrichtungsSelector(einrichtungen);
         
+        // Controls-Handler initialisieren
+        initControlsHandler({
+            updateBestellControlsContent: updateBestellControlsContentWrapper,
+            setupBestellControls: setupBestellControlsWrapper
+        });
+        
         // Controls setup
-        setupControls();
+        setupControls({
+            printMenuplan,
+            exportToPDF,
+            renderMenuplanWrapper,
+            updateBestellControlsContent: updateBestellControlsContentWrapper,
+            setupBestellControlsCallback: setupBestellControlsWrapper
+        }, currentWeek, currentYear);
         
         // Layout Event-Listener
-        setupLayoutEventListeners();
+        setupLayoutEventListeners(renderMenuplanWrapper);
         
         // Informations-System initialisieren
         initInformationHandler();
@@ -132,8 +150,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
         initNavigationHandler({
             updateActiveEinrichtungButton,
             updateEinrichtungsInfo,
-            setupBestellControls,
-            updateBestellControlsContent,
+            setupBestellControls: setupBestellControlsWrapper,
+            updateBestellControlsContent: updateBestellControlsContentWrapper,
             renderMenuplanWrapper
         });
         
@@ -228,7 +246,7 @@ function setupEinrichtungsSelector(einrichtungen) {
             await switchEinrichtung(einrichtungId, {
                 updateActiveEinrichtungButton,
                 updateEinrichtungsInfo,
-                setupBestellControls,
+                setupBestellControls: setupBestellControlsWrapper,
                 renderMenuplan: renderMenuplanWrapper
             });
         }
@@ -276,192 +294,30 @@ function updateActiveEinrichtungButton() {
 }
 
 /**
- * Setup der Steuerelemente (Wochennavigation + Bestellaktionen)
- */
-function setupControls() {
-    // Wochennavigation
-    const prevWeekBtn = document.getElementById('prev-week');
-    const nextWeekBtn = document.getElementById('next-week');
-    const currentWeekBtn = document.getElementById('current-week');
-    
-    if (prevWeekBtn) {
-        prevWeekBtn.addEventListener('click', () => navigateWeek(-1, {
-            updateBestellControlsContent,
-            renderMenuplan: renderMenuplanWrapper
-        }));
-    }
-    
-    if (nextWeekBtn) {
-        nextWeekBtn.addEventListener('click', () => navigateWeek(1, {
-            updateBestellControlsContent,
-            renderMenuplan: renderMenuplanWrapper
-        }));
-    }
-    
-    if (currentWeekBtn) {
-        currentWeekBtn.addEventListener('click', () => navigateToCurrentWeek({
-            updateBestellControlsContent,
-            renderMenuplan: renderMenuplanWrapper
-        }));
-    }
-    
-    // Action Buttons
-    const printBtn = document.getElementById('print-menu');
-    const pdfBtn = document.getElementById('export-pdf');
-    const refreshBtn = document.getElementById('refresh-menu');
-    
-    if (printBtn) {
-        printBtn.addEventListener('click', printMenuplan);
-    }
-    
-    if (pdfBtn) {
-        pdfBtn.addEventListener('click', exportToPDF);
-    }
-    
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => loadAndDisplayMenuplan({
-            renderMenuplan: renderMenuplanWrapper
-        }));
-    }
-    
-    // Bestellaktionen für externe Einrichtungen
-    setupBestellControls();
-    
-    // Aktuelle Woche anzeigen
-    updateWeekDisplay(currentWeek, currentYear, getMondayOfWeek, formatDate);
-}
-
-/**
- * Setup für Bestellungs-Controls (nur bei externen Einrichtungen)
- */
-function setupBestellControls() {
-    // Event-Listener nur einmal in action-buttons-container registrieren
-    if (!bestellControlsInitialized) {
-        const actionContainer = document.querySelector('.action-buttons-container');
-        if (actionContainer) {
-            actionContainer.addEventListener('click', (e) => {
-            if (e.target.id === 'export-bestellungen') {
-                exportCurrentBestellungen();
-            } else if (e.target.id === 'clear-bestellungen') {
-                clearCurrentBestellungen();
-            } else if (e.target.id === 'validate-bestellungen') {
-                validateCurrentBestellungen();
-            }
-        });
-        }
-        bestellControlsInitialized = true;
-        console.log('✅ Bestellkontrollen Event-Listener initialisiert');
-    }
-    
-    // HTML-Inhalt aktualisieren
-    updateBestellControlsContent();
-}
-
-/**
- * Aktualisiert nur den Inhalt der Bestellkontrollen ohne Event-Listener neu zu registrieren
- */
-function updateBestellControlsContent() {
-    const actionContainer = document.querySelector('.action-buttons-container .d-flex');
-    const bestellContainer = document.getElementById('bestellung-controls');
-    
-    // Alten bestellung-controls Container ausblenden
-    if (bestellContainer) {
-        bestellContainer.style.display = 'none';
-    }
-    
-    if (!actionContainer) return;
-    
-    // Vorhandene Bestellungs-Buttons entfernen
-    const existingBestellButtons = actionContainer.querySelectorAll('.bestellung-control-btn');
-    existingBestellButtons.forEach(btn => btn.remove());
-    
-    // Für externe Einrichtungen: Bestellungs-Buttons hinzufügen
-    if (currentEinrichtung && !currentEinrichtung.isIntern) {
-        const bestellButtons = `
-            <div class="d-flex gap-2 me-2 bestellung-control-btn">
-                <span class="text-success fw-bold me-2" style="line-height: 2.25rem;">
-                    <i class="bi bi-cart-check-fill me-1"></i>
-                    KW ${currentWeek}/${currentYear}:
-                </span>
-                <button type="button" class="btn btn-outline-success btn-sm" id="export-bestellungen">
-                        <i class="bi bi-download me-1"></i>
-                    Export
-                    </button>
-                <button type="button" class="btn btn-outline-warning btn-sm" id="clear-bestellungen">
-                        <i class="bi bi-trash me-1"></i>
-                        Löschen
-                    </button>
-                <button type="button" class="btn btn-outline-info btn-sm" id="validate-bestellungen">
-                        <i class="bi bi-check-circle me-1"></i>
-                        Prüfen
-                    </button>
-        </div>
-    `;
-        actionContainer.insertAdjacentHTML('afterbegin', bestellButtons);
-    }
-}
-
-/**
- * Setup der Layout Event-Listener (nur einmal)
- */
-function setupLayoutEventListeners() {
-    // Verhindere mehrfache Registrierung
-    if (eventListenersInitialized) {
-        return;
-    }
-    
-    // Resize-Handler
-    window.addEventListener('menue-portal:layout-change', () => {
-        isMobile = isMobileView();
-        updateMobileDetection(isMobile, renderMenuplanWrapper);
-    });
-    
-    // Window Resize mit Debouncing um Toast-Spam zu verhindern
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            isMobile = isMobileView();
-            updateMobileDetection(isMobile, renderMenuplanWrapper);
-        }, 250); // 250ms Debounce
-    });
-    
-    eventListenersInitialized = true;
-    console.log('✅ Layout Event-Listener initialisiert');
-}
-
-// Information Event-Listener jetzt in information-handler
-
-// updateInformationButtons jetzt in information-handler
-
-// getDayFromButton und getCategoryFromButton jetzt in information-handler
-
-// handleInformationClick jetzt in information-handler
-
-// switchEinrichtung jetzt in navigation-handler
-
-// navigateWeek jetzt in navigation-handler
-
-// navigateToCurrentWeek jetzt in navigation-handler
-
-// loadAndDisplayMenuplan jetzt in navigation-handler
-
-// loadMenuplanRecipes jetzt in navigation-handler
-
-// loadInformationenData jetzt in information-handler
-
-/**
  * Rendert den Menüplan basierend auf Bildschirmgröße - Wrapper für Rendering-Handler
  */
 function renderMenuplanWrapper() {
     renderMenuplan(isMobile, portalStammdaten, currentEinrichtung, currentYear, currentWeek);
 }
 
-// istKategorieZugewiesen jetzt in rendering-handler
+/**
+ * Wrapper für setupBestellControls mit lokalen Funktions-Callbacks
+ */
+function setupBestellControlsWrapper() {
+    setupBestellControls({
+        exportCurrentBestellungen,
+        clearCurrentBestellungen,
+        validateCurrentBestellungen,
+        updateBestellControlsContent: updateBestellControlsContentWrapper
+    });
+}
 
-// istKategorieRelevantFuerEinrichtung jetzt in rendering-handler 
-
-// extractVisibleCategories jetzt in rendering-handler
+/**
+ * Wrapper für updateBestellControlsContent
+ */
+function updateBestellControlsContentWrapper() {
+    updateBestellControlsContent(currentEinrichtung, currentWeek, currentYear);
+}
 
 // === Bestellaktionen ===
 
