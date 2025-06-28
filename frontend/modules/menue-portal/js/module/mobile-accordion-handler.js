@@ -159,6 +159,53 @@ export function renderMobileAccordion(
     
     accordionHtml += '</div>';
     container.innerHTML = accordionHtml;
+    
+    // Bootstrap Accordion-Komponenten nach dem Rendern initialisieren
+    // Warte einen Tick, damit das DOM vollständig geladen ist
+    setTimeout(() => {
+        const accordionItems = container.querySelectorAll('.accordion-item');
+        accordionItems.forEach(item => {
+            const button = item.querySelector('.accordion-button');
+            const collapse = item.querySelector('.accordion-collapse');
+            
+            if (button && collapse) {
+                // Bootstrap Collapse-Instanz erstellen
+                const bsCollapse = new bootstrap.Collapse(collapse, {
+                    toggle: false // Nicht automatisch öffnen
+                });
+                
+                // Event-Listener für Button-Klicks
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                    
+                    if (isExpanded) {
+                        // Schließen
+                        bsCollapse.hide();
+                        button.classList.add('collapsed');
+                        button.setAttribute('aria-expanded', 'false');
+                    } else {
+                        // Öffnen
+                        bsCollapse.show();
+                        button.classList.remove('collapsed');
+                        button.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                
+                // Event-Listener für Collapse-Events
+                collapse.addEventListener('shown.bs.collapse', () => {
+                    button.classList.remove('collapsed');
+                    button.setAttribute('aria-expanded', 'true');
+                });
+                
+                collapse.addEventListener('hidden.bs.collapse', () => {
+                    button.classList.add('collapsed');
+                    button.setAttribute('aria-expanded', 'false');
+                });
+            }
+        });
+    }, 0);
 }
 
 /**
