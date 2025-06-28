@@ -77,7 +77,7 @@ async function saveBestellungen(req, res) {
 
         res.json({
             success: true,
-            message: `Bestellungen für ${einrichtung_id} in KW ${week}/${year} gespeichert`,
+            message: `Bestellungen für ${req.body.einrichtung_name || einrichtung_id} in KW ${week}/${year} gespeichert`,
             gespeichert_am: bestellungenGesamt.letzte_änderung
         });
 

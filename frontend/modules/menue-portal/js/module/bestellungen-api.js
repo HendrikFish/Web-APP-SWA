@@ -69,7 +69,9 @@ export async function saveBestellungen(year, week, einrichtungId, bestellungen, 
         
         if (response.success) {
             console.log('✅ Bestellungen erfolgreich gespeichert');
-            showToast(response.message || `Bestellungen für KW ${week}/${year} gespeichert`, 'success');
+            // Verwende den Einrichtungsnamen statt ID für Toast-Nachricht
+            const einrichtungsName = einrichtungInfo.name || 'Unbekannte Einrichtung';
+            showToast(`Bestellungen für ${einrichtungsName} in KW ${week}/${year} gespeichert`, 'success');
             return {
                 success: true,
                 message: response.message,

@@ -167,22 +167,8 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
  * @param {number} anzahl - Anzahl
  */
 function updateBestellungUI(day, kategorie, gruppe, anzahl) {
-    // Toast-Benachrichtigung anzeigen
-    if (window.showToast) {
-        const kategorieNames = {
-            'menu1': 'Menü 1',
-            'menu2': 'Menü 2', 
-            'menu': 'Hauptmenü',
-            'suppe': 'Suppe',
-            'dessert': 'Dessert'
-        };
-        
-        const message = anzahl > 0 
-            ? `${kategorieNames[kategorie]} für ${gruppe}: ${anzahl} bestellt`
-            : `Bestellung für ${kategorieNames[kategorie]} (${gruppe}) entfernt`;
-            
-        window.showToast(message, 'success');
-    }
+    // Keine einzelnen Toast-Nachrichten bei jedem Input-Change
+    // Das würde zu viele Nachrichten erzeugen
     
     // Tagesinformation aktualisieren
     updateDayOrderSummary(day);
