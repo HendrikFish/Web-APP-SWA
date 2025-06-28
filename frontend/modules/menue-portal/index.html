@@ -38,26 +38,28 @@
                             </div>
                         </div>
                         
-                        <!-- Wochennavigation -->
+                        <!-- Wochennavigation - Kompakt -->
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center justify-content-md-end gap-2">
-                                <button id="prev-week" class="btn btn-outline-secondary btn-sm">
-                                    <i class="bi bi-chevron-left"></i>
-                                    <span class="d-none d-sm-inline">Vorherige</span>
-                                </button>
-                                
-                                <button id="current-week" class="btn btn-outline-secondary btn-sm">
-                                    Heute
-                                </button>
-                                
-                                <div id="week-display" class="fw-bold text-center" style="min-width: 120px;">
+                            <div class="week-navigation-compact">
+                                <!-- 1. Zeile: KW und Datum -->
+                                <div id="week-display" class="fw-bold text-center text-md-end mb-1" style="font-size: 0.95rem;">
                                     <!-- Wird per JavaScript gefüllt -->
                                 </div>
                                 
-                                <button id="next-week" class="btn btn-outline-secondary btn-sm">
-                                    <span class="d-none d-sm-inline">Nächste</span>
-                                    <i class="bi bi-chevron-right"></i>
-                                </button>
+                                <!-- 2. Zeile: Navigation Buttons -->
+                                <div class="d-flex align-items-center justify-content-md-end gap-2">
+                                    <button id="prev-week" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    
+                                    <button id="current-week" class="btn btn-outline-secondary btn-sm">
+                                        Heute
+                                    </button>
+                                    
+                                    <button id="next-week" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

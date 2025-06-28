@@ -1313,6 +1313,35 @@
     outline: none;
 }
 
+/* Kompakte Wochennavigation */
+.menue-portal-controls .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.week-navigation-compact {
+    line-height: 1.2;
+}
+
+.week-navigation-compact #week-display {
+    color: #495057;
+    letter-spacing: 0.25px;
+}
+
+@media (max-width: 767px) {
+    .menue-portal-controls .card-body {
+        padding: 0.75rem 1rem;
+    }
+    
+    .week-navigation-compact #week-display {
+        text-align: center !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .week-navigation-compact .d-flex {
+        justify-content: center !important;
+    }
+}
+
 /* Max-Überschreitung Indicator */
 .bestellung-max-indicator.max-exceeded {
     background-color: #dc3545 !important;
