@@ -1,0 +1,226 @@
+/* Base & Layout Styles - Menue-Portal */
+/* Grundlegende Layouts, Controls und allgemeine Styles */
+
+/* App Container */
+#app {
+    margin-top: 0 !important;
+    padding-top: 0;
+}
+
+/* Controls bleiben sticky */
+.menue-portal-controls {
+    position: sticky;
+    top: 58px; /* Navbar-Höhe */
+    z-index: 1020;
+    background-color: #f8f9fa;
+    margin-bottom: 1rem;
+}
+
+.menue-portal-controls .card-body {
+    padding: 1rem 1.25rem;
+}
+
+/* Einrichtungs-Selector */
+#einrichtungs-selector .btn {
+    border-radius: 20px;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+#einrichtungs-selector .btn.active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+#einrichtungs-selector .d-flex.align-items-center {
+    gap: 1rem;
+}
+
+#einrichtungs-selector .card-title {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+#einrichtungs-selector .btn-group-sm {
+    gap: 0.5rem;
+}
+
+/* Week Navigation */
+.week-navigation-compact {
+    margin-bottom: 0.5rem;
+}
+
+.week-navigation-compact #week-display {
+    font-weight: 600;
+    color: #495057;
+    min-width: 140px;
+    text-align: center;
+}
+
+.week-navigation-compact .d-flex {
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.week-navigation-compact .btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.week-navigation-compact .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.week-navigation-compact .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading States */
+#loading-spinner {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-progress-bar {
+    width: 200px;
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.loading-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 50%, #007bff 100%);
+    border-radius: 2px;
+    animation: loading-slide 1.5s infinite;
+    width: 30%;
+}
+
+@keyframes loading-slide {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(233%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Error States */
+#error-message {
+    margin: 1rem 0;
+    border: none;
+    border-radius: 8px;
+    background-color: #fff5f5;
+    border-left: 4px solid #dc3545;
+}
+
+/* Action Buttons */
+.action-buttons-container {
+    padding: 1rem 0;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    margin-top: 2rem;
+}
+
+.action-buttons-container .btn {
+    min-width: 120px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Bestellung Control Buttons */
+.bestellung-control-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bestellung-control-btn span {
+    font-size: 0.9rem;
+}
+
+/* Fade-in Animation */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Pulse Animation */
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes slideInFromTop {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 767px) {
+    .menue-portal-controls {
+        margin-bottom: 0.75rem;
+    }
+    
+    .menue-portal-controls .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+
+    .menue-portal-controls .card-body {
+        padding: 0.75rem 1rem;
+    }
+
+    .week-navigation-compact #week-display {
+        font-size: 0.9rem;
+    }
+
+    .week-navigation-compact {
+        margin-bottom: 0.25rem;
+    }
+
+    #einrichtungs-selector .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+
+    .bestellung-control-btn {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+        padding: 0.75rem;
+    }
+
+    .bestellung-control-btn span {
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+} 

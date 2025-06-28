@@ -1,6 +1,13 @@
-/* Menü-Portal CSS - Mobile-First Design */
+/* Menü-Portal CSS - Modulares Design */
+/* Importiert alle CSS-Module für bessere Wartbarkeit */
 
-/* App Container */
+/* Basis-Module */
+@import './base.css';           /* Layout, Controls, Loading */
+@import './mobile-accordion.css'; /* Mobile Accordion Layout */
+
+/* Restliche Styles (werden schrittweise modularisiert) */
+
+/* Basis-Überschreibungen für Rückwärtskompatibilität */
 #app {
     margin-top: 0 !important;
     padding-top: 0;
