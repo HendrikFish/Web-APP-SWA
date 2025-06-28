@@ -74,7 +74,7 @@ export function renderMobileAccordion(
                         aria-expanded="false" 
                         aria-controls="collapse-${dayKey}"
                     >
-                        <div class="w-100 d-flex justify-content-between align-items-center">
+                        <div class="w-100 d-flex justify-content-between align-items-center accordion-header-content">
                             <div class="day-info">
                                 <span class="day-name fw-bold">${dayNames[index]}</span>
                                 <small class="day-date text-muted d-block">${dateStr}</small>

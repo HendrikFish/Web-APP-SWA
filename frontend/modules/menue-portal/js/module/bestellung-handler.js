@@ -1,40 +1,44 @@
 // bestellung-handler.js - Bestellfunktionalität für externe Einrichtungen
-// Verwaltet Bestellungen, automatische Berechnungen und Validierung
+// Verwendet JSON-API statt LocalStorage für Datenpersistierung
+
+import { loadBestellungenForEinrichtung, saveBestellungen } from './bestellungen-api.js';
+import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 
 /**
- * Globaler Bestellungs-Zustand
+ * Globaler Bestellungs-Zustand (Cache für UI-Performance)
  */
-let bestellungen = {
-    // Format: { "2025-01-13": { "montag": { "menu1": { "Gruppe A": 5 } } } }
-};
+let bestellungenCache = {};
+let currentWeek = null;
+let currentYear = null;
+let saveTimeout = null; // Debouncing für API-Aufrufe
 
 /**
  * Behandelt Änderungen an Bestellfeldern
  * @param {HTMLInputElement} input - Das geänderte Input-Element
  */
-export function handleBestellungChange(input) {
+export async function handleBestellungChange(input) {
     const day = input.dataset.day;
     const kategorie = input.dataset.kategorie;
     const gruppe = input.dataset.gruppe;
     const anzahl = parseInt(input.value) || 0;
     
     // Aktuelle Woche berechnen
-    const currentWeek = getCurrentWeek();
-    const currentYear = getCurrentYear();
+    currentWeek = getCurrentWeek();
+    currentYear = getCurrentYear();
     const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
     
-    // Bestellung speichern
-    if (!bestellungen[wochenschluessel]) {
-        bestellungen[wochenschluessel] = {};
+    // Bestellung in Cache speichern
+    if (!bestellungenCache[wochenschluessel]) {
+        bestellungenCache[wochenschluessel] = {};
     }
-    if (!bestellungen[wochenschluessel][day]) {
-        bestellungen[wochenschluessel][day] = {};
+    if (!bestellungenCache[wochenschluessel][day]) {
+        bestellungenCache[wochenschluessel][day] = {};
     }
-    if (!bestellungen[wochenschluessel][day][kategorie]) {
-        bestellungen[wochenschluessel][day][kategorie] = {};
+    if (!bestellungenCache[wochenschluessel][day][kategorie]) {
+        bestellungenCache[wochenschluessel][day][kategorie] = {};
     }
     
-    bestellungen[wochenschluessel][day][kategorie][gruppe] = anzahl;
+    bestellungenCache[wochenschluessel][day][kategorie][gruppe] = anzahl;
     
     // Automatische Berechnung für Suppen und Desserts
     berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochenschluessel);
@@ -42,10 +46,65 @@ export function handleBestellungChange(input) {
     // UI aktualisieren
     updateBestellungUI(day, kategorie, gruppe, anzahl);
     
-    // In localStorage speichern
-    saveBestellungenToStorage();
+    // Debounced API-Speicherung
+    debouncedSaveToAPI(wochenschluessel);
     
     console.log('Bestellung aktualisiert:', { day, kategorie, gruppe, anzahl, wochenschluessel });
+}
+
+/**
+ * Debounced Speicherung in die API (verhindert zu viele API-Aufrufe)
+ * @param {string} wochenschluessel - Wochenschlüssel
+ */
+function debouncedSaveToAPI(wochenschluessel) {
+    // Vorherigen Timeout löschen
+    if (saveTimeout) {
+        clearTimeout(saveTimeout);
+    }
+    
+    // Neuen Timeout setzen
+    saveTimeout = setTimeout(async () => {
+        await saveBestellungenToAPI(wochenschluessel);
+    }, 1000); // 1 Sekunde Debouncing
+}
+
+/**
+ * Speichert Bestellungen über die API
+ * @param {string} wochenschluessel - Wochenschlüssel
+ */
+async function saveBestellungenToAPI(wochenschluessel) {
+    try {
+        const currentEinrichtung = window.currentEinrichtung;
+        if (!currentEinrichtung) {
+            console.error('Keine Einrichtung ausgewählt');
+            return;
+        }
+
+        const bestellungsData = bestellungenCache[wochenschluessel] || {};
+        
+        const result = await saveBestellungen(
+            currentYear,
+            currentWeek,
+            currentEinrichtung.id,
+            bestellungsData,
+            {
+                name: currentEinrichtung.name,
+                typ: currentEinrichtung.typ || 'extern',
+                gruppen: currentEinrichtung.gruppen || []
+            }
+        );
+
+        if (result.success) {
+            console.log('✅ Bestellungen erfolgreich in JSON gespeichert');
+        } else {
+            console.error('❌ Fehler beim Speichern in JSON:', result.message);
+            showToast(`Fehler beim Speichern: ${result.message}`, 'error');
+        }
+
+    } catch (error) {
+        console.error('❌ Fehler beim Speichern der Bestellungen:', error);
+        showToast('Fehler beim Speichern der Bestellungen', 'error');
+    }
 }
 
 /**
@@ -71,10 +130,10 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
     
     // Automatische Suppen-Bestellung
     if (speiseplanTag.suppe) {
-        if (!bestellungen[wochenschluessel][day]['suppe']) {
-            bestellungen[wochenschluessel][day]['suppe'] = {};
+        if (!bestellungenCache[wochenschluessel][day]['suppe']) {
+            bestellungenCache[wochenschluessel][day]['suppe'] = {};
         }
-        bestellungen[wochenschluessel][day]['suppe'][gruppe] = anzahl;
+        bestellungenCache[wochenschluessel][day]['suppe'][gruppe] = anzahl;
         
         // UI-Feld aktualisieren falls vorhanden
         const suppenInput = document.querySelector(`input[data-day="${day}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`);
@@ -86,10 +145,10 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
     
     // Automatische Dessert-Bestellung
     if (speiseplanTag.dessert) {
-        if (!bestellungen[wochenschluessel][day]['dessert']) {
-            bestellungen[wochenschluessel][day]['dessert'] = {};
+        if (!bestellungenCache[wochenschluessel][day]['dessert']) {
+            bestellungenCache[wochenschluessel][day]['dessert'] = {};
         }
-        bestellungen[wochenschluessel][day]['dessert'][gruppe] = anzahl;
+        bestellungenCache[wochenschluessel][day]['dessert'][gruppe] = anzahl;
         
         // UI-Feld aktualisieren falls vorhanden
         const dessertInput = document.querySelector(`input[data-day="${day}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`);
@@ -134,15 +193,13 @@ function updateBestellungUI(day, kategorie, gruppe, anzahl) {
  * @param {string} day - Wochentag
  */
 function updateDayOrderSummary(day) {
-    const currentWeek = getCurrentWeek();
-    const currentYear = getCurrentYear();
     const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
     
-    if (!bestellungen[wochenschluessel] || !bestellungen[wochenschluessel][day]) {
+    if (!bestellungenCache[wochenschluessel] || !bestellungenCache[wochenschluessel][day]) {
         return;
     }
     
-    const dayData = bestellungen[wochenschluessel][day];
+    const dayData = bestellungenCache[wochenschluessel][day];
     let totalBestellungen = 0;
     
     // Gesamtanzahl berechnen
@@ -172,44 +229,111 @@ function updateDayOrderSummary(day) {
 }
 
 /**
- * Lädt gespeicherte Bestellungen aus localStorage
+ * Lädt gespeicherte Bestellungen aus der JSON-API
+ */
+export async function loadBestellungenFromAPI() {
+    try {
+        const currentEinrichtung = window.currentEinrichtung;
+        if (!currentEinrichtung) {
+            console.warn('Keine Einrichtung ausgewählt - kann Bestellungen nicht laden');
+            return;
+        }
+
+        currentWeek = getCurrentWeek();
+        currentYear = getCurrentYear();
+        
+        console.log(`📋 Lade Bestellungen für ${currentEinrichtung.name} aus JSON-API...`);
+        
+        const result = await loadBestellungenForEinrichtung(currentYear, currentWeek, currentEinrichtung.id);
+        
+        if (result.success) {
+            const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+            bestellungenCache[wochenschluessel] = result.bestellungen;
+            
+            console.log('✅ Bestellungen aus JSON-API geladen:', result.bestellungen);
+            
+            // UI aktualisieren falls bereits geladen
+            setTimeout(() => {
+                loadBestellungenIntoUI(wochenschluessel);
+            }, 500);
+            
+        } else {
+            console.warn('⚠️ Keine Bestellungen gefunden:', result.message);
+            bestellungenCache = {};
+        }
+
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Bestellungen aus JSON-API:', error);
+        bestellungenCache = {};
+    }
+}
+
+/**
+ * Legacy-Funktion: Lädt aus LocalStorage (für Rückwärtskompatibilität)
+ * @deprecated Verwende loadBestellungenFromAPI() stattdessen
  */
 export function loadBestellungenFromStorage() {
+    console.warn('⚠️ loadBestellungenFromStorage() ist deprecated - verwende loadBestellungenFromAPI()');
+    // Migration: Falls LocalStorage-Daten vorhanden, diese zur API migrieren
+    migrateLocalStorageToAPI();
+}
+
+/**
+ * Migriert bestehende LocalStorage-Daten zur JSON-API
+ */
+async function migrateLocalStorageToAPI() {
     try {
         const stored = localStorage.getItem('menue-portal-bestellungen');
         if (stored) {
-            bestellungen = JSON.parse(stored);
-            console.log('Bestellungen aus localStorage geladen:', bestellungen);
+            const localStorageData = JSON.parse(stored);
+            console.log('🔄 Migriere LocalStorage-Daten zur JSON-API...', localStorageData);
+            
+            // Daten in Cache übernehmen
+            bestellungenCache = localStorageData;
+            
+            // Daten zur API hochladen
+            const currentEinrichtung = window.currentEinrichtung;
+            if (currentEinrichtung) {
+                for (const [wochenschluessel, wochenData] of Object.entries(localStorageData)) {
+                    const [year, week] = wochenschluessel.split('-');
+                    await saveBestellungen(
+                        parseInt(year),
+                        parseInt(week),
+                        currentEinrichtung.id,
+                        wochenData,
+                        {
+                            name: currentEinrichtung.name,
+                            typ: currentEinrichtung.typ || 'extern',
+                            gruppen: currentEinrichtung.gruppen || []
+                        }
+                    );
+                }
+                
+                // LocalStorage nach erfolgreicher Migration löschen
+                localStorage.removeItem('menue-portal-bestellungen');
+                console.log('✅ Migration abgeschlossen - LocalStorage-Daten gelöscht');
+                showToast('Bestellungen erfolgreich zur JSON-API migriert', 'success');
+            }
         }
     } catch (error) {
-        console.error('Fehler beim Laden der Bestellungen:', error);
-        bestellungen = {};
+        console.error('❌ Fehler bei der Migration:', error);
+        showToast('Fehler bei der Datenmigration', 'error');
     }
 }
 
 /**
- * Speichert Bestellungen in localStorage
- */
-function saveBestellungenToStorage() {
-    try {
-        localStorage.setItem('menue-portal-bestellungen', JSON.stringify(bestellungen));
-        console.log('Bestellungen in localStorage gespeichert');
-    } catch (error) {
-        console.error('Fehler beim Speichern der Bestellungen:', error);
-    }
-}
-
-/**
- * Lädt gespeicherte Bestellungen in die UI
+ * Lädt Bestellungen in die UI
  * @param {string} wochenschluessel - Wochenschlüssel
  */
 export function loadBestellungenIntoUI(wochenschluessel) {
-    if (!bestellungen[wochenschluessel]) {
+    if (!bestellungenCache[wochenschluessel]) {
+        console.log('Keine Bestellungen für', wochenschluessel);
         return;
     }
     
-    const wochenData = bestellungen[wochenschluessel];
+    const wochenData = bestellungenCache[wochenschluessel];
     
+    // Alle Bestellungsfelder füllen
     Object.entries(wochenData).forEach(([day, dayData]) => {
         Object.entries(dayData).forEach(([kategorie, kategorieData]) => {
             Object.entries(kategorieData).forEach(([gruppe, anzahl]) => {
@@ -217,19 +341,19 @@ export function loadBestellungenIntoUI(wochenschluessel) {
                 if (input) {
                     input.value = anzahl;
                     
-                    // Automatisch berechnete Felder markieren
+                    // Visuelle Kennzeichnung für automatisch berechnete Werte
                     if (['suppe', 'dessert'].includes(kategorie)) {
                         input.style.backgroundColor = kategorie === 'suppe' ? '#e3f2fd' : '#e8f5e8';
-                        input.readOnly = true;
-                        input.title = 'Automatisch berechnet basierend auf Hauptspeise';
                     }
                 }
             });
         });
         
-        // Tages-Zusammenfassung aktualisieren
+        // Tagesinformation aktualisieren
         updateDayOrderSummary(day);
     });
+    
+    console.log('UI mit Bestellungen gefüllt für', wochenschluessel);
 }
 
 /**
@@ -244,7 +368,7 @@ export function exportBestellungen(wochenschluessel) {
         return null;
     }
     
-    const wochenData = bestellungen[wochenschluessel] || {};
+    const wochenData = bestellungenCache[wochenschluessel] || {};
     
     return {
         einrichtung: {
@@ -264,29 +388,41 @@ export function exportBestellungen(wochenschluessel) {
  * Löscht alle Bestellungen für eine Woche
  * @param {string} wochenschluessel - Wochenschlüssel
  */
-export function clearBestellungen(wochenschluessel) {
-    if (bestellungen[wochenschluessel]) {
-        delete bestellungen[wochenschluessel];
-        saveBestellungenToStorage();
+export async function clearBestellungen(wochenschluessel) {
+    try {
+        // Cache leeren
+        if (bestellungenCache[wochenschluessel]) {
+            delete bestellungenCache[wochenschluessel];
+        }
         
-        // UI zurücksetzen
-        document.querySelectorAll('.bestellung-input, .bestellung-input-desktop').forEach(input => {
+        // API-Speicherung mit leeren Daten
+        await saveBestellungenToAPI(wochenschluessel);
+        
+        // UI-Felder leeren
+        document.querySelectorAll('.bestellung-input').forEach(input => {
             input.value = '';
             input.style.backgroundColor = '';
-            input.readOnly = false;
         });
         
-        if (window.showToast) {
-            window.showToast('Alle Bestellungen für diese Woche gelöscht', 'info');
-        }
+        // Tagesanzeigen aktualisieren
+        ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'].forEach(day => {
+            updateDayOrderSummary(day);
+        });
+        
+        console.log('Bestellungen gelöscht für', wochenschluessel);
+        showToast('Alle Bestellungen gelöscht', 'success');
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Löschen der Bestellungen:', error);
+        showToast('Fehler beim Löschen der Bestellungen', 'error');
     }
 }
 
 /**
- * Hilfsfunktionen für Woche/Jahr
+ * Hilfsfunktionen
  */
 function getCurrentWeek() {
-    return window.currentWeek || new Date().getWeek();
+    return window.currentWeek || getWeekNumber(new Date());
 }
 
 function getCurrentYear() {
@@ -298,7 +434,7 @@ function getCurrentYear() {
  * @returns {object} Aktueller Bestellungs-Zustand
  */
 export function getBestellungen() {
-    return bestellungen;
+    return bestellungenCache;
 }
 
 /**
@@ -307,7 +443,7 @@ export function getBestellungen() {
  * @returns {object} Validierungs-Ergebnis
  */
 export function validateBestellungen(wochenschluessel) {
-    const wochenData = bestellungen[wochenschluessel] || {};
+    const wochenData = bestellungenCache[wochenschluessel] || {};
     const errors = [];
     const warnings = [];
     
@@ -339,6 +475,15 @@ export function validateBestellungen(wochenschluessel) {
         errors,
         warnings
     };
+}
+
+/**
+ * Hilfsfunktion: Wochennummer berechnen
+ */
+function getWeekNumber(date) {
+    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
 // Global verfügbar machen

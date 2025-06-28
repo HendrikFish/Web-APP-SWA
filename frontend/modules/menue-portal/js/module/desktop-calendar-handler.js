@@ -100,21 +100,28 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
         let recipes = [];
         
         if (categoryKey === 'hauptspeise' && categoryInfo.isZusammengefasst) {
-            // Für Kindergarten/Schule: Nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" anzeigen
-            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
-            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+            // Für Kindergarten/Schule: Unterstütze beide Datenstrukturen
             
-            // Rezepte aus der tatsächlich zugewiesenen Kategorie holen
-            if (istMenu1Zugewiesen) {
-                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
-            } else if (istMenu2Zugewiesen) {
-                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+            // Prüfe ob bereits zusammengefasste 'menu' Kategorie vorhanden ist
+            if (dayData['menu'] && dayData['menu'].length > 0) {
+                // Neue Struktur: Direkt aus 'menu' Kategorie
+                recipes = dayData['menu'] || [];
             } else {
-                recipes = []; // Keine Zuweisung
+                // Alte Struktur: Aus menu1/menu2 basierend auf Zuweisungen
+                const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+                const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+                
+                if (istMenu1Zugewiesen) {
+                    recipes = dayData['menu1'] || [];
+                } else if (istMenu2Zugewiesen) {
+                    recipes = dayData['menu2'] || [];
+                } else {
+                    recipes = []; // Keine Zuweisung
+                }
             }
         } else {
-            // Normale Kategorien
-            recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten[categoryKey] || []) : (dayData[categoryKey] || []);
+            // Normale Kategorien - auch direkt aus dayData[categoryKey]
+            recipes = dayData[categoryKey] || [];
         }
         
         // Prüfe ob diese Kategorie für die Einrichtung relevant ist (Desktop = false)

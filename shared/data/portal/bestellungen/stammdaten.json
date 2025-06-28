@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "description": "Stammdaten für Portal-Bestellungen - definiert Schema und Metadaten",
+  "schema": {
+    "bestelldatei_format": {
+      "dateiname": "{jahr}/{kalenderwoche}.json",
+      "beispiel": "2025/26.json",
+      "beschreibung": "Eine JSON-Datei pro Kalenderwoche mit allen Bestellungen"
+    },
+    "struktur": {
+      "year": "number - Kalenderjahr",
+      "week": "number - Kalenderwoche",
+      "erstellt_am": "ISO-Datum - Erstellungszeitpunkt",
+      "letzte_änderung": "ISO-Datum - Letzte Änderung",
+      "einrichtungen": {
+        "struktur": "object - Bestellungen gruppiert nach Einrichtungs-ID",
+        "schema": {
+          "einrichtung_id": {
+            "info": "object - Einrichtungsinfo für Nachverfolgung",
+            "tage": "object - Bestellungen pro Wochentag",
+            "tag_schema": {
+              "kategorien": "object - Bestellungen pro Kategorie",
+              "kategorie_schema": {
+                "gruppen": "object - Bestellungen pro Personengruppe",
+                "gruppe_schema": "number - Anzahl bestellter Portionen"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "kategorien": {
+    "beschreibung": "Verfügbare Bestellkategorien mit Anzeigenamen",
+    "verfügbar": {
+      "suppe": {
+        "name": "Suppe",
+        "icon": "🍲",
+        "automatisch_berechnet": true,
+        "basis": "hauptspeise"
+      },
+      "menu1": {
+        "name": "Menü 1",
+        "icon": "🍽️",
+        "manuell_bestellbar": true
+      },
+      "menu2": {
+        "name": "Menü 2", 
+        "icon": "🍽️",
+        "manuell_bestellbar": true
+      },
+      "menu": {
+        "name": "Hauptmenü",
+        "icon": "🍽️",
+        "manuell_bestellbar": true,
+        "hinweis": "Für Kindergarten/Schule statt menu1/menu2"
+      },
+      "hauptspeise": {
+        "name": "Hauptspeise",
+        "icon": "🍽️",
+        "virtuelle_kategorie": true,
+        "zusammensetzung": ["menu1", "menu2"],
+        "beschreibung": "Anzeige-Kategorie für Kindergarten/Schule"
+      },
+      "dessert": {
+        "name": "Dessert",
+        "icon": "🍰",
+        "automatisch_berechnet": true,
+        "basis": "hauptspeise"
+      }
+    }
+  },
+  "automatische_berechnung": {
+    "beschreibung": "Regeln für automatische Bestellberechnung",
+    "regeln": {
+      "suppe": {
+        "basis_kategorie": ["menu1", "menu2", "menu"],
+        "faktor": 1.0,
+        "beschreibung": "Suppe wird 1:1 zu Hauptspeisen-Bestellungen berechnet"
+      },
+      "dessert": {
+        "basis_kategorie": ["menu1", "menu2", "menu"],
+        "faktor": 1.0,
+        "beschreibung": "Dessert wird 1:1 zu Hauptspeisen-Bestellungen berechnet"
+      }
+    }
+  },
+  "validierung": {
+    "beschreibung": "Validierungsregeln für Bestellungen",
+    "regeln": {
+      "min_bestellung": 0,
+      "max_bestellung": "gruppe.anzahl_personen",
+      "pflichtfelder": ["year", "week", "einrichtungen"],
+      "datum_format": "ISO 8601",
+      "einrichtung_pflichtfelder": ["info.id", "info.name", "info.typ"]
+    }
+  },
+  "export_formate": {
+    "beschreibung": "Verfügbare Export-Formate für Bestellungen",
+    "formate": {
+      "json": {
+        "beschreibung": "Standard JSON-Format",
+        "dateiendung": ".json"
+      },
+      "csv": {
+        "beschreibung": "CSV für Excel/Tabellenkalkulation",
+        "dateiendung": ".csv",
+        "spalten": ["Einrichtung", "Tag", "Kategorie", "Gruppe", "Anzahl"]
+      },
+      "pdf": {
+        "beschreibung": "PDF-Bestellübersicht",
+        "dateiendung": ".pdf"
+      }
+    }
+  },
+  "hinweise": {
+    "speicherort": "Bestellungen werden ausschließlich in JSON-Dateien gespeichert",
+    "persistierung": "Direkte Speicherung in JSON-Dateien für dauerhafte Archivierung",
+    "archivierung": "Alte Bestellungen werden nach 2 Jahren archiviert",
+    "datenschutz": "Nur anonymisierte Gruppendaten, keine Personendaten"
+  }
+}

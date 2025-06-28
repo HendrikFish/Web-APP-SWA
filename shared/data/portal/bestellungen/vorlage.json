@@ -1,0 +1,59 @@
+{
+  "year": null,
+  "week": null,
+  "erstellt_am": null,
+  "letzte_änderung": null,
+  "einrichtungen": {},
+  "wochenstatistik": {
+    "gesamt_einrichtungen": 0,
+    "gesamt_bestellungen": 0,
+    "durchschnitt_pro_einrichtung": 0,
+    "einrichtungstypen": {}
+  },
+  "metadaten": {
+    "bestellfrist": null,
+    "lieferwoche": null,
+    "status": "offen",
+    "änderungen_erlaubt": true,
+    "export_historie": []
+  },
+  "_vorlage_hinweise": {
+    "verwendung": "Diese Datei dient als Vorlage für neue Bestellwochen",
+    "schritte": [
+      "1. Datei kopieren und umbenennen zu {jahr}/{kalenderwoche}.json",
+      "2. year, week, erstellt_am ausfüllen", 
+      "3. bestellfrist und lieferwoche setzen",
+      "4. Einrichtungs-Bestellungen hinzufügen",
+      "5. Statistiken automatisch berechnen lassen"
+    ],
+    "beispiel_einrichtung": {
+      "einrichtung_id": {
+        "info": {
+          "id": "einrichtung_id",
+          "name": "Einrichtungsname",
+          "typ": "kindergarten|schule|extern",
+          "gruppen": [
+            {
+              "name": "Gruppenname",
+              "bezeichnung": "Vollständige Bezeichnung",
+              "anzahl": 0
+            }
+          ]
+        },
+        "tage": {
+          "montag": {
+            "kategorie": {
+              "gruppenname": 0
+            }
+          }
+        },
+        "wochenstatistik": {
+          "gesamt_bestellungen": 0,
+          "durchschnitt_pro_tag": 0,
+          "höchster_tag": "",
+          "niedrigster_tag": ""
+        }
+      }
+    }
+  }
+} 

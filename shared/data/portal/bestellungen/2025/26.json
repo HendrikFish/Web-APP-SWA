@@ -1,0 +1,49 @@
+{
+  "year": 2025,
+  "week": 26,
+  "erstellt_am": "2025-06-23T08:00:00.000Z",
+  "letzte_änderung": "2025-06-28T11:48:02.560Z",
+  "einrichtungen": {
+    "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
+      "info": {
+        "id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+        "name": "Hendrik Fischer",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "dd",
+            "anzahl": 8
+          }
+        ]
+      },
+      "tage": {
+        "dienstag": {
+          "hauptspeise": {
+            "dd": 3
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 3,
+        "durchschnitt_pro_tag": 3,
+        "höchster_tag": "dienstag",
+        "niedrigster_tag": "dienstag"
+      }
+    }
+  },
+  "wochenstatistik": {
+    "gesamt_einrichtungen": 1,
+    "gesamt_bestellungen": 3,
+    "durchschnitt_pro_einrichtung": 3,
+    "einrichtungstypen": {
+      "extern": 1
+    }
+  },
+  "metadaten": {
+    "bestellfrist": "2025-06-20T23:59:59.000Z",
+    "lieferwoche": "2025-06-23",
+    "status": "offen",
+    "änderungen_erlaubt": true,
+    "export_historie": []
+  }
+}

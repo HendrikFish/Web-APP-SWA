@@ -1,5 +1,132 @@
 # Menü-Portal Verbesserungen - Changelog
 
+## Dezember 2025 - Bestellungs-API Migration
+
+### 🚀 LocalStorage → JSON-API Migration (Critical Update)
+
+**Problem**: Bestellungen wurden nur in LocalStorage gespeichert
+- Daten gingen bei Browser-Wechsel verloren
+- Keine serverseitige Verarbeitung möglich
+- Keine Archivierung oder Backup-Möglichkeit
+- Keine Multi-User-Funktionalität
+
+**Lösung**: Komplette Umstellung auf JSON-API mit persistenter Speicherung
+```javascript
+// VORHER: LocalStorage
+localStorage.setItem('menue-portal-bestellungen', JSON.stringify(data));
+
+// NACHHER: JSON-API
+await saveBestellungen(year, week, einrichtungId, bestellungen, einrichtungInfo);
+```
+
+**Neue Funktionalitäten:**
+- ✅ **JSON-Datei-Persistierung**: Bestellungen in `shared/data/portal/bestellungen/{jahr}/{kw}.json`
+- ✅ **Automatische Migration**: LocalStorage-Daten werden zur API migriert
+- ✅ **Debounced Speicherung**: API-Aufrufe werden gedrosselt (1s Debouncing)
+- ✅ **Multi-Einrichtungs-Support**: Mehrere Einrichtungen pro JSON-Datei
+- ✅ **Automatische Statistiken**: Wochenstatistiken werden berechnet
+- ✅ **Export-Funktionen**: CSV/JSON-Export aus JSON-Daten
+- ✅ **Robuste Fehlerbehandlung**: Fallback-Mechanismen bei API-Fehlern
+- ✅ **Backend-Integration**: RESTful API-Endpunkte für Bestellungen
+
+### 🔧 Technische Implementierung
+
+#### **Backend-API-Endpunkte**
+```
+GET  /api/bestellungen/{year}/{week}  - Bestellungen laden
+POST /api/bestellungen/{year}/{week}  - Bestellungen speichern
+```
+
+#### **JSON-Dateistruktur**
+```json
+{
+  "year": 2025,
+  "week": 26,
+  "einrichtungen": {
+    "einrichtung-id": {
+      "info": {...},
+      "tage": {
+        "montag": {
+          "menu1": {
+            "Gruppe A": 5
+          }
+        }
+      },
+      "wochenstatistik": {...}
+    }
+  }
+}
+```
+
+#### **Frontend-API-Client**
+```javascript
+// Neue API-Funktionen
+import { 
+  loadBestellungen, 
+  saveBestellungen, 
+  loadBestellungenForEinrichtung 
+} from './bestellungen-api.js';
+
+// Migration von LocalStorage
+migrateLocalStorageToAPI();
+```
+
+### 📊 Verbesserte Datenpersistierung
+
+| Feature | Vorher (LocalStorage) | Nachher (JSON-API) |
+|---------|----------------------|---------------------|
+| **Persistierung** | Browser-abhängig | Server-permanent |
+| **Multi-User** | ❌ Nicht möglich | ✅ Vollständig unterstützt |
+| **Backup** | ❌ Keine | ✅ Automatisch |
+| **Export** | ❌ Frontend-only | ✅ Server + Client |
+| **Archivierung** | ❌ Verlust bei Löschung | ✅ Permanente Archivierung |
+| **Statistiken** | ❌ Keine | ✅ Automatisch berechnet |
+| **Debugging** | ❌ Schwierig | ✅ JSON-lesbar |
+
+### 🔄 Migration & Rückwärtskompatibilität
+
+**Automatische Migration**: Bestehende LocalStorage-Daten werden automatisch zur API migriert:
+```javascript
+// Automatische Erkennung und Migration
+if (localStorage.getItem('menue-portal-bestellungen')) {
+  await migrateLocalStorageToAPI();
+  localStorage.removeItem('menue-portal-bestellungen');
+}
+```
+
+**Fallback-Verhalten**: Bei API-Fehlern wird ein Cache-Mechanismus verwendet
+```javascript
+// Cache für UI-Performance + API-Persistierung
+let bestellungenCache = {}; // Für schnelle UI-Updates
+await saveBestellungenToAPI(); // Für dauerhafte Speicherung
+```
+
+### 🚨 Breaking Changes
+
+- ⚠️ `loadBestellungenFromStorage()` ist **deprecated** → `loadBestellungenFromAPI()`
+- ⚠️ LocalStorage wird automatisch migriert und dann gelöscht
+- ⚠️ Neue Backend-Abhängigkeit für Bestellfunktionalität
+
+### 🔧 Git-Commits
+
+1. `feat: Backend-API für Bestellungen implementiert`
+2. `feat: Frontend-API-Client für Bestellungen erstellt`
+3. `feat: Bestellung-Handler von LocalStorage auf JSON-API umgestellt`
+4. `feat: Automatische LocalStorage-Migration hinzugefügt`
+
+### 📋 Testing-Checkliste
+
+- [x] Backend-API-Endpunkte funktionieren
+- [x] Frontend lädt Bestellungen von API
+- [x] Frontend speichert Bestellungen über API
+- [x] LocalStorage-Migration funktioniert
+- [x] Debounced Speicherung verhindert API-Spam
+- [x] Export-Funktionen verwenden JSON-Daten
+- [x] Clear-Funktionen löschen aus JSON-API
+- [x] Multi-Einrichtungs-Support funktioniert
+- [x] Fehlerbehandlung bei API-Ausfällen
+- [x] JSON-Dateien werden korrekt erstellt
+
 ## Juni 2025 - Performance & Stabilität Update
 
 ### 🚀 Hauptprobleme behoben

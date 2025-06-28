@@ -20,7 +20,7 @@ import { renderMobileAccordion } from './mobile-accordion-handler.js';
 import { renderDesktopCalendar } from './desktop-calendar-handler.js';
 import { 
     handleBestellungChange, 
-    loadBestellungenFromStorage, 
+    loadBestellungenFromAPI, 
     loadBestellungenIntoUI,
     exportBestellungen,
     clearBestellungen,
@@ -36,6 +36,9 @@ let currentMenuplan = null;
 let rezepteCache = {};
 let isMobile = false;
 let portalStammdaten = null;
+let eventListenersInitialized = false; // Flag um mehrfache Event-Listener zu verhindern
+let loadMenuplanTimeout = null; // Debouncing für loadAndDisplayMenuplan
+let bestellControlsInitialized = false; // Flag für Bestellkontrollen Event-Listener
 
 /**
  * Initialisiert die UI-Module
@@ -76,8 +79,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Loading ausblenden
         hideLoading();
         
-        // Bestellungen aus localStorage laden
-        loadBestellungenFromStorage();
+        // Bestellungen aus JSON-API laden (statt LocalStorage)
+        await loadBestellungenFromAPI();
         
         // Einrichtungs-Selector setup
         setupEinrichtungsSelector(einrichtungen);
@@ -106,31 +109,18 @@ export async function initMenuePortalUI(user, einrichtungen) {
 }
 
 /**
- * Setup der Einrichtungs-Auswahl
+ * Setup der Einrichtungs-Auswahl (nur einmal aufrufen)
  * @param {object[]} einrichtungen - Verfügbare Einrichtungen
  */
 function setupEinrichtungsSelector(einrichtungen) {
     const container = document.getElementById('einrichtungs-selector');
-    const infoElement = document.getElementById('einrichtungs-info');
     
     if (!container) return;
-    
-    // Einrichtungs-Info im Controls-Bereich aktualisieren
-    if (infoElement && currentEinrichtung) {
-        const typeLabel = currentEinrichtung.isIntern ? 'Intern' : 'Extern';
-        const typeColor = currentEinrichtung.isIntern ? 'bg-info' : 'bg-success';
-        
-        infoElement.innerHTML = `
-            <i class="bi bi-building"></i>
-            <strong>${currentEinrichtung.name}</strong>
-            <span class="badge bg-secondary ms-2">${currentEinrichtung.kuerzel}</span>
-            <span class="badge ${typeColor} ms-1">${typeLabel}</span>
-        `;
-    }
     
     // Wenn nur eine Einrichtung: Selector ausblenden
     if (einrichtungen.length <= 1) {
         container.style.display = 'none';
+        updateEinrichtungsInfo(); // Info trotzdem aktualisieren
         return;
     }
     
@@ -168,7 +158,7 @@ function setupEinrichtungsSelector(einrichtungen) {
     // Selector anzeigen
     container.style.display = 'block';
     
-    // Event-Listener für Einrichtungsauswahl
+    // Event-Listener für Einrichtungsauswahl (nur einmal registrieren)
     container.addEventListener('click', async (e) => {
         if (e.target.classList.contains('einrichtung-btn')) {
             const einrichtungId = e.target.dataset.einrichtungId;
@@ -177,8 +167,42 @@ function setupEinrichtungsSelector(einrichtungen) {
     });
     
     // Aktuelle Einrichtung als aktiv markieren
+    updateActiveEinrichtungButton();
+    // Einrichtungs-Info aktualisieren
+    updateEinrichtungsInfo();
+}
+
+/**
+ * Aktualisiert nur die Einrichtungs-Info ohne Event-Listener neu zu registrieren
+ */
+function updateEinrichtungsInfo() {
+    const infoElement = document.getElementById('einrichtungs-info');
+    
+    if (infoElement && currentEinrichtung) {
+        const typeLabel = currentEinrichtung.isIntern ? 'Intern' : 'Extern';
+        const typeColor = currentEinrichtung.isIntern ? 'bg-info' : 'bg-success';
+        
+        infoElement.innerHTML = `
+            <i class="bi bi-building"></i>
+            <strong>${currentEinrichtung.name}</strong>
+            <span class="badge bg-secondary ms-2">${currentEinrichtung.kuerzel}</span>
+            <span class="badge ${typeColor} ms-1">${typeLabel}</span>
+        `;
+    }
+}
+
+/**
+ * Aktualisiert die aktiven Button-Klassen ohne Event-Listener neu zu registrieren
+ */
+function updateActiveEinrichtungButton() {
     if (currentEinrichtung) {
-        const activeBtn = container.querySelector(`[data-einrichtung-id="${currentEinrichtung.id}"]`);
+        // Alle Buttons deaktivieren
+        document.querySelectorAll('.einrichtung-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Aktuellen Button aktivieren
+        const activeBtn = document.querySelector(`[data-einrichtung-id="${currentEinrichtung.id}"]`);
         if (activeBtn) activeBtn.classList.add('active');
     }
 }
@@ -232,15 +256,45 @@ function setupControls() {
  * Setup für Bestellungs-Controls (nur bei externen Einrichtungen)
  */
 function setupBestellControls() {
+    const bestellContainer = document.getElementById('bestellung-controls');
+    if (!bestellContainer) return;
+    
     if (!currentEinrichtung || currentEinrichtung.isIntern) {
         // Bestellkontrollen ausblenden
-        const bestellContainer = document.getElementById('bestellung-controls');
-        if (bestellContainer) bestellContainer.style.display = 'none';
+        bestellContainer.style.display = 'none';
         return;
     }
     
+    // Event-Listener nur einmal registrieren
+    if (!bestellControlsInitialized) {
+        bestellContainer.addEventListener('click', (e) => {
+            if (e.target.id === 'export-bestellungen') {
+                exportCurrentBestellungen();
+            } else if (e.target.id === 'clear-bestellungen') {
+                clearCurrentBestellungen();
+            } else if (e.target.id === 'validate-bestellungen') {
+                validateCurrentBestellungen();
+            }
+        });
+        bestellControlsInitialized = true;
+        console.log('✅ Bestellkontrollen Event-Listener initialisiert');
+    }
+    
+    // HTML-Inhalt aktualisieren
+    updateBestellControlsContent();
+}
+
+/**
+ * Aktualisiert nur den Inhalt der Bestellkontrollen ohne Event-Listener neu zu registrieren
+ */
+function updateBestellControlsContent() {
     const bestellContainer = document.getElementById('bestellung-controls');
     if (!bestellContainer) return;
+    
+    if (!currentEinrichtung || currentEinrichtung.isIntern) {
+        bestellContainer.style.display = 'none';
+        return;
+    }
     
     bestellContainer.style.display = 'block';
     bestellContainer.innerHTML = `
@@ -267,28 +321,35 @@ function setupBestellControls() {
             </div>
         </div>
     `;
-    
-    // Event-Listener für Bestellaktionen
-    document.getElementById('export-bestellungen')?.addEventListener('click', exportCurrentBestellungen);
-    document.getElementById('clear-bestellungen')?.addEventListener('click', clearCurrentBestellungen);
-    document.getElementById('validate-bestellungen')?.addEventListener('click', validateCurrentBestellungen);
 }
 
 /**
- * Layout Event-Listener setup
+ * Setup der Layout Event-Listener (nur einmal)
  */
 function setupLayoutEventListeners() {
+    // Verhindere mehrfache Registrierung
+    if (eventListenersInitialized) {
+        return;
+    }
+    
     // Resize-Handler
     window.addEventListener('menue-portal:layout-change', () => {
         updateMobileDetection();
         renderMenuplan();
     });
     
-    // Window Resize
+    // Window Resize mit Debouncing um Toast-Spam zu verhindern
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-        updateMobileDetection();
-        renderMenuplan();
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            updateMobileDetection();
+            renderMenuplan();
+        }, 250); // 250ms Debounce
     });
+    
+    eventListenersInitialized = true;
+    console.log('✅ Layout Event-Listener initialisiert');
 }
 
 /**
@@ -310,14 +371,9 @@ async function switchEinrichtung(einrichtungId) {
         currentEinrichtung = neueEinrichtung;
         window.currentEinrichtung = neueEinrichtung; // Global verfügbar
         
-        // UI-Buttons aktualisieren
-        document.querySelectorAll('.einrichtung-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`[data-einrichtung-id="${einrichtungId}"]`)?.classList.add('active');
-        
-        // Einrichtungs-Info aktualisieren
-        setupEinrichtungsSelector(await getAllEinrichtungen());
+        // UI aktualisieren ohne Event-Listener neu zu registrieren
+        updateActiveEinrichtungButton();
+        updateEinrichtungsInfo();
         
         // Bestellkontrollen aktualisieren
         setupBestellControls();
@@ -359,7 +415,7 @@ async function navigateWeek(direction) {
         window.currentYear = currentYear;
         
         updateWeekDisplay();
-        setupBestellControls(); // Bestellkontrollen aktualisieren
+        updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
         await loadAndDisplayMenuplan();
         
     } catch (error) {
@@ -382,47 +438,54 @@ async function navigateToCurrentWeek() {
     window.currentYear = currentYear;
     
     updateWeekDisplay();
-    setupBestellControls();
+    updateBestellControlsContent(); // Nur Inhalt aktualisieren, nicht Event-Listener
     await loadAndDisplayMenuplan();
 }
 
 /**
- * Lädt und zeigt den Menüplan an
+ * Lädt und zeigt den Menüplan an (mit Debouncing)
  */
 async function loadAndDisplayMenuplan() {
-    try {
-        console.log(`📋 Lade Menüplan für KW ${currentWeek}/${currentYear}...`);
-        
-        if (!currentEinrichtung) {
-            throw new Error('Keine Einrichtung ausgewählt');
-        }
-        
-        // Menüplan laden
-        const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
-        if (!result.success) {
-            throw new Error(result.error || 'Fehler beim Laden des Menüplans');
-        }
-        
-        currentMenuplan = result.menuplan;
-        
-        // Rezepte laden
-        await loadMenuplanRecipes();
-        
-        // UI rendern
-        renderMenuplan();
-        
-        // Bestellungen laden (falls externe Einrichtung)
-        if (!currentEinrichtung.isIntern) {
-            const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
-            loadBestellungenIntoUI(wochenschluessel);
-        }
-        
-        console.log('✅ Menüplan geladen und dargestellt');
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Laden des Menüplans:', error);
-        showError(error.message);
+    // Debouncing um mehrfache schnelle Aufrufe zu verhindern
+    if (loadMenuplanTimeout) {
+        clearTimeout(loadMenuplanTimeout);
     }
+    
+    loadMenuplanTimeout = setTimeout(async () => {
+        try {
+            console.log(`📋 Lade Menüplan für KW ${currentWeek}/${currentYear}...`);
+            
+            if (!currentEinrichtung) {
+                throw new Error('Keine Einrichtung ausgewählt');
+            }
+            
+            // Menüplan laden
+            const result = await loadMenuplan(currentEinrichtung.id, currentYear, currentWeek);
+            if (!result.success) {
+                throw new Error(result.error || 'Fehler beim Laden des Menüplans');
+            }
+            
+            currentMenuplan = result.menuplan;
+            
+            // Rezepte laden
+            await loadMenuplanRecipes();
+            
+            // UI rendern
+            renderMenuplan();
+            
+            // Bestellungen laden (falls externe Einrichtung)
+            if (!currentEinrichtung.isIntern) {
+                const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+                loadBestellungenIntoUI(wochenschluessel);
+            }
+            
+            console.log('✅ Menüplan geladen und dargestellt');
+            
+        } catch (error) {
+            console.error('❌ Fehler beim Laden des Menüplans:', error);
+            showError(error.message);
+        }
+    }, 100); // 100ms Debounce
 }
 
 /**
@@ -509,11 +572,22 @@ function istKategorieZugewiesen(categoryKey, dayKey, einrichtungId) {
     const dayData = currentMenuplan.days[dayKey];
     const zuweisungen = dayData.Zuweisungen || {};
     
-    // Für zusammengefasste "hauptspeise": prüfe menu1 ODER menu2
+    // Für zusammengefasste "hauptspeise": prüfe menu1 ODER menu2 ODER menu
     if (categoryKey === 'hauptspeise') {
+        // Spezialfall: Kindergarten/Schule mit 'menu' Struktur
+        // Diese sind immer zugewiesen wenn Rezepte vorhanden sind
+        if (dayData['menu'] && dayData['menu'].length > 0) {
+            return true; // Kindergarten/Schule mit neuer Struktur
+        }
+        
         const menu1Zuweisungen = zuweisungen['menu1'] || [];
         const menu2Zuweisungen = zuweisungen['menu2'] || [];
-        return menu1Zuweisungen.includes(einrichtungId) || menu2Zuweisungen.includes(einrichtungId);
+        const menuZuweisungen = zuweisungen['menu'] || [];
+        
+        // Prüfe alle möglichen Strukturen
+        return menu1Zuweisungen.includes(einrichtungId) || 
+               menu2Zuweisungen.includes(einrichtungId) ||
+               menuZuweisungen.includes(einrichtungId);
     }
     
     // Für normale Kategorien

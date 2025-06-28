@@ -21,6 +21,7 @@ import './module/bewertung-api.js';
 import './module/bewertung-modal.js';
 
 // Bestellungs- und Handler-Module importieren um globale Funktionen verfügbar zu machen
+import './module/bestellungen-api.js';
 import './module/bestellung-handler.js';
 import './module/mobile-accordion-handler.js';
 import './module/desktop-calendar-handler.js';
@@ -81,16 +82,6 @@ function showError(message) {
  * Event-Listener für globale Ereignisse
  */
 function setupGlobalEventListeners() {
-    // Resize-Handler für responsive Layout
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            // Trigger UI Update für Layout-Wechsel
-            window.dispatchEvent(new CustomEvent('menue-portal:layout-change'));
-        }, 250);
-    });
-
     // Unhandled Promise Rejections abfangen
     window.addEventListener('unhandledrejection', (event) => {
         console.error('Unhandled Promise Rejection:', event.reason);

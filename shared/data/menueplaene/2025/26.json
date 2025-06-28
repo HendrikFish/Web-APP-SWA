@@ -6,32 +6,32 @@
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
+            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+            "name": "Lasagne "
           }
         ],
         "menu1": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
-        "menu2": [
           {
             "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
             "name": "Mozzarella-Tomate"
           }
         ],
+        "menu2": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          }
+        ],
         "dessert": [
           {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
           }
         ],
         "abend-suppe": [
           {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
+            "id": "rezept-1750677840830-idmwpxk",
+            "name": "Hefebier"
           }
         ],
         "milchspeise": [],
@@ -44,15 +44,15 @@
       },
       "Zuweisungen": {
         "menu1": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
         ],
         "menu2": [
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
           "5409619a-b506-442f-a97d-182c354f2480",
-          "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "17cf0076-e28f-4a11-9b21-49ad01039650"
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa"
         ]
       }
     },
@@ -60,49 +60,36 @@
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          },
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu2": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          },
-          {
-            "id": "rezept-1750679454215-ea9p7hw",
-            "name": "Möhrensalat"
-          }
-        ],
-        "dessert": [
-          {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
             "name": "Lasagne "
           }
         ],
+        "menu1": [
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
+        "menu2": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          }
+        ],
+        "dessert": [
+          {
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
+          }
+        ],
         "abend-suppe": [
           {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
+            "id": "rezept-1750677840830-idmwpxk",
+            "name": "Hefebier"
           }
         ],
         "milchspeise": [],
-        "normalkost": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "normalkost": [],
         "kalte-platte": [],
         "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
@@ -112,14 +99,14 @@
       "Zuweisungen": {
         "menu1": [
           "353f0eeb-48e7-4fc8-a667-abaff01046e8",
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
           "b0914524-d72a-4fac-8a2a-06c55db71afa"
         ],
         "menu2": [
-          "17cf0076-e28f-4a11-9b21-49ad01039650",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
-          "5409619a-b506-442f-a97d-182c354f2480"
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
         ]
       }
     },
@@ -127,94 +114,88 @@
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
+            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+            "name": "Lasagne "
           }
         ],
         "menu1": [
           {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
           }
         ],
         "menu2": [
           {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
           }
         ],
         "dessert": [
           {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
           }
         ],
-        "abend-suppe": [],
+        "abend-suppe": [
+          {
+            "id": "rezept-1750677840830-idmwpxk",
+            "name": "Hefebier"
+          }
+        ],
         "milchspeise": [],
-        "normalkost": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "normalkost": [],
         "kalte-platte": [],
-        "wurstbrot-toast": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
+        "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
         "kaesebrot-toast": [],
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
-          "17cf0076-e28f-4a11-9b21-49ad01039650",
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8"
-        ],
         "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
           "5409619a-b506-442f-a97d-182c354f2480",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
           "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
-        ]
+        ],
+        "menu1": []
       }
     },
     "donnerstag": {
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
+            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+            "name": "Lasagne "
           }
         ],
         "menu1": [
           {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
           }
         ],
         "menu2": [
           {
-            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
-            "name": "Wurst"
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
           }
         ],
         "dessert": [
+          {
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
+          }
+        ],
+        "abend-suppe": [
           {
             "id": "rezept-1750677840830-idmwpxk",
             "name": "Hefebier"
           }
         ],
-        "abend-suppe": [],
-        "milchspeise": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
+        "milchspeise": [],
         "normalkost": [],
         "kalte-platte": [],
         "wurstbrot-toast": [],
@@ -223,152 +204,103 @@
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu2": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "17cf0076-e28f-4a11-9b21-49ad01039650",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
-        ],
         "menu1": [
-          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
           "5409619a-b506-442f-a97d-182c354f2480",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
           "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "353f0eeb-48e7-4fc8-a667-abaff01046e8",
           "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
-        ]
+        ],
+        "menu2": []
       }
     },
     "freitag": {
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750679035844-54zghf0",
-            "name": "Hackepeter"
-          }
-        ],
-        "menu2": [
-          {
-            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
-            "name": "Wurst"
-          }
-        ],
-        "dessert": [
-          {
             "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
             "name": "Lasagne "
           }
         ],
-        "abend-suppe": [],
-        "milchspeise": [],
-        "normalkost": [],
-        "kalte-platte": [],
-        "wurstbrot-toast": [
+        "menu1": [
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
+        "menu2": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          }
+        ],
+        "dessert": [
+          {
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
+          }
+        ],
+        "abend-suppe": [
           {
             "id": "rezept-1750677840830-idmwpxk",
             "name": "Hefebier"
           }
         ],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
         "wurstbrot-schwarzbrot": [],
         "kaesebrot-toast": [],
         "kaesebrot-schwarzbrot": []
       },
       "Zuweisungen": {
-        "menu1": [
-          "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "17cf0076-e28f-4a11-9b21-49ad01039650",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
-        ],
         "menu2": [
           "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
           "5409619a-b506-442f-a97d-182c354f2480",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
-          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd"
-        ]
+          "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
+        ],
+        "menu1": []
       }
     },
     "samstag": {
       "Mahlzeiten": {
         "suppe": [
           {
-            "id": "rezept-1750679454215-ea9p7hw",
-            "name": "Möhrensalat"
+            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+            "name": "Lasagne "
           }
         ],
         "menu1": [
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
+        "menu2": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          }
+        ],
+        "dessert": [
+          {
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
+          }
+        ],
+        "abend-suppe": [
           {
             "id": "rezept-1750677840830-idmwpxk",
             "name": "Hefebier"
           }
         ],
-        "menu2": [
-          {
-            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
-            "name": "Wurst"
-          }
-        ],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "abend-suppe": [],
-        "milchspeise": [],
-        "normalkost": [],
-        "kalte-platte": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "wurstbrot-toast": [],
-        "wurstbrot-schwarzbrot": [],
-        "kaesebrot-toast": [],
-        "kaesebrot-schwarzbrot": []
-      },
-      "Zuweisungen": {
-        "menu1": [
-          "5409619a-b506-442f-a97d-182c354f2480",
-          "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
-          "17cf0076-e28f-4a11-9b21-49ad01039650"
-        ],
-        "menu2": [
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
-      }
-    },
-    "sonntag": {
-      "Mahlzeiten": {
-        "suppe": [
-          {
-            "id": "rezept-1750677840830-idmwpxk",
-            "name": "Hefebier"
-          }
-        ],
-        "menu1": [
-          {
-            "id": "rezept-1750711766277-wmuh3bf",
-            "name": "Wurstbrot"
-          }
-        ],
-        "menu2": [
-          {
-            "id": "618df7c3-3393-4920-8b88-c8c97cbc63aa",
-            "name": "Wurst"
-          }
-        ],
-        "dessert": [
-          {
-            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
-            "name": "Lasagne "
-          }
-        ],
-        "abend-suppe": [],
         "milchspeise": [],
         "normalkost": [],
         "kalte-platte": [],
@@ -379,14 +311,64 @@
       },
       "Zuweisungen": {
         "menu1": [
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "b0914524-d72a-4fac-8a2a-06c55db71afa",
+          "17cf0076-e28f-4a11-9b21-49ad01039650",
           "5409619a-b506-442f-a97d-182c354f2480"
         ],
+        "menu2": []
+      }
+    },
+    "sonntag": {
+      "Mahlzeiten": {
+        "suppe": [
+          {
+            "id": "498df200-75f0-4d66-92ff-5fea5225b6e9",
+            "name": "Lasagne "
+          }
+        ],
+        "menu1": [
+          {
+            "id": "26ececeb-1a4c-4d92-9080-1176bcd24c5f",
+            "name": "Mozzarella-Tomate"
+          }
+        ],
         "menu2": [
+          {
+            "id": "rezept-1750679508813-89cacyi",
+            "name": "Humus"
+          }
+        ],
+        "dessert": [
+          {
+            "id": "rezept-1750679663309-1mweywf",
+            "name": "Radiesalat"
+          }
+        ],
+        "abend-suppe": [
+          {
+            "id": "rezept-1750677840830-idmwpxk",
+            "name": "Hefebier"
+          }
+        ],
+        "milchspeise": [],
+        "normalkost": [],
+        "kalte-platte": [],
+        "wurstbrot-toast": [],
+        "wurstbrot-schwarzbrot": [],
+        "kaesebrot-toast": [],
+        "kaesebrot-schwarzbrot": []
+      },
+      "Zuweisungen": {
+        "menu1": [
           "17cf0076-e28f-4a11-9b21-49ad01039650",
-          "136e90d8-255a-4d28-a1cb-85af9639ea9d",
           "b0914524-d72a-4fac-8a2a-06c55db71afa",
-          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3"
-        ]
+          "d9f231ed-3e86-4a45-9a75-aaafcc2e0ec3",
+          "5409619a-b506-442f-a97d-182c354f2480",
+          "136e90d8-255a-4d28-a1cb-85af9639ea9d"
+        ],
+        "menu2": []
       }
     }
   },
@@ -779,7 +761,7 @@
       "action": "snapshot_update"
     }
   },
-  "updatedAt": "2025-06-26T19:36:52.992Z",
+  "updatedAt": "2025-06-28T10:38:05.264Z",
   "updatedBy": {
     "userId": "679f7a109d1d8b3535030897",
     "name": "Admin System"
