@@ -308,18 +308,45 @@ function renderDesktopInformationButton(dayKey, categoryKey, dayDate, currentEin
  * @returns {string} HTML für Bestellfelder
  */
 function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung) {
+    console.log('🛒 Debug renderDesktopBestellungFields:', {
+        dayKey,
+        categoryKey,
+        hasRecipes: !!recipes,
+        recipesLength: recipes ? recipes.length : 0,
+        hasEinrichtung: !!currentEinrichtung,
+        einrichtungName: currentEinrichtung ? currentEinrichtung.name : 'KEINE',
+        isIntern: currentEinrichtung ? currentEinrichtung.isIntern : 'UNBEKANNT',
+        hasGruppen: currentEinrichtung ? !!(currentEinrichtung.gruppen) : false,
+        gruppenCount: currentEinrichtung ? (currentEinrichtung.gruppen || []).length : 0,
+        gruppen: currentEinrichtung ? currentEinrichtung.gruppen : 'KEINE'
+    });
+    
     // Nur für externe Einrichtungen
     if (!currentEinrichtung || currentEinrichtung.isIntern || !recipes || recipes.length === 0) {
+        console.log('❌ Desktop-Bestellfelder nicht gerendert: externe/rezepte check fehlgeschlagen');
         return '';
     }
     
     // Nur für Hauptspeisen (menu1, menu2, menu, hauptspeise) Bestellfelder anzeigen
     if (!['menu1', 'menu2', 'menu', 'hauptspeise'].includes(categoryKey)) {
+        console.log('❌ Desktop-Bestellfelder nicht gerendert: kategorie nicht relevant', categoryKey);
         return '';
     }
     
     const gruppen = currentEinrichtung.gruppen || [];
-    if (gruppen.length === 0) return '';
+    if (gruppen.length === 0) {
+        console.log('❌ Desktop-Bestellfelder nicht gerendert: keine gruppen definiert', {
+            einrichtungName: currentEinrichtung.name,
+            gruppen: currentEinrichtung.gruppen
+        });
+        return '';
+    }
+    
+    console.log('✅ Desktop-Bestellfelder werden gerendert!', {
+        dayKey,
+        categoryKey, 
+        gruppenCount: gruppen.length
+    });
     
     // Desktop mit Mobile-Layout-Stil
     let html = `
