@@ -441,14 +441,16 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
                         data-day="${dayKey}"
                         data-kategorie="${categoryKey}"
                         data-gruppe="${gruppe.name}"
+                        data-max-anzahl="${gruppe.anzahl}"
                         min="0" 
                         max="${gruppe.anzahl}"
                         placeholder="Anzahl"
                         onchange="handleBestellungChange(this)"
+                        oninput="validateMaxInput(this)"
                         aria-describedby="${inputId}-hint"
                         style="max-width: 80px; font-size: 1.1rem; text-align: center;"
                     >
-                    <span class="input-group-text" id="${inputId}-hint">von ${gruppe.anzahl}</span>
+                    <span class="input-group-text bestellung-max-indicator" id="${inputId}-hint">von ${gruppe.anzahl}</span>
                     <button 
                         type="button" 
                         class="btn btn-outline-dark btn-sm bestellung-save-btn-mobile"

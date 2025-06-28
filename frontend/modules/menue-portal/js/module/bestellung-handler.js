@@ -543,6 +543,39 @@ function getWeekNumber(date) {
 }
 
 /**
+ * Validiert Eingaben gegen Maximalwerte (Mobile)
+ * @param {HTMLInputElement} input - Input-Element
+ */
+function validateMaxInput(input) {
+    const maxAnzahl = parseInt(input.getAttribute('data-max-anzahl')) || 0;
+    const currentValue = parseInt(input.value) || 0;
+    const maxIndicator = input.parentNode.querySelector('.bestellung-max-indicator');
+    
+    if (currentValue > maxAnzahl && maxAnzahl > 0) {
+        // Wert auf Maximum begrenzen
+        input.value = maxAnzahl;
+        
+        // Visuelles Feedback für Max-Überschreitung
+        if (maxIndicator) {
+            maxIndicator.classList.add('max-exceeded');
+            
+            // Nach 2 Sekunden wieder normal
+            setTimeout(() => {
+                maxIndicator.classList.remove('max-exceeded');
+            }, 2000);
+        }
+        
+        // Automatisch speichern mit korrigiertem Wert
+        handleBestellungChange(input);
+        
+        // Toast-Benachrichtigung
+        if (window.showToast) {
+            window.showToast(`Maximum von ${maxAnzahl} wurde automatisch eingesetzt`, 'warning');
+        }
+    }
+}
+
+/**
  * Manuelles Speichern aller Bestellungen
  */
 export async function manualSaveBestellungen() {
@@ -612,4 +645,5 @@ function updateSaveButtonState(input, anzahl) {
 
 // Global verfügbar machen
 window.handleBestellungChange = handleBestellungChange;
-window.manualSaveBestellungen = manualSaveBestellungen; 
+window.manualSaveBestellungen = manualSaveBestellungen;
+window.validateMaxInput = validateMaxInput; 

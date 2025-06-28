@@ -1313,6 +1313,21 @@
     outline: none;
 }
 
+/* Max-Überschreitung Indicator */
+.bestellung-max-indicator.max-exceeded {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+    font-weight: bold !important;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
 /* Responsive Anpassungen für Bestellfelder */
 @media (max-width: 768px) {
     .bestellung-input.bestellung-saved {
@@ -1320,9 +1335,20 @@
         padding: 8px 12px;
     }
     
-    .bestellung-save-btn {
+    .bestellung-save-btn-mobile {
         min-width: 40px;
         padding: 6px 10px;
+    }
+    
+    /* Mobile Input-Group Layout-Verbesserung */
+    .input-group .bestellung-max-indicator {
+        min-width: auto;
+        white-space: nowrap;
+    }
+    
+    .input-group .bestellung-save-btn-mobile {
+        border-left: 1px solid #dee2e6;
+        border-radius: 0 0.375rem 0.375rem 0;
     }
 }
 
