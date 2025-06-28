@@ -39,7 +39,25 @@
         }
       ]
     },
-    "dienstag": {},
+    "dienstag": {
+      "hauptspeise": [
+        {
+          "id": "67f99e1f-c4b4-47dd-b9f6-a5dc1dec2929",
+          "benutzer_id": "679f90a70055fb7ef18dd42d",
+          "benutzer_name": "Samantha Fischer",
+          "einrichtung_id": "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd",
+          "einrichtung_name": "Hendrik Fischer",
+          "rezepte": [
+            "Humus"
+          ],
+          "geschmack": 5,
+          "optik": 4,
+          "verbesserungsvorschlag": "War echt lecker und kann es gern wieder geben",
+          "timestamp": "2025-06-28T17:01:08.145Z",
+          "menueplan_datum": "2025-06-23"
+        }
+      ]
+    },
     "mittwoch": {},
     "donnerstag": {
       "dessert": [
