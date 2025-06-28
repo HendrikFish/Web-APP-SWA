@@ -126,12 +126,12 @@ function createModalHTML() {
                                 <i class="bi bi-star-fill text-warning"></i>
                                 Geschmack
                             </label>
-                            <div class="star-rating" data-field="geschmack">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
+                            <div class="star-rating" data-field="geschmack" id="geschmack-rating" role="radiogroup" aria-labelledby="geschmack-label">
+                                <span class="star" data-value="1" role="radio" aria-checked="false" tabindex="0">⭐</span>
+                                <span class="star" data-value="2" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="3" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="4" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="5" role="radio" aria-checked="false" tabindex="-1">⭐</span>
                             </div>
                             <span class="rating-text" id="geschmack-text">Bitte bewerten</span>
                         </div>
@@ -142,12 +142,12 @@ function createModalHTML() {
                                 <i class="bi bi-eye-fill text-info"></i>
                                 Optik
                             </label>
-                            <div class="star-rating" data-field="optik">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
+                            <div class="star-rating" data-field="optik" id="optik-rating" role="radiogroup" aria-labelledby="optik-label">
+                                <span class="star" data-value="1" role="radio" aria-checked="false" tabindex="0">⭐</span>
+                                <span class="star" data-value="2" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="3" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="4" role="radio" aria-checked="false" tabindex="-1">⭐</span>
+                                <span class="star" data-value="5" role="radio" aria-checked="false" tabindex="-1">⭐</span>
                             </div>
                             <span class="rating-text" id="optik-text">Bitte bewerten</span>
                         </div>

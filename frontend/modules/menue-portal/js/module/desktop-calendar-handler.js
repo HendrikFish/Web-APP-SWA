@@ -278,13 +278,17 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
             </small>
     `;
     
-    gruppen.forEach(gruppe => {
+    gruppen.forEach((gruppe, index) => {
+        const inputId = `bestellung-desktop-${dayKey}-${categoryKey}-${gruppe.name.replace(/\s+/g, '-').toLowerCase()}`;
         html += `
             <div class="gruppe-bestellung-desktop mb-1">
                 <div class="d-flex align-items-center">
-                    <small class="gruppe-label me-2">${gruppe.name}:</small>
+                    <label for="${inputId}" class="gruppe-label me-2 mb-0">
+                        <small>${gruppe.name}:</small>
+                    </label>
                     <input 
                         type="number" 
+                        id="${inputId}"
                         class="form-control form-control-sm bestellung-input-desktop" 
                         data-day="${dayKey}"
                         data-kategorie="${categoryKey}"
@@ -294,8 +298,9 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
                         placeholder="0"
                         style="width: 60px;"
                         onchange="handleBestellungChange(this)"
+                        aria-describedby="${inputId}-max"
                     >
-                    <small class="text-muted ms-1">/${gruppe.anzahl}</small>
+                    <small class="text-muted ms-1" id="${inputId}-max">/${gruppe.anzahl}</small>
                 </div>
             </div>
         `;

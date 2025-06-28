@@ -426,15 +426,17 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
             </h6>
     `;
     
-    gruppen.forEach(gruppe => {
+    gruppen.forEach((gruppe, index) => {
+        const inputId = `bestellung-${dayKey}-${categoryKey}-${gruppe.name.replace(/\s+/g, '-').toLowerCase()}`;
         html += `
             <div class="gruppe-bestellung mb-2">
-                <label class="form-label small">
+                <label for="${inputId}" class="form-label small">
                     ${gruppe.name} (${gruppe.anzahl} Personen)
                 </label>
                 <div class="input-group input-group-sm">
                     <input 
                         type="number" 
+                        id="${inputId}"
                         class="form-control bestellung-input" 
                         data-day="${dayKey}"
                         data-kategorie="${categoryKey}"
@@ -443,8 +445,9 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
                         max="${gruppe.anzahl}"
                         placeholder="Anzahl"
                         onchange="handleBestellungChange(this)"
+                        aria-describedby="${inputId}-hint"
                     >
-                    <span class="input-group-text">von ${gruppe.anzahl}</span>
+                    <span class="input-group-text" id="${inputId}-hint">von ${gruppe.anzahl}</span>
                 </div>
             </div>
         `;
