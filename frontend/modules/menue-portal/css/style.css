@@ -537,16 +537,62 @@
         margin: 1cm;
     }
     
-    /* Verstecke alle interaktiven Elemente */
-    .menue-portal-controls,
+    /* Verstecke Navigation und interaktive Elemente */
+    .navbar,
     .action-buttons-container,
     #einrichtungs-selector,
     .mobile-accordion,
     .bestellung-container,
     .bestellung-container-desktop,
     .bewertung-btn,
-    .bewertung-btn-desktop {
+    .bewertung-btn-desktop,
+    .week-navigation-compact .btn,
+    #prev-week,
+    #next-week,
+    #current-week {
         display: none !important;
+    }
+    
+    /* Header-Bereich anzeigen */
+    .menue-portal-controls {
+        display: block !important;
+        position: static !important;
+        background: transparent !important;
+        margin-bottom: 1rem !important;
+        page-break-after: avoid !important;
+    }
+    
+    .menue-portal-controls .card {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+    
+    .menue-portal-controls .card-body {
+        padding: 0.5rem 0 !important;
+    }
+    
+    /* Header-Titel und Info */
+    .menue-portal-controls h4 {
+        font-size: 1.2rem !important;
+        color: #000 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #einrichtungs-info {
+        font-size: 0.9rem !important;
+        color: #666 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Wocheninfo ohne Buttons */
+    .week-navigation-compact #week-display {
+        display: block !important;
+        font-size: 1rem !important;
+        color: #000 !important;
+        text-align: center !important;
+        margin: 0 !important;
+        font-weight: bold !important;
     }
     
     /* Zeige nur Desktop-Kalender */
@@ -621,10 +667,12 @@
         font-size: 0.9rem !important;
         font-weight: 600 !important;
         color: #000 !important;
+        display: block !important;
     }
     
     .category-icon {
         font-size: 0.8rem !important;
+        display: inline !important;
     }
     
     /* Recipe Content */
@@ -649,6 +697,7 @@
         font-weight: 500 !important;
         color: #000 !important;
         line-height: 1.2 !important;
+        display: block !important;
     }
     
     /* Leere Kategorien */
