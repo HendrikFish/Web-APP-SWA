@@ -958,71 +958,103 @@ function exportToPDF() {
             desktopContainer.classList.remove('d-none');
         }
         
-        // Desktop-Menü rendern - DAS WAR DER FEHLENDE SCHRITT!
+        // Desktop-Menü rendern
         renderMenuplan();
         
         // Kurz warten für vollständiges Rendering
         setTimeout(() => {
-            const printWindow = window.open('', '_blank');
+            // CSS-Styles sammeln
+            let allCSS = '';
             
-            if (!printWindow) {
-                showToast('Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für PDF-Export.', 'warning');
-                // Layout wiederherstellen
-                isMobile = originalIsMobile;
-                updateMobileDetection();
-                renderMenuplan();
-                return;
+            // Bootstrap und andere externe CSS über Links sammeln
+            const linkElements = document.querySelectorAll('link[rel="stylesheet"]');
+            const linkPromises = Array.from(linkElements).map(link => {
+                return fetch(link.href)
+                    .then(response => response.text())
+                    .catch(() => '');
+            });
+            
+            Promise.all(linkPromises).then(cssTexts => {
+                allCSS = cssTexts.join('\n');
+                
+                // Lokale Stylesheets hinzufügen
+                Array.from(document.styleSheets).forEach(sheet => {
+                    try {
+                        if (sheet.cssRules) {
+                            allCSS += Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+                        }
+                    } catch (e) {
+                        console.warn('Stylesheet nicht zugänglich:', e);
+                    }
+                });
+                
+                // HTML-Inhalt für PDF vorbereiten
+                const printHTML = `<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menüplan KW ${currentWeek}/${currentYear} - ${currentEinrichtung?.name || 'Einrichtung'}</title>
+    <style>
+        ${allCSS}
+        
+        /* PDF-spezifische Optimierungen */
+        @media print {
+            body { margin: 0; padding: 20px; }
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                color-adjust: exact !important; 
+                print-color-adjust: exact !important;
             }
-            
-            // Print-optimierten HTML-Code erstellen
-            const printHTML = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Menüplan KW ${currentWeek}/${currentYear} - ${currentEinrichtung?.name || 'Einrichtung'}</title>
-                <style>
-                    /* CSS aus der aktuellen Seite kopieren */
-                    ${Array.from(document.styleSheets)
-                        .map(sheet => {
-                            try {
-                                return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
-                            } catch (e) {
-                                return '';
-                            }
-                        })
-                        .join('\n')
-                    }
+        }
+        
+        /* Inline-Styles für bessere Kompatibilität */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .navbar { display: none !important; }
+        #mobile-accordion { display: none !important; }
+        #desktop-calendar { display: block !important; }
+    </style>
+</head>
+<body>
+    ${document.body.innerHTML}
+    <script>
+        // Direkt drucken wenn Seite geladen
+        window.onload = function() {
+            setTimeout(() => {
+                window.print();
+                // Fenster nach Druck schließen
+                window.onafterprint = function() {
+                    window.close();
+                };
+            }, 500);
+        };
+    </script>
+</body>
+</html>`;
+                
+                // Blob-URL erstellen (moderner Ansatz ohne document.write)
+                const blob = new Blob([printHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                // Neues Fenster mit Blob-URL öffnen
+                const printWindow = window.open(url, '_blank');
+                
+                if (!printWindow) {
+                    showToast('Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für PDF-Export.', 'warning');
+                    URL.revokeObjectURL(url);
+                } else {
+                    showToast('PDF-Export wird vorbereitet...', 'info');
                     
-                    /* PDF-spezifische Styles */
-                    @media print {
-                        body { margin: 0; padding: 20px; }
-                        * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-                    }
-                </style>
-            </head>
-            <body>
-                ${document.body.innerHTML}
-            </body>
-            </html>
-            `;
-            
-            // HTML in neues Fenster schreiben
-            printWindow.document.write(printHTML);
-            printWindow.document.close();
-            
-            // Warten bis Inhalte geladen sind, dann drucken
-            printWindow.onload = function() {
-                setTimeout(() => {
-                    printWindow.print();
-                    // Fenster nach Druck schließen
-                    printWindow.onafterprint = function() {
-                        printWindow.close();
-                    };
-                }, 500);
-            };
-            
-            showToast('PDF-Export wird vorbereitet...', 'info');
+                    // URL nach 30 Sekunden freigeben
+                    setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                    }, 30000);
+                }
+                
+            }).catch(error => {
+                console.error('Fehler beim Laden der CSS-Dateien:', error);
+                showToast('Fallback: Verwenden Sie den Drucken-Button.', 'warning');
+            });
             
             // Original-Layout nach PDF-Export wiederherstellen
             setTimeout(() => {
