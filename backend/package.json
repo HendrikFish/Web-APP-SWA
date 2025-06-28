@@ -36,6 +36,8 @@
       "modules/auth/controller/loginUser.js",
       "modules/auth/controller/registerUser.js",
       "modules/auth/routes.js",
+      "modules/informationen/controller/*.js",
+      "modules/informationen/routes.js",
       "!**/node_modules/**"
     ],
     "coverageThreshold": {
