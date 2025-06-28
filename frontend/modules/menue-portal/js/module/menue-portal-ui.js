@@ -916,6 +916,9 @@ function printMenuplan() {
             desktopContainer.classList.remove('d-none');
         }
         
+        // Desktop-Menü rendern - DAS WAR DER FEHLENDE SCHRITT!
+        renderMenuplan();
+        
         // Kurz warten, damit Layout vollständig gerendert wird
         setTimeout(() => {
             // Drucken
@@ -925,8 +928,10 @@ function printMenuplan() {
             setTimeout(() => {
                 isMobile = originalIsMobile;
                 updateMobileDetection();
+                // Original-Layout auch neu rendern
+                renderMenuplan();
             }, 1000);
-        }, 100);
+        }, 200);
         
     } catch (error) {
         console.error('Fehler beim Drucken:', error);
@@ -934,6 +939,7 @@ function printMenuplan() {
         
         // Bei Fehler sicherstellen, dass Layout wiederhergestellt wird
         updateMobileDetection();
+        renderMenuplan();
     }
 }
 
@@ -952,6 +958,9 @@ function exportToPDF() {
             desktopContainer.classList.remove('d-none');
         }
         
+        // Desktop-Menü rendern - DAS WAR DER FEHLENDE SCHRITT!
+        renderMenuplan();
+        
         // Kurz warten für vollständiges Rendering
         setTimeout(() => {
             const printWindow = window.open('', '_blank');
@@ -961,6 +970,7 @@ function exportToPDF() {
                 // Layout wiederherstellen
                 isMobile = originalIsMobile;
                 updateMobileDetection();
+                renderMenuplan();
                 return;
             }
             
@@ -1018,9 +1028,10 @@ function exportToPDF() {
             setTimeout(() => {
                 isMobile = originalIsMobile;
                 updateMobileDetection();
+                renderMenuplan();
             }, 1000);
             
-        }, 100);
+        }, 200);
         
     } catch (error) {
         console.error('Fehler beim PDF-Export:', error);
@@ -1028,6 +1039,7 @@ function exportToPDF() {
         
         // Bei Fehler sicherstellen, dass Layout wiederhergestellt wird
         updateMobileDetection();
+        renderMenuplan();
     }
 }
 
