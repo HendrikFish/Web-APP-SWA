@@ -1350,6 +1350,26 @@
     transform: translateY(0);
 }
 
+/* Kompakter Loading-Indicator neben Navigation */
+.loading-indicator-compact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.loading-indicator-compact .spinner-border-sm {
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 1s linear infinite;
+}
+
+/* Container für Navigation + Loading */
+.col-md-6 .d-flex.align-items-center {
+    min-height: 60px;
+}
+
 /* Verbesserte Einrichtungsauswahl - Buttons neben Titel */
 #einrichtungs-selector .d-flex.align-items-center {
     gap: 1rem;
@@ -1383,6 +1403,18 @@
     .week-navigation-compact #week-display {
         font-size: 0.875rem !important;
     }
+    
+    /* Mobile: Navigation + Loading vertikal zentriert */
+    .col-md-6 .d-flex.align-items-center {
+        justify-content: center !important;
+        flex-wrap: wrap;
+        gap: 1rem !important;
+    }
+    
+    .week-navigation-compact {
+        text-align: center !important;
+    }
+}
     
     /* Mobile: Einrichtungsauswahl vertikal */
     #einrichtungs-selector .d-flex.align-items-center {
