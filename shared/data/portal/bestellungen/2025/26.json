@@ -2,7 +2,7 @@
   "year": 2025,
   "week": 26,
   "erstellt_am": "2025-06-23T08:00:00.000Z",
-  "letzte_änderung": "2025-06-28T11:48:02.560Z",
+  "letzte_änderung": "2025-06-28T12:17:56.298Z",
   "einrichtungen": {
     "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
       "info": {
@@ -14,29 +14,71 @@
             "name": "dd",
             "anzahl": 8
           }
+        ],
+        "letzte_aktualisierung": "2025-06-28T12:17:56.298Z"
+      },
+      "tage": {
+        "dienstag": {
+          "hauptspeise": {
+            "dd": 5
+          }
+        },
+        "mittwoch": {
+          "hauptspeise": {
+            "dd": 3
+          }
+        },
+        "montag": {
+          "hauptspeise": {
+            "dd": 2
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 10,
+        "durchschnitt_pro_tag": 3.3333333333333335,
+        "höchster_tag": "dienstag",
+        "niedrigster_tag": "montag"
+      }
+    },
+    "353f0eeb-48e7-4fc8-a667-abaff01046e8": {
+      "info": {
+        "id": "353f0eeb-48e7-4fc8-a667-abaff01046e8",
+        "name": "Limberg",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "KR",
+            "anzahl": 10
+          },
+          {
+            "name": "KG",
+            "anzahl": 23
+          }
         ]
       },
       "tage": {
         "dienstag": {
           "hauptspeise": {
-            "dd": 3
+            "KR": 1,
+            "KG": 6
           }
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 3,
-        "durchschnitt_pro_tag": 3,
+        "gesamt_bestellungen": 7,
+        "durchschnitt_pro_tag": 7,
         "höchster_tag": "dienstag",
         "niedrigster_tag": "dienstag"
       }
     }
   },
   "wochenstatistik": {
-    "gesamt_einrichtungen": 1,
-    "gesamt_bestellungen": 3,
-    "durchschnitt_pro_einrichtung": 3,
+    "gesamt_einrichtungen": 2,
+    "gesamt_bestellungen": 17,
+    "durchschnitt_pro_einrichtung": 8.5,
     "einrichtungstypen": {
-      "extern": 1
+      "extern": 2
     }
   },
   "metadaten": {
