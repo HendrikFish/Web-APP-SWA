@@ -227,7 +227,7 @@ function updateDayOrderSummary(day) {
     // Badge in Accordion-Header aktualisieren (falls mobile)
     const accordionHeader = document.querySelector(`#heading-${day} .recipe-count`);
     if (accordionHeader && totalBestellungen > 0) {
-        accordionHeader.textContent = `${accordionHeader.textContent.split('•')[0].trim()} • ${totalBestellungen} bestellt`;
+        accordionHeader.textContent = `${accordionHeader.textContent.split('•')[0].trim()} • ${totalBestellungen} mal bestellt`;
     }
     
     // Badge in Desktop-Karte aktualisieren
@@ -239,7 +239,7 @@ function updateDayOrderSummary(day) {
             orderBadge.className = 'order-badge badge bg-success';
             desktopCard.appendChild(orderBadge);
         }
-        orderBadge.textContent = `${totalBestellungen} bestellt`;
+        orderBadge.textContent = `${totalBestellungen} mal bestellt`;
     }
 }
 
