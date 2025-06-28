@@ -4,6 +4,31 @@
 
 Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpläne verschiedener Einrichtungen einzusehen. Es unterstützt Multi-Einrichtungs-Zugriff und bietet sowohl eine mobile Accordion-Ansicht als auch eine Desktop-Grid-Darstellung. Zusätzlich bietet es umfassende Bewertungs- und Bestellfunktionalitäten.
 
+## 🚀 Aktuelle Verbesserungen (Juni 2025)
+
+### **Performance & Stabilität**
+- **Toast-Spam behoben**: Eliminierung mehrfacher Toast-Benachrichtigungen durch Event-Listener Optimierung
+- **Event-Listener Flags**: Verhinderung mehrfacher Event-Registrierung mit `eventListenersInitialized` Flags
+- **Debouncing-Mechanismen**: 
+  - Resize-Events: 250ms Debounce
+  - loadAndDisplayMenuplan: 100ms Debounce
+- **Memory-Leak Prevention**: Saubere Event-Listener Verwaltung ohne Akkumulation
+
+### **Mobile Accordion Verbesserungen**
+- **Robuste Accordion-Funktionalität**: Eigene Click-Handler ohne Bootstrap-Konflikte
+- **Standardmäßig geschlossen**: Alle Accordion-Items starten im geschlossenen Zustand
+- **Unabhängige Bedienung**: Jeder Tag kann einzeln geöffnet/geschlossen werden
+- **Zuverlässiges Toggle**: Direkte DOM-Manipulation für konsistentes Verhalten
+- **Bootstrap-Konflikt-Vermeidung**: Entfernung von `data-bs-toggle` und `data-bs-target`
+
+### **Event-Listener Architektur**
+- **Aufgeteilte Setup-Funktionen**: 
+  - `setupEinrichtungsSelector()`: Event-Listener nur einmal registrieren
+  - `updateEinrichtungsInfo()`: Nur Info-Bereich aktualisieren
+  - `updateActiveEinrichtungButton()`: Nur Button-Klassen aktualisieren
+- **Event-Delegation**: Für Bestellkontrollen mit `bestellControlsInitialized` Flag
+- **Optimierte switchEinrichtung()**: Vermeidung redundanter Setup-Aufrufe
+
 ## Intelligente Kategorien-Darstellung
 
 ### **Mobile-Ansicht (Smartphone)**
@@ -13,6 +38,7 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 - **Alle Kategorien** die im Speiseplan aktiviert sind (`suppe: true`, `dessert: true`, etc.)
 - **Platzhalter**: "Noch nicht erzeugt" wenn keine Rezepte vorhanden
 - **Kindergarten/Schule**: Zeigt nur die tatsächlich zugewiesene Kategorie als "Hauptspeise" an
+- **Accordion-Items**: Standardmäßig geschlossen, unabhängig bedienbar
 
 ### **Desktop-Ansicht (Tabelle)**
 **Grundprinzip**: Alle Standard-Kategorien für **Tabellen-Konsistenz** anzeigen
@@ -29,6 +55,7 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 - **Umbenennung** zu "Hauptspeise" (verständlicher für Zielgruppe)
 - **Platzhalter**: Auch ohne Zuweisung wird "Hauptspeise - Noch nicht erzeugt" angezeigt
 - **Grund**: Vereinfachung, da sie nicht wissen dass es 2 Menüs gibt
+- **Debug-Ausgaben**: Temporäre Console-Logs zur Problemdiagnose
 
 ### **Beispiel-Szenarien**
 
@@ -68,15 +95,16 @@ Das **Menü-Portal** ist ein Read-Only-Modul, das Benutzern ermöglicht, Menüpl
 - **LocalStorage-Persistierung**: Bestellungen bleiben bei Seitenwechsel erhalten
 - **Export/Import**: CSV-Export und Datenimport für weitere Verarbeitung
 - **Validierung**: Automatische Plausibilitätsprüfung der Bestellmengen
-- **UI-Feedback**: Live-Updates und Toast-Benachrichtigungen
+- **UI-Feedback**: Live-Updates und Toast-Benachrichtigungen (optimiert, kein Spam)
 
 ### 📱 **Mobile Features**
-- **Accordion-Layout**: Tage als aufklappbare Karten
+- **Accordion-Layout**: Tage als aufklappbare Karten (standardmäßig geschlossen)
 - **Touch-optimiert**: Große Touchziele, einfache Navigation
 - **Rezept-Counter**: Anzahl Rezepte pro Tag auf einen Blick
 - **Kategorie-Icons**: Visuelle Unterscheidung (🍲 Suppe, 🍽️ Menü 1, etc.)
 - **Bewertungs-Buttons**: Schneller Zugriff auf Bewertungsfunktion
 - **Bestellfelder**: Inline-Eingabe für Bestellmengen
+- **Robuste Accordion-Bedienung**: Zuverlässiges Öffnen/Schließen ohne Bootstrap-Konflikte
 
 ### 🖥️ **Desktop Features**
 - **Grid-Layout**: Übersichtliche Tabellenansicht
@@ -140,6 +168,8 @@ Die UI ist in spezialisierte Handler aufgeteilt:
 - Touch-optimierte Bedienung
 - Kategoriebasierte Darstellung
 - Bewertungs-Buttons pro Kategorie
+- **Verbesserte Accordion-Logik**: Eigene Click-Handler ohne Bootstrap-Konflikte
+- **Performance-Optimiert**: Minimale DOM-Manipulation, keine Event-Listener Akkumulation
 
 #### **Desktop Calendar Handler**  
 - Grid-basierte Kalenderansicht
@@ -152,6 +182,39 @@ Die UI ist in spezialisierte Handler aufgeteilt:
 - Automatische Berechnungen (Suppe/Dessert)
 - LocalStorage-Persistierung
 - Export/Import-Funktionalität
+- **Event-Delegation**: Optimierte Event-Behandlung
+
+### Performance-Optimierungen
+
+#### **Event-Listener Management**
+```javascript
+// Flags verhindern mehrfache Registrierung
+let eventListenersInitialized = false;
+let bestellControlsInitialized = false;
+let loadMenuplanTimeout = null;
+
+// Debouncing für Performance
+const debouncedLoadMenuplan = debounce(loadAndDisplayMenuplan, 100);
+const debouncedResize = debounce(handleResize, 250);
+```
+
+#### **Accordion-Optimierung**
+```javascript
+// Eigene Click-Handler ohne Bootstrap-Konflikte
+button.removeAttribute('data-bs-toggle');
+button.removeAttribute('data-bs-target');
+
+// Direkte DOM-Manipulation für zuverlässiges Toggle
+if (isExpanded) {
+    button.classList.add('collapsed');
+    button.setAttribute('aria-expanded', 'false');
+    targetCollapse.classList.remove('show');
+} else {
+    button.classList.remove('collapsed');
+    button.setAttribute('aria-expanded', 'true');
+    targetCollapse.classList.add('show');
+}
+```
 
 ### API-Integration
 

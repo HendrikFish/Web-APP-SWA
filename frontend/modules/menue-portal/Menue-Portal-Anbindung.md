@@ -2,6 +2,8 @@
 
 > **🛡️ SICHERHEIT:** Dieses Modul MUSS das neue Sicherheitssystem verwenden! Siehe `shared/docs/MODULARE-ENTWICKLUNG.md` für sichere Implementierung mit Error-Boundary und einheitlichem API-Client.
 
+> **🚀 PERFORMANCE:** Aktuelle Optimierungen (Juni 2025) - Toast-Spam behoben, Event-Listener optimiert, Accordion-Funktionalität verbessert
+
 Dieses Dokument definiert den "Datenvertrag" für das Menue-Portal-Modul. Alle Komponenten, sowohl im Frontend als auch im Backend, müssen sich an diese Struktur halten.
 
 ## 1. Datenquellen (Wo liegen die Daten?)
@@ -79,6 +81,8 @@ Diese Datei kapselt die gesamte Kommunikation mit den Backend-Endpunkten:
 - **Authentifizierung:** Alle Anfragen **müssen** den JWT-Token aus dem `localStorage` verwenden
 - **Fehlerbehandlung:** Graceful Degradation bei Netzwerkfehlern oder fehlenden Daten
 - **Caching:** Intelligente Zwischenspeicherung von Rezept-Details für Performance
+- **Debouncing:** API-Aufrufe werden gedrosselt um Toast-Spam zu vermeiden (100ms)
+- **Toast-Optimierung:** Nur eine Toast-Nachricht pro Aktion durch Event-Listener Flags
 
 ### Wichtige API-Funktionen:
 
@@ -86,11 +90,28 @@ Diese Datei kapselt die gesamte Kommunikation mit den Backend-Endpunkten:
 // Benutzer-Authentifizierung mit Einrichtungszuordnung
 export async function getCurrentUserWithEinrichtungen();
 
-// Menüplan für spezifische Einrichtung laden
+// Menüplan für spezifische Einrichtung laden (mit Debouncing)
 export async function loadMenuplanForEinrichtung(einrichtungId, year, week);
 
 // Portal-Stammdaten abrufen
 export async function getPortalStammdaten();
+```
+
+### Performance-Optimierungen (Juni 2025)
+
+```javascript
+// Event-Listener Flags verhindern mehrfache Registrierung
+let eventListenersInitialized = false;
+let bestellControlsInitialized = false;
+
+// Debouncing für API-Aufrufe
+let loadMenuplanTimeout = null;
+const debouncedLoadMenuplan = debounce(loadAndDisplayMenuplan, 100);
+
+// Aufgeteilte Setup-Funktionen für bessere Performance
+function setupEinrichtungsSelector() { /* Event-Listener nur einmal */ }
+function updateEinrichtungsInfo() { /* Nur Info-Bereich aktualisieren */ }
+function updateActiveEinrichtungButton() { /* Nur Button-Klassen */ }
 ```
 
 ## 6. Besonderheiten des Read-Only-Moduls
@@ -104,11 +125,46 @@ export async function getPortalStammdaten();
 - **Lazy Loading**: Rezept-Details nur bei Bedarf
 - **Parallel-Requests**: Gleichzeitige API-Abfragen für bessere Performance
 - **Client-Side Caching**: Vermeidung redundanter Backend-Aufrufe
+- **Event-Listener Management**: Flags verhindern mehrfache Event-Registrierung
+- **Debouncing**: API-Aufrufe und Resize-Events werden gedrosselt
+- **Memory-Leak Prevention**: Saubere Event-Listener Verwaltung
 
 ### Responsive Design Integration
 - **Mobile-First**: Accordion-Layout für schmale Bildschirme
 - **Desktop-Enhancement**: Grid-Layout für große Bildschirme
 - **Touch-Optimierung**: Große Touchziele für mobile Nutzung
+- **Robuste Accordion-Logik**: Eigene Click-Handler ohne Bootstrap-Konflikte
+
+### Mobile Accordion Verbesserungen
+- **Standardmäßig geschlossen**: Alle Accordion-Items starten geschlossen
+- **Unabhängige Bedienung**: Jeder Tag kann einzeln geöffnet/geschlossen werden
+- **Bootstrap-Konflikt-Vermeidung**: Entfernung von `data-bs-toggle` und `data-bs-target`
+- **Direkte DOM-Manipulation**: Zuverlässiges Toggle-Verhalten
+
+```javascript
+// Verbesserte Accordion-Logik
+button.removeAttribute('data-bs-toggle');
+button.removeAttribute('data-bs-target');
+
+button.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    
+    if (isExpanded) {
+        // Schließen
+        button.classList.add('collapsed');
+        button.setAttribute('aria-expanded', 'false');
+        targetCollapse.classList.remove('show');
+    } else {
+        // Öffnen
+        button.classList.remove('collapsed');
+        button.setAttribute('aria-expanded', 'true');
+        targetCollapse.classList.add('show');
+    }
+});
+```
 
 ## 7. Authentifizierung & Zugriffskontrolle
 
@@ -121,4 +177,9 @@ export async function getPortalStammdaten();
 - **401 Unauthorized**: Weiterleitung zum Login
 - **403 Forbidden**: Meldung über fehlende Berechtigung
 - **404 Not Found**: Anzeige leerer Menüplan
-- **500 Server Error**: Benutzerfreundliche Fehlermeldung mit Retry-Option 
+- **500 Server Error**: Benutzerfreundliche Fehlermeldung mit Retry-Option
+
+### Toast-Benachrichtigungen (Optimiert)
+- **Kein Spam**: Event-Listener Flags verhindern mehrfache Toast-Nachrichten
+- **Debouncing**: API-Aufrufe werden gedrosselt um redundante Nachrichten zu vermeiden
+- **Performance**: Minimale UI-Updates durch optimierte Event-Behandlung 
