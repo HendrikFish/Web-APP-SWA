@@ -902,7 +902,72 @@ function printMenuplan() {
 }
 
 function exportToPDF() {
-    showToast('PDF-Export wird implementiert...', 'info');
+    try {
+        // Temporäres Fenster für PDF-Export erstellen
+        const printWindow = window.open('', '_blank');
+        
+        if (!printWindow) {
+            showToast('Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für PDF-Export.', 'warning');
+            return;
+        }
+        
+        // Aktueller Seiteninhalt
+        const currentContent = document.documentElement.outerHTML;
+        
+        // Print-optimierten HTML-Code erstellen
+        const printHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Menüplan KW ${currentWeek}/${currentYear} - ${currentEinrichtung?.name || 'Einrichtung'}</title>
+            <style>
+                /* CSS aus der aktuellen Seite kopieren */
+                ${Array.from(document.styleSheets)
+                    .map(sheet => {
+                        try {
+                            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+                        } catch (e) {
+                            return '';
+                        }
+                    })
+                    .join('\n')
+                }
+                
+                /* PDF-spezifische Styles */
+                @media print {
+                    body { margin: 0; padding: 20px; }
+                    * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                }
+            </style>
+        </head>
+        <body>
+            ${document.body.innerHTML}
+        </body>
+        </html>
+        `;
+        
+        // HTML in neues Fenster schreiben
+        printWindow.document.write(printHTML);
+        printWindow.document.close();
+        
+        // Warten bis Inhalte geladen sind, dann drucken
+        printWindow.onload = function() {
+            setTimeout(() => {
+                printWindow.print();
+                // Fenster nach Druck schließen
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            }, 500);
+        };
+        
+        showToast('PDF-Export wird vorbereitet...', 'info');
+        
+    } catch (error) {
+        console.error('Fehler beim PDF-Export:', error);
+        showToast('Fehler beim PDF-Export. Verwenden Sie den Drucken-Button.', 'error');
+    }
 }
 
 /**
