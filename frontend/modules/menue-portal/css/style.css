@@ -531,20 +531,136 @@
 
 /* Print Styles */
 @media print {
+    /* Seiteneinstellungen für A4 Querformat */
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+    
+    /* Verstecke alle interaktiven Elemente */
     .menue-portal-controls,
     .action-buttons-container,
-    #einrichtungs-selector {
+    #einrichtungs-selector,
+    .mobile-accordion,
+    .bestellung-container,
+    .bestellung-container-desktop,
+    .bewertung-btn,
+    .bewertung-btn-desktop {
         display: none !important;
     }
-
-    .day-header {
+    
+    /* Zeige nur Desktop-Kalender */
+    #desktop-calendar {
+        display: block !important;
+    }
+    
+    /* Verstecke Wochenende (Samstag & Sonntag) */
+    .day-card[data-day="samstag"],
+    .day-card[data-day="sonntag"] {
+        display: none !important;
+    }
+    
+    /* Layout-Optimierung für A4 Querformat */
+    .desktop-calendar-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important; /* 5 Spalten für Mo-Fr */
+        gap: 0.5rem !important;
+        max-width: 100% !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Day Cards für Druck optimieren */
+    .day-card {
+        border: 2px solid #000 !important;
+        border-radius: 8px !important;
+        page-break-inside: avoid !important;
+        background: white !important;
+        padding: 0.5rem !important;
+        height: auto !important;
+        min-height: 200px !important;
+    }
+    
+    /* Day Header */
+    .day-card .day-header {
         background: #000 !important;
         color: #fff !important;
+        padding: 0.5rem !important;
+        border-radius: 4px !important;
+        margin-bottom: 0.5rem !important;
+        text-align: center !important;
     }
-
-    .recipe-item {
+    
+    .day-card .day-name {
+        font-size: 1rem !important;
+        font-weight: bold !important;
+        margin: 0 !important;
+    }
+    
+    .day-card .day-date {
+        font-size: 0.8rem !important;
+        margin: 0 !important;
+        opacity: 0.9 !important;
+    }
+    
+    /* Category Sections */
+    .category-section {
+        margin-bottom: 0.75rem !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        padding: 0.4rem !important;
+    }
+    
+    .category-header {
+        background: #f8f9fa !important;
+        padding: 0.3rem !important;
+        border-radius: 3px !important;
+        margin-bottom: 0.3rem !important;
+    }
+    
+    .category-title {
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+    }
+    
+    .category-icon {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Recipe Content */
+    .recipe-content {
+        padding: 0.2rem !important;
+    }
+    
+    .recipe-item-desktop {
         border: 1px solid #000 !important;
         background: transparent !important;
+        padding: 0.3rem !important;
+        margin-bottom: 0.2rem !important;
+        border-radius: 3px !important;
+    }
+    
+    .recipe-item-desktop:last-child {
+        margin-bottom: 0 !important;
+    }
+    
+    .recipe-name {
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
+        color: #000 !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* Leere Kategorien */
+    .recipe-content .text-muted {
+        font-size: 0.75rem !important;
+        color: #666 !important;
+        font-style: italic !important;
+    }
+    
+    /* Verstecke "Kein Essen" Indikator */
+    .no-food-indicator {
+        display: none !important;
     }
 }
 
