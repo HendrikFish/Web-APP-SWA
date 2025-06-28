@@ -530,10 +530,12 @@ async function loadAndDisplayMenuplan() {
             // UI rendern
             renderMenuplan();
             
-            // Bestellungen laden (falls externe Einrichtung)
+            // Bestellungen laden (falls externe Einrichtung) - mit Delay für vollständiges Rendering
             if (!currentEinrichtung.isIntern) {
                 const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
-                loadBestellungenIntoUI(wochenschluessel);
+                setTimeout(() => {
+                    loadBestellungenIntoUI(wochenschluessel);
+                }, 200); // 200ms Delay für vollständiges DOM-Rendering
             }
             
             console.log('✅ Menüplan geladen und dargestellt');

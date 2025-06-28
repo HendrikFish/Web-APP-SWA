@@ -9,7 +9,11 @@ const path = require('path');
 async function saveBestellungen(req, res) {
     try {
         const { year, week } = req.params;
-        const { einrichtung_id, bestellungen: bestellungsData } = req.body;
+        const { 
+            einrichtung_id, 
+            bestellungen: bestellungsData,
+            user_info = {}
+        } = req.body;
         
         // Input-Validierung
         if (!year || !week || !einrichtung_id || !bestellungsData) {
@@ -57,13 +61,54 @@ async function saveBestellungen(req, res) {
                     durchschnitt_pro_tag: 0,
                     höchster_tag: "",
                     niedrigster_tag: ""
-                }
+                },
+                bestellhistorie: []
             };
+        }
+
+        // User-Tracking in Bestellhistorie
+        if (user_info.user_id) {
+            const bestellungenAnzahl = Object.keys(bestellungsData).reduce((total, day) => {
+                return total + Object.keys(bestellungsData[day] || {}).reduce((dayTotal, kategorie) => {
+                    return dayTotal + Object.values(bestellungsData[day][kategorie] || {}).reduce((sum, anzahl) => sum + (anzahl || 0), 0);
+                }, 0);
+            }, 0);
+
+            const historyEntry = {
+                timestamp: new Date().toISOString(),
+                user_id: user_info.user_id,
+                username: user_info.username || 'Unbekannt',
+                name: user_info.name || 'Unbekannter Benutzer',
+                action: 'bestellung_gespeichert',
+                bestellungen_anzahl: bestellungenAnzahl,
+                ip_address: req.ip || req.connection.remoteAddress || 'unbekannt'
+            };
+            
+            // Historie-Array initialisieren falls nicht vorhanden
+            if (!bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie) {
+                bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie = [];
+            }
+            
+            // Neue Historie hinzufügen (max. 50 Einträge behalten)
+            bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie.unshift(historyEntry);
+            if (bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie.length > 50) {
+                bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie = 
+                    bestellungenGesamt.einrichtungen[einrichtung_id].bestellhistorie.slice(0, 50);
+            }
         }
 
         // Bestellungsdaten in die Struktur integrieren
         bestellungenGesamt.einrichtungen[einrichtung_id].tage = bestellungsData;
         bestellungenGesamt.letzte_änderung = new Date().toISOString();
+        
+        // Einrichtungsinfo aktualisieren
+        bestellungenGesamt.einrichtungen[einrichtung_id].info = {
+            ...bestellungenGesamt.einrichtungen[einrichtung_id].info,
+            name: req.body.einrichtung_name || bestellungenGesamt.einrichtungen[einrichtung_id].info.name,
+            typ: req.body.einrichtung_typ || bestellungenGesamt.einrichtungen[einrichtung_id].info.typ,
+            gruppen: req.body.gruppen || bestellungenGesamt.einrichtungen[einrichtung_id].info.gruppen,
+            letzte_aktualisierung: new Date().toISOString()
+        };
 
         // Statistiken neu berechnen
         bestellungenGesamt = calculateStatistics(bestellungenGesamt);

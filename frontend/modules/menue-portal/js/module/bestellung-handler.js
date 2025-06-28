@@ -135,12 +135,16 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
         }
         bestellungenCache[wochenschluessel][day]['suppe'][gruppe] = anzahl;
         
-        // UI-Feld aktualisieren falls vorhanden
-        const suppenInput = document.querySelector(`input[data-day="${day}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`);
-        if (suppenInput) {
-            suppenInput.value = anzahl;
-            suppenInput.style.backgroundColor = '#e3f2fd'; // Leicht blau für automatisch berechnet
-        }
+        // UI-Felder aktualisieren falls vorhanden (Mobile + Desktop)
+        const suppenInputMobile = document.querySelector(`input.bestellung-input[data-day="${day}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`);
+        const suppenInputDesktop = document.querySelector(`input.bestellung-input-desktop[data-day="${day}"][data-kategorie="suppe"][data-gruppe="${gruppe}"]`);
+        
+        [suppenInputMobile, suppenInputDesktop].forEach(input => {
+            if (input) {
+                input.value = anzahl;
+                applyInputStyling(input, anzahl, 'suppe');
+            }
+        });
     }
     
     // Automatische Dessert-Bestellung
@@ -150,12 +154,16 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
         }
         bestellungenCache[wochenschluessel][day]['dessert'][gruppe] = anzahl;
         
-        // UI-Feld aktualisieren falls vorhanden
-        const dessertInput = document.querySelector(`input[data-day="${day}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`);
-        if (dessertInput) {
-            dessertInput.value = anzahl;
-            dessertInput.style.backgroundColor = '#e8f5e8'; // Leicht grün für automatisch berechnet
-        }
+        // UI-Felder aktualisieren falls vorhanden (Mobile + Desktop)
+        const dessertInputMobile = document.querySelector(`input.bestellung-input[data-day="${day}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`);
+        const dessertInputDesktop = document.querySelector(`input.bestellung-input-desktop[data-day="${day}"][data-kategorie="dessert"][data-gruppe="${gruppe}"]`);
+        
+        [dessertInputMobile, dessertInputDesktop].forEach(input => {
+            if (input) {
+                input.value = anzahl;
+                applyInputStyling(input, anzahl, 'dessert');
+            }
+        });
     }
 }
 
@@ -167,8 +175,15 @@ function berechneAutomatischeBestellungen(day, kategorie, gruppe, anzahl, wochen
  * @param {number} anzahl - Anzahl
  */
 function updateBestellungUI(day, kategorie, gruppe, anzahl) {
-    // Keine einzelnen Toast-Nachrichten bei jedem Input-Change
-    // Das würde zu viele Nachrichten erzeugen
+    // Visuelles Feedback für alle zugehörigen Input-Felder anwenden
+    const mobileInput = document.querySelector(`input.bestellung-input[data-day="${day}"][data-kategorie="${kategorie}"][data-gruppe="${gruppe}"]`);
+    const desktopInput = document.querySelector(`input.bestellung-input-desktop[data-day="${day}"][data-kategorie="${kategorie}"][data-gruppe="${gruppe}"]`);
+    
+    [mobileInput, desktopInput].forEach(input => {
+        if (input) {
+            applyInputStyling(input, anzahl, kategorie);
+        }
+    });
     
     // Tagesinformation aktualisieren
     updateDayOrderSummary(day);
@@ -308,7 +323,7 @@ async function migrateLocalStorageToAPI() {
 }
 
 /**
- * Lädt Bestellungen in die UI
+ * Lädt Bestellungen in die UI (Mobile + Desktop)
  * @param {string} wochenschluessel - Wochenschlüssel
  */
 export function loadBestellungenIntoUI(wochenschluessel) {
@@ -318,20 +333,25 @@ export function loadBestellungenIntoUI(wochenschluessel) {
     }
     
     const wochenData = bestellungenCache[wochenschluessel];
+    let geladenesTotal = 0;
     
-    // Alle Bestellungsfelder füllen
+    // Alle Bestellungsfelder füllen (Mobile + Desktop)
     Object.entries(wochenData).forEach(([day, dayData]) => {
         Object.entries(dayData).forEach(([kategorie, kategorieData]) => {
             Object.entries(kategorieData).forEach(([gruppe, anzahl]) => {
-                const input = document.querySelector(`input[data-day="${day}"][data-kategorie="${kategorie}"][data-gruppe="${gruppe}"]`);
-                if (input) {
-                    input.value = anzahl;
-                    
-                    // Visuelle Kennzeichnung für automatisch berechnete Werte
-                    if (['suppe', 'dessert'].includes(kategorie)) {
-                        input.style.backgroundColor = kategorie === 'suppe' ? '#e3f2fd' : '#e8f5e8';
+                // Mobile und Desktop Inputs parallel suchen
+                const mobileInput = document.querySelector(`input.bestellung-input[data-day="${day}"][data-kategorie="${kategorie}"][data-gruppe="${gruppe}"]`);
+                const desktopInput = document.querySelector(`input.bestellung-input-desktop[data-day="${day}"][data-kategorie="${kategorie}"][data-gruppe="${gruppe}"]`);
+                
+                [mobileInput, desktopInput].forEach(input => {
+                    if (input) {
+                        input.value = anzahl;
+                        geladenesTotal++;
+                        
+                        // Visuelles Feedback für eingetragene Werte
+                        applyInputStyling(input, anzahl, kategorie);
                     }
-                }
+                });
             });
         });
         
@@ -339,7 +359,38 @@ export function loadBestellungenIntoUI(wochenschluessel) {
         updateDayOrderSummary(day);
     });
     
-    console.log('UI mit Bestellungen gefüllt für', wochenschluessel);
+    console.log(`✅ UI mit Bestellungen gefüllt für ${wochenschluessel} (${geladenesTotal} Felder)`);
+}
+
+/**
+ * Wendet visuelles Styling auf Bestellfelder an
+ * @param {HTMLInputElement} input - Input-Element
+ * @param {number} anzahl - Bestellte Anzahl
+ * @param {string} kategorie - Kategorie
+ */
+function applyInputStyling(input, anzahl, kategorie) {
+    // Reset alle Styles
+    input.classList.remove('bestellung-saved', 'bestellung-automatic');
+    input.style.backgroundColor = '';
+    input.style.border = '';
+    input.style.fontWeight = '';
+    input.style.fontSize = '';
+    
+    if (anzahl > 0) {
+        // Grüner Rahmen für eingetragene Werte
+        input.classList.add('bestellung-saved');
+        input.style.border = '2px solid #28a745';
+        input.style.fontWeight = 'bold';
+        input.style.fontSize = '1.1em';
+        
+        // Spezielle Kennzeichnung für automatisch berechnete Werte
+        if (['suppe', 'dessert'].includes(kategorie)) {
+            input.classList.add('bestellung-automatic');
+            input.style.backgroundColor = kategorie === 'suppe' ? '#e3f2fd' : '#e8f5e8';
+        } else {
+            input.style.backgroundColor = '#f8fff8'; // Leicht grün
+        }
+    }
 }
 
 /**
@@ -384,10 +435,14 @@ export async function clearBestellungen(wochenschluessel) {
         // API-Speicherung mit leeren Daten
         await saveBestellungenToAPI(wochenschluessel);
         
-        // UI-Felder leeren
-        document.querySelectorAll('.bestellung-input').forEach(input => {
+        // UI-Felder leeren (Mobile + Desktop)
+        document.querySelectorAll('.bestellung-input, .bestellung-input-desktop').forEach(input => {
             input.value = '';
+            input.classList.remove('bestellung-saved', 'bestellung-automatic');
             input.style.backgroundColor = '';
+            input.style.border = '';
+            input.style.fontWeight = '';
+            input.style.fontSize = '';
         });
         
         // Tagesanzeigen aktualisieren
@@ -472,5 +527,39 @@ function getWeekNumber(date) {
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 }
 
+/**
+ * Manuelles Speichern aller Bestellungen
+ */
+export async function manualSaveBestellungen() {
+    try {
+        const currentWeek = getCurrentWeek();
+        const currentYear = getCurrentYear();
+        const wochenschluessel = `${currentYear}-${currentWeek.toString().padStart(2, '0')}`;
+        
+        // Sofortiges Speichern ohne Debouncing
+        clearTimeout(saveTimeout);
+        await saveBestellungenToAPI(wochenschluessel);
+        
+        // Visuelles Feedback
+        document.querySelectorAll('.bestellung-save-btn, .bestellung-save-btn-desktop').forEach(btn => {
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-outline-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-success');
+            }, 1500);
+        });
+        
+    } catch (error) {
+        console.error('❌ Fehler beim manuellen Speichern:', error);
+        showToast('Fehler beim Speichern der Bestellungen', 'error');
+    }
+}
+
 // Global verfügbar machen
-window.handleBestellungChange = handleBestellungChange; 
+window.handleBestellungChange = handleBestellungChange;
+window.manualSaveBestellungen = manualSaveBestellungen; 

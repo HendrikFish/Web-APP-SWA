@@ -301,12 +301,29 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
                         aria-describedby="${inputId}-max"
                     >
                     <small class="text-muted ms-1" id="${inputId}-max">/${gruppe.anzahl}</small>
+                    <button 
+                        type="button" 
+                        class="btn btn-outline-success btn-sm ms-1 bestellung-save-btn-desktop"
+                        onclick="manualSaveBestellungen()"
+                        title="Bestellungen jetzt speichern"
+                        style="padding: 2px 6px; font-size: 0.7rem;"
+                    >
+                        <i class="bi bi-check"></i>
+                    </button>
                 </div>
             </div>
         `;
     });
     
-    html += '</div>';
+    html += `
+            <div class="bestellung-actions-desktop mt-1">
+                <small class="text-muted" style="font-size: 0.7rem;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Auto-Save nach 1s
+                </small>
+            </div>
+        </div>
+    `;
     return html;
 }
 

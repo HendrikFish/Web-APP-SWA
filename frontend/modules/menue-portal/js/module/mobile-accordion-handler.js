@@ -448,11 +448,27 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
                         aria-describedby="${inputId}-hint"
                     >
                     <span class="input-group-text" id="${inputId}-hint">von ${gruppe.anzahl}</span>
+                    <button 
+                        type="button" 
+                        class="btn btn-outline-success btn-sm bestellung-save-btn"
+                        onclick="manualSaveBestellungen()"
+                        title="Bestellungen jetzt speichern"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                    </button>
                 </div>
             </div>
         `;
     });
     
-    html += '</div>';
+    html += `
+            <div class="bestellung-actions mt-2">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Änderungen werden automatisch nach 1 Sekunde gespeichert
+                </small>
+            </div>
+        </div>
+    `;
     return html;
 } 
