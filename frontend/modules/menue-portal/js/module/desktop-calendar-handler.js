@@ -274,7 +274,7 @@ function renderDesktopBestellungFields(dayKey, categoryKey, recipes, currentEinr
         <div class="bestellung-container bestellung-container-desktop mt-3">
             <h6 class="bestellung-title">
                 <i class="bi bi-cart3 me-2"></i>
-                Bestellung für ${formatDate(new Date())}
+                Bestellt am ${formatDate(new Date())}
             </h6>
     `;
     
