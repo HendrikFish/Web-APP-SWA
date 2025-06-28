@@ -31,6 +31,10 @@ import { initBewertungModal, openBewertungModal } from './bewertung-modal.js';
 import { istDatumBewertbar } from './bewertung-api.js';
 import { initInformationModal, openNewInformationModal, openInformationManagementModal } from './informationen-modal.js';
 import { getInformationen } from './informationen-api.js';
+import { 
+    initInformationHandler,
+    loadInformationenData
+} from './menue-portal-information-handler.js';
 import { renderMobileAccordion } from './mobile-accordion-handler.js';
 import { renderDesktopCalendar } from './desktop-calendar-handler.js';
 import { 
@@ -66,8 +70,7 @@ let portalStammdaten = null;
 let eventListenersInitialized = false; // Flag um mehrfache Event-Listener zu verhindern
 let loadMenuplanTimeout = null; // Debouncing für loadAndDisplayMenuplan
 let bestellControlsInitialized = false; // Flag für Bestellkontrollen Event-Listener
-let currentInformationenData = {}; // Informationsdaten für aktuelle Woche
-window.currentInformationenData = currentInformationenData; // Global verfügbar
+// Informationsdaten jetzt in information-handler verwaltet
 
 /**
  * Initialisiert die UI-Module
@@ -118,8 +121,8 @@ export async function initMenuePortalUI(user, einrichtungen) {
         // Layout Event-Listener
         setupLayoutEventListeners();
         
-        // Informations Event-Listener
-        setupInformationEventListeners();
+        // Informations-System initialisieren
+        initInformationHandler();
         
         // Standard-Einrichtung wählen und Menüplan laden
         currentEinrichtung = getDefaultEinrichtung();
@@ -396,152 +399,13 @@ function setupLayoutEventListeners() {
     console.log('✅ Layout Event-Listener initialisiert');
 }
 
-/**
- * Informations-Event-Listener (nur einmal registrieren)
- */
-function setupInformationEventListeners() {
-    // Globale Funktion für Information-Click verfügbar machen
-    window.handleInformationClick = handleInformationClick;
-    
-    // Event-Listener für Information-Updates
-    window.addEventListener('informationCreated', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
-        loadInformationenData().then(() => {
-            updateInformationButtons();
-        });
-    });
-    
-    window.addEventListener('informationUpdated', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
-        loadInformationenData().then(() => {
-            updateInformationButtons();
-        });
-    });
-    
-    window.addEventListener('informationDeleted', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
-        loadInformationenData().then(() => {
-            updateInformationButtons();
-        });
-    });
-    
-    console.log('📋 Informations-Event-Listener erfolgreich registriert');
-}
+// Information Event-Listener jetzt in information-handler
 
-/**
- * Aktualisiert nur die Informations-Button-Zustände ohne UI-Neurendierung
- */
-function updateInformationButtons() {
-    console.log('🔄 Aktualisiere nur Informations-Button-Zustände...');
-    
-    try {
-        const informationenData = window.currentInformationenData || {};
-        
-        // Alle Informations-Buttons finden
-        const allInfoButtons = document.querySelectorAll('.information-btn, .information-btn-desktop');
-        
-        allInfoButtons.forEach(button => {
-            // Tag und Kategorie des Buttons ermitteln
-            const categoryElement = button.closest('.category-section, .grid-content-cell');
-            if (!categoryElement) return;
-            
-            const dayKey = categoryElement.getAttribute('data-day') || getDayFromButton(categoryElement);
-            const categoryKey = categoryElement.getAttribute('data-category') || getCategoryFromButton(categoryElement);
-            
-            if (!dayKey || !categoryKey) return;
-            
-            // Prüfen ob Informationen für diesen Tag vorhanden sind
-            const tagInformationen = informationenData[dayKey] || [];
-            const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
-            
-            // Button-Zustand entsprechend setzen
-            if (activeInformationen.length > 0) {
-                button.classList.add('has-info');
-            } else {
-                button.classList.remove('has-info');
-            }
-        });
-        
-        console.log('✅ Informations-Button-Zustände erfolgreich aktualisiert');
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Aktualisieren der Informations-Button-Zustände:', error);
-    }
-}
+// updateInformationButtons jetzt in information-handler
 
-/**
- * Hilfsfunktion: Ermittelt Tag-Key aus Button-Element
- */
-function getDayFromButton(element) {
-    // Verschiedene Strategien versuchen
-    let dayKey = element.getAttribute('data-day');
-    if (dayKey) return dayKey;
-    
-    // In Accordion-Structure
-    const accordionItem = element.closest('.accordion-item');
-    if (accordionItem) {
-        dayKey = accordionItem.getAttribute('data-day');
-        if (dayKey) return dayKey;
-    }
-    
-    // In Desktop-Grid
-    const dayCard = element.closest('.day-card');
-    if (dayCard) {
-        dayKey = dayCard.getAttribute('data-day');
-        if (dayKey) return dayKey;
-    }
-    
-    // Fallback: aus DOM-Struktur ableiten
-    const dayHeader = element.closest('[data-day]');
-    if (dayHeader) {
-        return dayHeader.getAttribute('data-day');
-    }
-    
-    return null;
-}
+// getDayFromButton und getCategoryFromButton jetzt in information-handler
 
-/**
- * Hilfsfunktion: Ermittelt Kategorie-Key aus Button-Element
- */
-function getCategoryFromButton(element) {
-    // Verschiedene Strategien versuchen
-    let categoryKey = element.getAttribute('data-category');
-    if (categoryKey) return categoryKey;
-    
-    // In Category-Section
-    const categorySection = element.closest('.category-section');
-    if (categorySection) {
-        categoryKey = categorySection.getAttribute('data-category');
-        if (categoryKey) return categoryKey;
-    }
-    
-    // Fallback: aus DOM-Struktur ableiten
-    const categoryElement = element.closest('[data-category]');
-    if (categoryElement) {
-        return categoryElement.getAttribute('data-category');
-    }
-    
-    return null;
-}
-
-/**
- * Globale Funktion für Information-Click-Handler
- * @param {string} dayKey - Wochentag-Key
- * @param {string} isoDate - ISO-Datum-String
- */
-function handleInformationClick(dayKey, isoDate) {
-    try {
-        const datum = new Date(isoDate);
-        console.log(`📋 Information-Click für ${dayKey}, ${datum.toLocaleDateString()}`);
-        
-        // Öffne das Management-Modal (Übersicht + Bearbeitung/Erstellung)
-        openInformationManagementModal(dayKey, datum);
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Öffnen des Informations-Modals:', error);
-        showToast('Fehler beim Öffnen des Informations-Modals', 'error');
-    }
-}
+// handleInformationClick jetzt in information-handler
 
 /**
  * Wechselt zu einer anderen Einrichtung
@@ -706,7 +570,7 @@ async function loadAndDisplayMenuplan() {
             await loadMenuplanRecipes();
             
             // Informationen laden
-            await loadInformationenData();
+            await loadInformationenData(currentEinrichtung, currentYear, currentWeek);
             
             // UI rendern
             renderMenuplan();
@@ -757,41 +621,7 @@ async function loadMenuplanRecipes() {
     }
 }
 
-/**
- * Lädt Informationen für die aktuelle Woche
- */
-async function loadInformationenData() {
-    if (!currentEinrichtung || !currentYear || !currentWeek) {
-        console.warn('⚠️ Informationen können nicht geladen werden - fehlende Parameter:', {
-            currentEinrichtung: !!currentEinrichtung,
-            currentYear,
-            currentWeek
-        });
-        currentInformationenData = {};
-        window.currentInformationenData = {};
-        return;
-    }
-    
-    try {
-        console.log(`📋 Lade Informationen für KW ${currentWeek}/${currentYear}, Einrichtung: ${currentEinrichtung.name} (${currentEinrichtung.id})...`);
-        
-        const result = await getInformationen(currentYear, currentWeek, currentEinrichtung.id);
-        if (result.success) {
-            currentInformationenData = result.informationen;
-            window.currentInformationenData = currentInformationenData; // Global verfügbar
-            console.log(`✅ Informationen geladen:`, Object.keys(currentInformationenData).length, 'Tage');
-        } else {
-            console.warn('⚠️ Keine Informationen für diese Woche gefunden');
-            currentInformationenData = {};
-            window.currentInformationenData = {};
-        }
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Laden der Informationen:', error);
-        currentInformationenData = {};
-        window.currentInformationenData = {};
-    }
-}
+// loadInformationenData jetzt in information-handler
 
 /**
  * Rendert den Menüplan basierend auf Bildschirmgröße
