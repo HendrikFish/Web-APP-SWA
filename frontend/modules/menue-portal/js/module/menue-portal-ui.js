@@ -158,11 +158,13 @@ function setupEinrichtungsSelector(einrichtungen) {
     container.innerHTML = `
         <div class="card">
             <div class="card-body">
-                <h6 class="card-title mb-3">
-                    <i class="bi bi-building"></i> Einrichtung wählen:
-                </h6>
-                <div class="btn-group-sm d-flex flex-wrap gap-2" role="group">
-                    ${buttonsHtml}
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-building"></i> Einrichtung wählen:
+                    </h6>
+                    <div class="btn-group-sm d-flex flex-wrap gap-2" role="group">
+                        ${buttonsHtml}
+                    </div>
                 </div>
             </div>
         </div>
@@ -269,26 +271,20 @@ function setupControls() {
  * Setup für Bestellungs-Controls (nur bei externen Einrichtungen)
  */
 function setupBestellControls() {
-    const bestellContainer = document.getElementById('bestellung-controls');
-    if (!bestellContainer) return;
-    
-    if (!currentEinrichtung || currentEinrichtung.isIntern) {
-        // Bestellkontrollen ausblenden
-        bestellContainer.style.display = 'none';
-        return;
-    }
-    
-    // Event-Listener nur einmal registrieren
+    // Event-Listener nur einmal in action-buttons-container registrieren
     if (!bestellControlsInitialized) {
-        bestellContainer.addEventListener('click', (e) => {
-            if (e.target.id === 'export-bestellungen') {
-                exportCurrentBestellungen();
-            } else if (e.target.id === 'clear-bestellungen') {
-                clearCurrentBestellungen();
-            } else if (e.target.id === 'validate-bestellungen') {
-                validateCurrentBestellungen();
-            }
-        });
+        const actionContainer = document.querySelector('.action-buttons-container');
+        if (actionContainer) {
+            actionContainer.addEventListener('click', (e) => {
+                if (e.target.id === 'export-bestellungen') {
+                    exportCurrentBestellungen();
+                } else if (e.target.id === 'clear-bestellungen') {
+                    clearCurrentBestellungen();
+                } else if (e.target.id === 'validate-bestellungen') {
+                    validateCurrentBestellungen();
+                }
+            });
+        }
         bestellControlsInitialized = true;
         console.log('✅ Bestellkontrollen Event-Listener initialisiert');
     }
@@ -301,39 +297,44 @@ function setupBestellControls() {
  * Aktualisiert nur den Inhalt der Bestellkontrollen ohne Event-Listener neu zu registrieren
  */
 function updateBestellControlsContent() {
+    const actionContainer = document.querySelector('.action-buttons-container .d-flex');
     const bestellContainer = document.getElementById('bestellung-controls');
-    if (!bestellContainer) return;
     
-    if (!currentEinrichtung || currentEinrichtung.isIntern) {
+    // Alten bestellung-controls Container ausblenden
+    if (bestellContainer) {
         bestellContainer.style.display = 'none';
-        return;
     }
     
-    bestellContainer.style.display = 'block';
-    bestellContainer.innerHTML = `
-        <div class="card border-success">
-            <div class="card-body">
-                <h6 class="card-title text-success">
-                    <i class="bi bi-cart-check-fill me-2"></i>
-                    Bestellungen für KW ${currentWeek}/${currentYear}
-                </h6>
-                <div class="btn-group-sm d-flex gap-2" role="group">
-                    <button type="button" class="btn btn-outline-success" id="export-bestellungen">
-                        <i class="bi bi-download me-1"></i>
-                        Exportieren
-                    </button>
-                    <button type="button" class="btn btn-outline-warning" id="clear-bestellungen">
-                        <i class="bi bi-trash me-1"></i>
-                        Löschen
-                    </button>
-                    <button type="button" class="btn btn-outline-info" id="validate-bestellungen">
-                        <i class="bi bi-check-circle me-1"></i>
-                        Prüfen
-                    </button>
-                </div>
+    if (!actionContainer) return;
+    
+    // Vorhandene Bestellungs-Buttons entfernen
+    const existingBestellButtons = actionContainer.querySelectorAll('.bestellung-control-btn');
+    existingBestellButtons.forEach(btn => btn.remove());
+    
+    // Für externe Einrichtungen: Bestellungs-Buttons hinzufügen
+    if (currentEinrichtung && !currentEinrichtung.isIntern) {
+        const bestellButtons = `
+            <div class="d-flex gap-2 me-2 bestellung-control-btn">
+                <span class="text-success fw-bold me-2" style="line-height: 2.25rem;">
+                    <i class="bi bi-cart-check-fill me-1"></i>
+                    KW ${currentWeek}/${currentYear}:
+                </span>
+                <button type="button" class="btn btn-outline-success btn-sm" id="export-bestellungen">
+                    <i class="bi bi-download me-1"></i>
+                    Export
+                </button>
+                <button type="button" class="btn btn-outline-warning btn-sm" id="clear-bestellungen">
+                    <i class="bi bi-trash me-1"></i>
+                    Löschen
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm" id="validate-bestellungen">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Prüfen
+                </button>
             </div>
-        </div>
-    `;
+        `;
+        actionContainer.insertAdjacentHTML('afterbegin', bestellButtons);
+    }
 }
 
 /**
