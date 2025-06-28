@@ -174,48 +174,7 @@ function resetInformationButtonStates() {
     });
 }
 
-/**
- * Hilfsfunktion: Ermittelt den Tag-Key aus einem DOM-Element
- */
-function getDayFromElement(element) {
-    // Verschiedene Wege versuchen, den Tag zu finden
-    let dayKey = element.getAttribute('data-day');
-    if (dayKey) return dayKey;
-    
-    // Falls in Accordion-Structure
-    const accordionItem = element.closest('.accordion-item');
-    if (accordionItem) {
-        dayKey = accordionItem.getAttribute('data-day');
-        if (dayKey) return dayKey;
-    }
-    
-    // Falls in Desktop-Grid
-    const dayCard = element.closest('.day-card');
-    if (dayCard) {
-        dayKey = dayCard.getAttribute('data-day');
-        if (dayKey) return dayKey;
-    }
-    
-    return null;
-}
-
-/**
- * Hilfsfunktion: Ermittelt den Kategorie-Key aus einem DOM-Element
- */
-function getCategoryFromElement(element) {
-    // Verschiedene Wege versuchen, die Kategorie zu finden
-    let categoryKey = element.getAttribute('data-category');
-    if (categoryKey) return categoryKey;
-    
-    // Falls in Category-Section
-    const categorySection = element.closest('.category-section');
-    if (categorySection) {
-        categoryKey = categorySection.getAttribute('data-category');
-        if (categoryKey) return categoryKey;
-    }
-    
-    return null;
-}
+// Hilfsfunktionen getDayFromElement und getCategoryFromElement werden aus informationen-modal-ui.js importiert
 
 // Modal-HTML-Erstellung jetzt im UI-Modul
 
