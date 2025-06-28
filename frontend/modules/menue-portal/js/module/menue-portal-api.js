@@ -228,6 +228,13 @@ function validateAndStructureMenuplan(rawMenuplan, year, week) {
                 menuplan.days[day][category] = [];
             }
         });
+        
+        // Zuweisungen übernehmen (WICHTIG für Kategorien-Darstellung!)
+        if (actualMenuplan.days[day] && actualMenuplan.days[day].Zuweisungen) {
+            menuplan.days[day].Zuweisungen = actualMenuplan.days[day].Zuweisungen;
+        } else {
+            menuplan.days[day].Zuweisungen = {};
+        }
     });
     
     return menuplan;
@@ -243,10 +250,19 @@ function countRecipes(menuplan) {
     const days = Object.keys(menuplan.days || {});
     
     days.forEach(day => {
-        const categories = Object.keys(menuplan.days[day] || {});
+        const dayData = menuplan.days[day] || {};
+        const categories = Object.keys(dayData);
+        
         categories.forEach(category => {
-            const recipes = menuplan.days[day][category] || [];
-            count += recipes.length;
+            // Ignoriere Zuweisungen - das sind keine Rezepte
+            if (category === 'Zuweisungen') return;
+            
+            const recipes = dayData[category] || [];
+            
+            // Prüfe ob es ein Array ist
+            if (Array.isArray(recipes)) {
+                count += recipes.length;
+            }
         });
     });
     
@@ -263,14 +279,23 @@ export function extractRecipeIds(menuplan) {
     const days = Object.keys(menuplan.days || {});
     
     days.forEach(day => {
-        const categories = Object.keys(menuplan.days[day] || {});
+        const dayData = menuplan.days[day] || {};
+        const categories = Object.keys(dayData);
+        
         categories.forEach(category => {
-            const recipes = menuplan.days[day][category] || [];
-            recipes.forEach(recipe => {
-                if (recipe && recipe.id) {
-                    recipeIds.add(recipe.id);
-                }
-            });
+            // Ignoriere Zuweisungen - das sind keine Rezepte
+            if (category === 'Zuweisungen') return;
+            
+            const recipes = dayData[category] || [];
+            
+            // Prüfe ob es ein Array ist
+            if (Array.isArray(recipes)) {
+                recipes.forEach(recipe => {
+                    if (recipe && recipe.id) {
+                        recipeIds.add(recipe.id);
+                    }
+                });
+            }
         });
     });
     

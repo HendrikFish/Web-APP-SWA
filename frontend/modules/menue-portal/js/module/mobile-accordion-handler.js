@@ -62,7 +62,7 @@ export function renderMobileAccordion(
         const dayDate = new Date(monday.getTime() + index * 24 * 60 * 60 * 1000);
         const dateStr = formatDate(dayDate);
         
-        // Alle Tage standardmäßig geschlossen
+        // Alle Accordion-Items standardmäßig geschlossen
         accordionHtml += `
             <div class="accordion-item menu-day-accordion">
                 <h2 class="accordion-header" id="heading-${dayKey}">
@@ -82,20 +82,62 @@ export function renderMobileAccordion(
                             <div class="day-meta">
                                 <span class="recipe-count badge bg-primary">
                                     ${Object.keys(kategorien).reduce((count, categoryKey) => {
-                                        // Für zusammengefasste "hauptspeise": menu1 + menu2 kombinieren
                                         let recipes = [];
-                                        if (categoryKey === 'hauptspeise' && kategorien[categoryKey].isZusammengefasst) {
+                                        
+                                        // Spezialbehandlung für Kindergarten/Schule hauptspeise
+                                        const istKindergartenOderSchule = currentEinrichtung && 
+                                            ['Kindergartenkinder', 'Schüler'].includes(currentEinrichtung.personengruppe);
+                                        
+                                        if (istKindergartenOderSchule && categoryKey === 'hauptspeise') {
+                                            // Debug-Ausgabe
+                                            console.log(`🔍 Mobile Debug - ${dayKey} hauptspeise:`, {
+                                                istKindergartenOderSchule,
+                                                categoryKey,
+                                                dayDataMenu: dayData['menu'],
+                                                dayDataMahlzeitenMenu: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu'] : 'keine Mahlzeiten',
+                                                dayDataMahlzeitenMenu1: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu1'] : 'keine Mahlzeiten',
+                                                dayDataMahlzeitenMenu2: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu2'] : 'keine Mahlzeiten'
+                                            });
+                                            
+                                            // Für Kindergarten/Schule: Prüfe 'menu' Kategorie oder zugewiesene menu1/menu2
+                                            if (dayData['menu'] && dayData['menu'].length > 0) {
+                                                recipes = dayData['menu']; // Neue Struktur
+                                                console.log(`✅ Mobile: Verwende dayData['menu']:`, recipes);
+                                            } else {
+                                                // Fallback: Prüfe Zuweisungen für alte Struktur
+                                                const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+                                                const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+                                                
+                                                console.log(`🔍 Mobile Zuweisungs-Check:`, {
+                                                    istMenu1Zugewiesen,
+                                                    istMenu2Zugewiesen,
+                                                    einrichtungId: currentEinrichtung.id
+                                                });
+                                                
+                                                if (istMenu1Zugewiesen) {
+                                                    recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
+                                                    console.log(`✅ Mobile: Verwende menu1:`, recipes);
+                                                } else if (istMenu2Zugewiesen) {
+                                                    recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+                                                    console.log(`✅ Mobile: Verwende menu2:`, recipes);
+                                                } else {
+                                                    // Keine Zuweisung: leeres Array für Platzhalter "Noch nicht erzeugt"
+                                                    recipes = [];
+                                                    console.log(`❌ Mobile: Keine Zuweisungen gefunden`);
+                                                }
+                                            }
+                                        } else if (categoryKey === 'hauptspeise' && kategorien[categoryKey].isZusammengefasst) {
+                                            // Für andere Einrichtungen: menu1 + menu2 kombinieren
                                             const menu1Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
                                             const menu2Recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
                                             recipes = [...menu1Recipes, ...menu2Recipes];
                                         } else {
+                                            // Normale Kategorien
                                             recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten[categoryKey] || []) : (dayData[categoryKey] || []);
                                         }
                                         
-                                        const istRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, false); // Mobile = false, da wir alle Standard-Kategorien wollen
-                                        const istZugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen(categoryKey, dayKey, currentEinrichtung.id) : true;
-                                        // Mobile: nur zugewiesene Kategorien zählen
-                                        return count + (istRelevant && istZugewiesen ? recipes.length : 0);
+                                        const istRelevant = istKategorieRelevantFuerEinrichtung(categoryKey, dayKey, false);
+                                        return count + (istRelevant ? recipes.length : 0);
                                     }, 0)} Gerichte
                                 </span>
                             </div>
@@ -106,7 +148,6 @@ export function renderMobileAccordion(
                     id="collapse-${dayKey}" 
                     class="accordion-collapse collapse"
                     aria-labelledby="heading-${dayKey}"
-                    data-bs-parent="#mobile-menu-accordion"
                 >
                     <div class="accordion-body">
                         ${renderMobileDayContent(dayData.Mahlzeiten || dayData, kategorien, dayKey, currentEinrichtung, currentYear, currentWeek, rezepteCache, istKategorieRelevantFuerEinrichtung, index)}
@@ -163,18 +204,42 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
             ['Kindergartenkinder', 'Schüler'].includes(currentEinrichtung.personengruppe);
         
         if (istKindergartenOderSchule && categoryKey === 'hauptspeise') {
-            // Für Kindergarten/Schule: Prüfe welche Kategorie (menu1 oder menu2) tatsächlich zugewiesen ist
-            const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
-            const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+            // Debug-Ausgabe
+            console.log(`🔍 Mobile Debug - ${dayKey} hauptspeise:`, {
+                istKindergartenOderSchule,
+                categoryKey,
+                dayDataMenu: dayData['menu'],
+                dayDataMahlzeitenMenu: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu'] : 'keine Mahlzeiten',
+                dayDataMahlzeitenMenu1: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu1'] : 'keine Mahlzeiten',
+                dayDataMahlzeitenMenu2: dayData.Mahlzeiten ? dayData.Mahlzeiten['menu2'] : 'keine Mahlzeiten'
+            });
             
-            // Rezepte aus der tatsächlich zugewiesenen Kategorie holen
-            if (istMenu1Zugewiesen) {
-                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
-            } else if (istMenu2Zugewiesen) {
-                recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+            // Für Kindergarten/Schule: Prüfe 'menu' Kategorie oder zugewiesene menu1/menu2
+            if (dayData['menu'] && dayData['menu'].length > 0) {
+                recipes = dayData['menu']; // Neue Struktur
+                console.log(`✅ Mobile: Verwende dayData['menu']:`, recipes);
             } else {
-                // Keine Zuweisung: leeres Array für Platzhalter "Noch nicht erzeugt"
-                recipes = [];
+                // Fallback: Prüfe Zuweisungen für alte Struktur
+                const istMenu1Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu1', dayKey, currentEinrichtung.id) : false;
+                const istMenu2Zugewiesen = window.istKategorieZugewiesen ? window.istKategorieZugewiesen('menu2', dayKey, currentEinrichtung.id) : false;
+                
+                console.log(`🔍 Mobile Zuweisungs-Check:`, {
+                    istMenu1Zugewiesen,
+                    istMenu2Zugewiesen,
+                    einrichtungId: currentEinrichtung.id
+                });
+                
+                if (istMenu1Zugewiesen) {
+                    recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu1'] || []) : (dayData['menu1'] || []);
+                    console.log(`✅ Mobile: Verwende menu1:`, recipes);
+                } else if (istMenu2Zugewiesen) {
+                    recipes = dayData.Mahlzeiten ? (dayData.Mahlzeiten['menu2'] || []) : (dayData['menu2'] || []);
+                    console.log(`✅ Mobile: Verwende menu2:`, recipes);
+                } else {
+                    // Keine Zuweisung: leeres Array für Platzhalter "Noch nicht erzeugt"
+                    recipes = [];
+                    console.log(`❌ Mobile: Keine Zuweisungen gefunden`);
+                }
             }
         } else {
             // Normale Kategorien
