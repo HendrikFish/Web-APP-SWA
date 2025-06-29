@@ -336,14 +336,20 @@ export function updateLiveSummary(aktuelleZutaten) {
         const mengenInput = document.getElementById(`menge-${zutat.id}`);
         const menge = mengenInput ? parseFloat(mengenInput.value) || 0 : (zutat.menge || 0);
 
-        // Kosten berechnen mit neuer Preisberechnung
-        const kostenFürMenge = berechnePreisFürMenge(zutat, menge, zutat.einheit);
+        // Benutzerdefiniertes Durchschnittsgewicht zuerst lesen
+        const gewichtInput = document.getElementById(`gewicht-${zutat.id}`);
+        const durchschnittsgewicht = gewichtInput ? 
+            parseFloat(gewichtInput.value) || getDurchschnittsgewichtFürZutat(zutat) : 
+            (zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat));
+
+        // Kosten berechnen mit benutzerdefinierten Durchschnittsgewicht
+        const kostenFürMenge = berechnePreisFürMenge(zutat, menge, zutat.einheit, durchschnittsgewicht);
         if (kostenFürMenge > 0) {
             totalKosten += kostenFürMenge;
             
             // Debug-Ausgabe für detaillierte Preisaufschlüsselung
             if (window.DEBUG_PREIS) {
-                const aufschlüsselung = erstellePreisaufschlüsselung(zutat, menge, zutat.einheit);
+                const aufschlüsselung = erstellePreisaufschlüsselung(zutat, menge, zutat.einheit, durchschnittsgewicht);
                 console.log('Preisberechnung:', aufschlüsselung);
             }
         }
@@ -362,10 +368,6 @@ export function updateLiveSummary(aktuelleZutaten) {
         }
 
         // Gewicht und Volumen berechnen
-        const gewichtInput = document.getElementById(`gewicht-${zutat.id}`);
-        const durchschnittsgewicht = gewichtInput ? 
-            parseFloat(gewichtInput.value) || getDurchschnittsgewichtFürZutat(zutat) : 
-            (zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat));
         const { gewicht, volumen } = konvertiereZuBasisEinheiten(menge, zutat.einheit, durchschnittsgewicht);
         totalGewicht += gewicht;
         totalVolumen += volumen;

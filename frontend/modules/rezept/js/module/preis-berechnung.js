@@ -86,9 +86,10 @@ export function berechnePreisgrundlagen(zutat) {
  * @param {Object} zutat - Das Zutat-Objekt
  * @param {number} menge - Die benötigte Menge
  * @param {string} einheit - Die Verwendungseinheit
+ * @param {number} [benutzerDurchschnittsgewicht] - Benutzerdefiniertes Durchschnittsgewicht aus Rezept-UI
  * @returns {number} - Berechneter Preis
  */
-export function berechnePreisFürMenge(zutat, menge, einheit) {
+export function berechnePreisFürMenge(zutat, menge, einheit, benutzerDurchschnittsgewicht = null) {
     const berechnungsgrundlagen = berechnePreisgrundlagen(zutat);
     if (!berechnungsgrundlagen) return 0;
 
@@ -114,10 +115,33 @@ export function berechnePreisFürMenge(zutat, menge, einheit) {
         case 'stk.':
         case 'stk':
         case 'stück':
+            // Prüfe ob benutzerdefiniertes Durchschnittsgewicht verwendet werden soll
+            if (benutzerDurchschnittsgewicht && benutzerDurchschnittsgewicht > 0) {
+                const standardGewicht = zutat.gewicht_pro_einheit || 
+                                       zutat.durchschnittsgewicht || 
+                                       getDurchschnittsgewichtFürZutat(zutat);
+                
+                if (standardGewicht > 0) {
+                    // Preisanpassung basierend auf Gewichtsunterschied
+                    const gewichtsFaktor = benutzerDurchschnittsgewicht / standardGewicht;
+                    return menge * berechnungsgrundlagen.pro_stueck * gewichtsFaktor;
+                }
+            }
             return menge * berechnungsgrundlagen.pro_stueck;
             
         case 'pkg.':
         case 'packung':
+            // Gleiche Logik für Packungen
+            if (benutzerDurchschnittsgewicht && benutzerDurchschnittsgewicht > 0) {
+                const standardGewicht = zutat.gewicht_pro_einheit || 
+                                       zutat.durchschnittsgewicht || 
+                                       getDurchschnittsgewichtFürZutat(zutat);
+                
+                if (standardGewicht > 0) {
+                    const gewichtsFaktor = benutzerDurchschnittsgewicht / standardGewicht;
+                    return menge * berechnungsgrundlagen.pro_stueck * gewichtsFaktor;
+                }
+            }
             return menge * berechnungsgrundlagen.pro_stueck;
             
         default:
@@ -131,15 +155,16 @@ export function berechnePreisFürMenge(zutat, menge, einheit) {
  * @param {Object} zutat - Das Zutat-Objekt
  * @param {number} menge - Die benötigte Menge
  * @param {string} einheit - Die Verwendungseinheit
+ * @param {number} [benutzerDurchschnittsgewicht] - Benutzerdefiniertes Durchschnittsgewicht
  * @returns {Object} - Detaillierte Aufschlüsselung
  */
-export function erstellePreisaufschlüsselung(zutat, menge, einheit) {
+export function erstellePreisaufschlüsselung(zutat, menge, einheit, benutzerDurchschnittsgewicht = null) {
     const berechnungsgrundlagen = berechnePreisgrundlagen(zutat);
     if (!berechnungsgrundlagen) return null;
 
-    const preis = berechnePreisFürMenge(zutat, menge, einheit);
+    const preis = berechnePreisFürMenge(zutat, menge, einheit, benutzerDurchschnittsgewicht);
     
-    return {
+    const ausgabe = {
         zutat_name: zutat.name,
         einkauf: {
             preis: berechnungsgrundlagen.einkaufspreis,
@@ -153,6 +178,24 @@ export function erstellePreisaufschlüsselung(zutat, menge, einheit) {
         berechnungsgrundlagen: berechnungsgrundlagen,
         berechnung: `${menge} ${einheit} × ${getPreisProEinheit(berechnungsgrundlagen, einheit)}€ = ${preis.toFixed(4)}€`
     };
+    
+    // Bei Stück-Einheiten zusätzliche Gewichtsinformationen anzeigen
+    if (benutzerDurchschnittsgewicht && (einheit?.toLowerCase() === 'stk.' || einheit?.toLowerCase() === 'stk' || einheit?.toLowerCase() === 'stück')) {
+        const standardGewicht = zutat.gewicht_pro_einheit || zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat);
+        const gewichtsFaktor = benutzerDurchschnittsgewicht / standardGewicht;
+        
+        ausgabe.gewichtsanpassung = {
+            standard_gewicht: standardGewicht,
+            benutzer_gewicht: benutzerDurchschnittsgewicht,
+            gewichts_faktor: gewichtsFaktor,
+            standard_preis: berechnungsgrundlagen.pro_stueck,
+            angepasster_preis: berechnungsgrundlagen.pro_stueck * gewichtsFaktor
+        };
+        
+        ausgabe.berechnung = `${menge} ${einheit} × ${(berechnungsgrundlagen.pro_stueck * gewichtsFaktor).toFixed(4)}€ (${benutzerDurchschnittsgewicht}g statt ${standardGewicht}g) = ${preis.toFixed(4)}€`;
+    }
+    
+    return ausgabe;
 }
 
 /**
