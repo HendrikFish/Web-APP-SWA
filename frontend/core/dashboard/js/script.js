@@ -59,32 +59,56 @@ function createModuleCard(module, index = 0) {
 }
 
 /**
- * Erstellt eine Benachrichtigungs-Card für Admin-Benachrichtigungen
- * @param {number} notificationCount Anzahl der ungelesenen Benachrichtigungen
+ * Erstellt eine Benachrichtigungs-Card für eine spezifische Admin-Benachrichtigung
+ * @param {object} notification Die Benachrichtigungsdaten
+ * @param {number} index Index für Animation-Delay
  * @returns {HTMLElement} Das Benachrichtigungs-Card-Element
  */
-function createNotificationCard(notificationCount) {
-    if (notificationCount === 0) return null;
-    
+function createNotificationCard(notification, index = 0) {
     const card = document.createElement('div');
     card.className = 'fade-in';
+    card.style.animationDelay = `${index * 0.1}s`;
     
     const isMobile = window.innerWidth < 768;
     
+    // Icon basierend auf Trigger-Typ
+    const getNotificationIcon = (trigger) => {
+        switch (trigger) {
+            case 'onLogin': return 'bi-door-open-fill';
+            case 'once': return 'bi-info-circle-fill';
+            case 'interval': return 'bi-calendar-event-fill';
+            default: return 'bi-bell-fill';
+        }
+    };
+    
+    const iconClass = getNotificationIcon(notification.trigger);
+    
+    // Badge-Text basierend auf Trigger-Typ
+    const getBadgeText = (trigger) => {
+        switch (trigger) {
+            case 'onLogin': return 'Login';
+            case 'once': return 'Neu';
+            case 'interval': return 'Termin';
+            default: return 'Info';
+        }
+    };
+    
+    const badgeText = getBadgeText(notification.trigger);
+    
     const cardContent = `
-        <div class="notification-card" style="cursor: pointer;" onclick="showNotificationCenter()">
+        <div class="notification-card" data-trigger="${notification.trigger}" style="cursor: pointer;" onclick="handleNotificationClick('${notification.id}')">
             <div class="card-body">
-                <span class="notification-badge">${notificationCount}</span>
+                <span class="notification-badge">${badgeText}</span>
                 ${isMobile ? `
-                    <i class="notification-icon bi bi-bell-fill"></i>
+                    <i class="notification-icon bi ${iconClass}"></i>
                     <div class="notification-content">
-                        <h5 class="card-title">Neue Benachrichtigungen</h5>
-                        <p class="card-text">Sie haben ${notificationCount} ungelesene Benachrichtigung${notificationCount > 1 ? 'en' : ''}.</p>
+                        <h5 class="card-title">${notification.title}</h5>
+                        <p class="card-text">${notification.message}</p>
                     </div>
                 ` : `
-                    <i class="notification-icon bi bi-bell-fill"></i>
-                    <h5 class="card-title">Neue Benachrichtigungen</h5>
-                    <p class="card-text">Sie haben ${notificationCount} ungelesene Benachrichtigung${notificationCount > 1 ? 'en' : ''}.</p>
+                    <i class="notification-icon bi ${iconClass}"></i>
+                    <h5 class="card-title">${notification.title}</h5>
+                    <p class="card-text">${notification.message}</p>
                 `}
             </div>
         </div>
@@ -95,32 +119,54 @@ function createNotificationCard(notificationCount) {
 }
 
 /**
- * Zeigt das Benachrichtigungszentrum (öffnet Modal oder zeigt Toast)
+ * Behandelt Klicks auf Benachrichtigungs-Cards
+ * @param {string} notificationId Die ID der geklickten Benachrichtigung
  */
-function showNotificationCenter() {
-    // Hier könnten Sie ein Modal öffnen oder direkt die Benachrichtigungen anzeigen
-    fetchAndShowNotifications();
+function handleNotificationClick(notificationId) {
+    // Card-Element finden
+    const cardElement = document.querySelector(`[onclick="handleNotificationClick('${notificationId}')"]`).closest('.fade-in');
+    const triggerType = cardElement?.querySelector('.notification-card')?.getAttribute('data-trigger');
+    
+    // Benachrichtigung als gelesen markieren (außer bei onLogin-Benachrichtigungen)
+    if (triggerType !== 'onLogin') {
+        markNotificationAsRead(notificationId);
+        showToast('Benachrichtigung als gelesen markiert', 'success', 2000);
+    } else {
+        showToast('Login-Benachrichtigung zur Kenntnis genommen', 'info', 2000);
+    }
+    
+    // Card aus dem DOM entfernen mit Animation
+    if (cardElement) {
+        cardElement.style.opacity = '0';
+        cardElement.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            cardElement.remove();
+        }, 300);
+    }
 }
 
 // Globale Funktionen für onclick-Events verfügbar machen
-window.showNotificationCenter = showNotificationCenter;
+window.handleNotificationClick = handleNotificationClick;
 
 /**
  * Rendert die Modul-Kacheln auf der Dashboard-Seite basierend auf den Rollen des Benutzers.
  * @param {string[]} userRoles Die Rollen des aktuellen Benutzers.
- * @param {number} notificationCount Anzahl der ungelesenen Benachrichtigungen
+ * @param {Array} notifications Array der Benachrichtigungen
  */
-function renderModuleCards(userRoles, notificationCount = 0) {
+function renderModuleCards(userRoles, notifications = []) {
     if (!moduleContainer) return;
 
     moduleContainer.innerHTML = ''; 
     
-    // Benachrichtigungs-Card als erste Card hinzufügen
-    if (notificationCount > 0 && notificationsContainer) {
-        const notificationCard = createNotificationCard(notificationCount);
-        if (notificationCard) {
-            notificationsContainer.appendChild(notificationCard);
-        }
+    // Benachrichtigungs-Cards als erste Cards hinzufügen
+    if (notifications.length > 0 && notificationsContainer) {
+        notificationsContainer.innerHTML = ''; // Container leeren
+        notifications.forEach((notification, index) => {
+            const notificationCard = createNotificationCard(notification, index);
+            if (notificationCard) {
+                notificationsContainer.appendChild(notificationCard);
+            }
+        });
     }
     
     const accessibleModules = allModules.filter(module => 
@@ -129,7 +175,7 @@ function renderModuleCards(userRoles, notificationCount = 0) {
 
     if (accessibleModules.length > 0) {
         accessibleModules.forEach((module, index) => {
-            const cardElement = createModuleCard(module, index);
+            const cardElement = createModuleCard(module, index + notifications.length);
             moduleContainer.appendChild(cardElement);
         });
     } else {
@@ -144,20 +190,20 @@ function renderModuleCards(userRoles, notificationCount = 0) {
 }
 
 /**
- * Holt ungelesene Benachrichtigungen und gibt die Anzahl zurück
+ * Holt relevante Benachrichtigungen für das Dashboard
  */
-async function getNotificationCount() {
+async function getDashboardNotifications() {
     try {
         const notifications = await getUnreadNotifications();
-        return notifications ? notifications.length : 0;
+        return notifications || [];
     } catch (error) {
-        console.error('Fehler beim Abrufen der Benachrichtigungsanzahl:', error);
-        return 0;
+        console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
+        return [];
     }
 }
 
 /**
- * Holt ungelesene Benachrichtigungen und zeigt sie als Toasts an.
+ * Holt Benachrichtigungen und zeigt sie als Toasts an (für manuellen Aufruf)
  */
 async function fetchAndShowNotifications() {
     try {
@@ -167,16 +213,11 @@ async function fetchAndShowNotifications() {
             notifications.forEach(notification => {
                 // Verwende die neue showNotificationToast Funktion für Titel und Nachricht
                 showNotificationToast(notification.title, notification.message, 'info', 6000);
-                // Markiere die Benachrichtigung sofort als gelesen, um sie nicht erneut anzuzeigen.
-                markNotificationAsRead(notification.id);
+                // Markiere nur "once" und "interval" Benachrichtigungen als gelesen
+                if (notification.trigger !== 'onLogin') {
+                    markNotificationAsRead(notification.id);
+                }
             });
-            
-            // Benachrichtigungs-Card ausblenden nach dem Anzeigen
-            if (notificationsContainer) {
-                setTimeout(() => {
-                    notificationsContainer.innerHTML = '';
-                }, 1000);
-            }
         }
     } catch (error) {
         console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
@@ -204,14 +245,14 @@ async function initializeDashboard() {
             userWelcomeName.textContent = user.username;
         }
         
-        // Anzahl der ungelesenen Benachrichtigungen abrufen
-        const notificationCount = await getNotificationCount();
+        // Benachrichtigungen für das Dashboard abrufen
+        const notifications = await getDashboardNotifications();
         
         // Rendert die Modul-Kacheln basierend auf den Benutzerrollen
         if (user && user.roles) {
-            renderModuleCards(user.roles, notificationCount);
+            renderModuleCards(user.roles, notifications);
         } else if (user && user.role) {
-            renderModuleCards([user.role], notificationCount);
+            renderModuleCards([user.role], notifications);
         } else {
             console.error("Benutzerdaten oder Rollen konnten nicht geladen werden.");
             if (moduleContainer) {
@@ -228,9 +269,9 @@ async function initializeDashboard() {
         // Responsive Layout Updates bei Größenänderung
         window.addEventListener('resize', () => {
             if (user && user.roles) {
-                renderModuleCards(user.roles, notificationCount);
+                renderModuleCards(user.roles, notifications);
             } else if (user && user.role) {
-                renderModuleCards([user.role], notificationCount);
+                renderModuleCards([user.role], notifications);
             }
         });
 

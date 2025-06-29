@@ -44,6 +44,19 @@ body {
     position: relative;
 }
 
+/* Benachrichtigungs-Varianten basierend auf Trigger-Typ */
+.notification-card[data-trigger="onLogin"] {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.notification-card[data-trigger="once"] {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+
+.notification-card[data-trigger="interval"] {
+    background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+}
+
 .notification-card::before {
     content: '';
     position: absolute;

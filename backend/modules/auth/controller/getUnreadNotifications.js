@@ -16,16 +16,37 @@ const getUnreadNotifications = async (req, res) => {
             return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
         }
 
-        // 3. Filtern der für den Benutzer relevanten und ungelesenen Benachrichtigungen
-        const unreadNotifications = allNotifications.filter(notification => {
+        // 3. Filtern der für den Benutzer relevanten Benachrichtigungen basierend auf Trigger-Typ
+        const relevantNotifications = allNotifications.filter(notification => {
             const isActive = notification.active;
             const isRoleMatch = notification.targetRoles.includes(user.role);
-            const isUnread = !user.readNotificationIds.includes(notification.id);
             
-            return isActive && isRoleMatch && isUnread;
+            if (!isActive || !isRoleMatch) {
+                return false;
+            }
+            
+            // Trigger-spezifische Logik
+            switch (notification.trigger) {
+                case 'onLogin':
+                    // onLogin-Benachrichtigungen werden bei jedem Login angezeigt
+                    return true;
+                    
+                case 'once':
+                    // Einmalige Benachrichtigungen nur wenn noch nicht gelesen
+                    return !user.readNotificationIds.includes(notification.id);
+                    
+                case 'interval':
+                    // Intervall-Benachrichtigungen (z.B. monatlich)
+                    // Für jetzt als ungelesen behandeln - kann später erweitert werden
+                    return !user.readNotificationIds.includes(notification.id);
+                    
+                default:
+                    // Fallback: wie bisher behandeln
+                    return !user.readNotificationIds.includes(notification.id);
+            }
         });
 
-        res.status(200).json(unreadNotifications);
+        res.status(200).json(relevantNotifications);
 
     } catch (error) {
         console.error('Fehler beim Abrufen der ungelesenen Benachrichtigungen:', error);
