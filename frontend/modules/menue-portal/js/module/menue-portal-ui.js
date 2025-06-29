@@ -317,6 +317,11 @@ function updateActiveEinrichtungButton() {
  * Rendert den Menüplan basierend auf Bildschirmgröße - Wrapper für Rendering-Handler
  */
 function renderMenuplanWrapper() {
+    // Synchronisiere lokale Variablen mit globalen Variablen
+    currentEinrichtung = window.currentEinrichtung;
+    currentYear = window.currentYear;
+    currentWeek = window.currentWeek;
+    
     console.log('🎨 Render Wrapper Debug:', {
         isMobile,
         portalStammdaten: !!portalStammdaten,
@@ -355,6 +360,11 @@ function setupBestellControlsWrapper() {
  * Wrapper für updateBestellControlsContent
  */
 function updateBestellControlsContentWrapper() {
+    // Synchronisiere lokale Variablen mit globalen Variablen
+    currentEinrichtung = window.currentEinrichtung;
+    currentYear = window.currentYear;
+    currentWeek = window.currentWeek;
+    
     updateBestellControlsContent(currentEinrichtung, currentWeek, currentYear);
 }
 

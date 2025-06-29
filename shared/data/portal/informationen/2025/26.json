@@ -156,6 +156,25 @@
         "read": false,
         "soft_deleted": false,
         "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "fd3a795f-4204-40e7-99dc-8cb17e61f417",
+        "titel": "Am Montag ist Hut-Tag",
+        "inhalt": "Bitte alle die Hütte anziehen: !!",
+        "prioritaet": "hoch",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:29:42.452Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:29:42.452Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
       }
     ]
   }
