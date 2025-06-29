@@ -134,9 +134,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:36:41.706Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:42:42.587Z"
+        }
       },
       {
         "id": "0e0d024d-b676-4958-9d8a-c1cb3465ed21",

@@ -645,4 +645,21 @@
         border: 1px solid #000;
         break-inside: avoid;
     }
+}
+
+/* ===== "Heute" Button - Style wie im Menü-Portal ===== */
+#current-week {
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
+    min-width: 80px;
+    font-weight: 500;
+    border-radius: 15px !important;
+}
+
+#current-week:hover {
+    background-color: var(--zahlen-primary);
+    border-color: var(--zahlen-primary);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 102, 204, 0.2);
 } 

@@ -14,7 +14,36 @@
         "bearbeitet_von": {
           "benutzer_id": "679f7a109d1d8b3535030897",
           "benutzer_name": "Admin System",
-          "timestamp": "2025-06-29T11:34:26.748Z"
+          "timestamp": "2025-06-29T11:38:40.745Z"
+        },
+        "read": true,
+        "soft_deleted": true,
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:38:18.062Z"
+        },
+        "geloescht_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:38:53.121Z"
+        }
+      },
+      {
+        "id": "20c03a56-a804-462e-a8c9-aa1311d83cc8",
+        "titel": "Test Information",
+        "inhalt": "Infos zum Testen",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:39:29.781Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:39:29.781Z"
         },
         "read": false,
         "soft_deleted": false,
