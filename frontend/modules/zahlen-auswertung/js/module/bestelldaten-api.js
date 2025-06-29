@@ -55,30 +55,33 @@ export async function getBestelldaten(year, week) {
         const response = await fetch(`/shared/data/portal/bestellungen/${year}/${week}.json`);
         
         if (!response.ok) {
-            throw new Error(`Bestelldaten für KW ${week}/${year} nicht verfügbar`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
         
-        // Lade auch Informationen für die Woche
+        // Lade auch Informationen für diese Woche
         const informationen = await getInformationenFürWoche(year, week);
         
-        // Verarbeite und bereite Daten für die Anzeige vor
-        return verarbeiteBestelldaten(data, informationen);
+        // Lade Einrichtungsstammdaten für prozentuale Klassifizierung
+        const einrichtungsStammdaten = await getEinrichtungsStammdaten();
+        
+        return verarbeiteBestelldaten(data, informationen, einrichtungsStammdaten);
         
     } catch (error) {
-        console.error(`Fehler beim Laden der Bestelldaten für KW ${week}/${year}:`, error);
+        console.error('Fehler beim Laden der Bestelldaten:', error);
         throw error;
     }
 }
 
 /**
- * Verarbeitet Roh-Bestelldaten für die Anzeige
- * @param {Object} rawData - Rohe Bestelldaten
- * @param {Object} informationen - Informationen-Daten
+ * Verarbeitet Rohbestelldaten zu strukturierten Daten
+ * @param {Object} rawData - Rohdaten aus JSON
+ * @param {Object} informationen - Informationen für die Woche
+ * @param {Array} einrichtungsStammdaten - Stammdaten der Einrichtungen
  * @returns {Object} Verarbeitete Daten
  */
-function verarbeiteBestelldaten(rawData, informationen = {}) {
+function verarbeiteBestelldaten(rawData, informationen = {}, einrichtungsStammdaten = []) {
     const { einrichtungen, year, week, metadaten } = rawData;
     
     const verarbeitet = {
@@ -88,11 +91,12 @@ function verarbeiteBestelldaten(rawData, informationen = {}) {
         einrichtungen: [],
         tage: ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'],
         wochenstatistik: rawData.wochenstatistik || {},
-        informationen // Füge Informationen zu den verarbeiteten Daten hinzu
+        informationen, // Füge Informationen zu den verarbeiteten Daten hinzu
+        einrichtungsStammdaten // Füge Stammdaten hinzu für prozentuale Berechnung
     };
     
     // Verarbeite jede Einrichtung
-    Object.entries(einrichtungen).forEach(([id, einrichtungData]) => {
+    Object.entries(einrichtungen).forEach(([id, einrichtungData], index) => {
         const { info, tage, wochenstatistik } = einrichtungData;
         
         const einrichtung = {
@@ -126,7 +130,10 @@ function verarbeiteBestelldaten(rawData, informationen = {}) {
                 summe: tagSumme,
                 gruppen_details: Object.entries(hauptspeise).map(([gruppe, anzahl]) => ({
                     gruppe,
-                    anzahl
+                    anzahl,
+                    // Füge prozentuale Information hinzu
+                    prozent: berechneProzentAuslastung(anzahl, id, gruppe, einrichtungsStammdaten),
+                    klassifizierung: klassifiziereAnzahl(anzahl, id, gruppe, einrichtungsStammdaten)
                 }))
             };
         });
@@ -189,15 +196,75 @@ export async function markiereAlsGelesen(year, week, einrichtungId) {
 }
 
 /**
- * Berechnet Zahlen-Klassifizierung (niedrig/mittel/hoch)
- * @param {number} anzahl - Anzahl Bestellungen
- * @returns {string} Klassifizierung
+ * Berechnet Zahlen-Klassifizierung basierend auf Prozent der maximalen Gruppenstärke
+ * @param {number} aktuelleAnzahl - Aktuelle Anzahl Bestellungen
+ * @param {string} einrichtungId - ID der Einrichtung
+ * @param {string} gruppeName - Name der Personengruppe
+ * @param {Array} einrichtungsStammdaten - Stammdaten aller Einrichtungen
+ * @returns {string} Klassifizierung (null/niedrig/mittel/hoch)
  */
-export function klassifiziereAnzahl(anzahl) {
-    if (anzahl === 0) return 'null';
-    if (anzahl <= 5) return 'niedrig';
-    if (anzahl <= 15) return 'mittel';
-    return 'hoch';
+export function klassifiziereAnzahl(aktuelleAnzahl, einrichtungId = null, gruppeName = null, einrichtungsStammdaten = []) {
+    // Fallback auf alte absolute Klassifizierung wenn Stammdaten fehlen
+    if (!einrichtungId || !gruppeName || !einrichtungsStammdaten.length) {
+        if (aktuelleAnzahl === 0) return 'null';
+        if (aktuelleAnzahl <= 5) return 'niedrig';
+        if (aktuelleAnzahl <= 15) return 'mittel';
+        return 'hoch';
+    }
+    
+    // Finde die entsprechende Einrichtung in den Stammdaten
+    const einrichtung = einrichtungsStammdaten.find(e => e.id === einrichtungId);
+    if (!einrichtung || !einrichtung.gruppen) {
+        // Fallback auf alte Klassifizierung
+        if (aktuelleAnzahl === 0) return 'null';
+        if (aktuelleAnzahl <= 5) return 'niedrig';
+        if (aktuelleAnzahl <= 15) return 'mittel';
+        return 'hoch';
+    }
+    
+    // Finde die maximale Anzahl für diese Gruppe
+    const gruppe = einrichtung.gruppen.find(g => g.name === gruppeName);
+    if (!gruppe || !gruppe.anzahl) {
+        // Fallback auf alte Klassifizierung
+        if (aktuelleAnzahl === 0) return 'null';
+        if (aktuelleAnzahl <= 5) return 'niedrig';
+        if (aktuelleAnzahl <= 15) return 'mittel';
+        return 'hoch';
+    }
+    
+    const maxAnzahl = gruppe.anzahl;
+    
+    // Berechne Prozentsatz
+    if (aktuelleAnzahl === 0) return 'null';
+    
+    const prozent = (aktuelleAnzahl / maxAnzahl) * 100;
+    
+    // UMGEDREHTE Prozentuale Klassifizierung:
+    // 0%: null (bereits oben abgefangen)
+    // 1-50%: niedrig (rot) - Geringe Auslastung ist problematisch
+    // 51-80%: mittel (gelb) - Mittlere Auslastung ist ok
+    // 81-100%+: hoch (grün) - Hohe Auslastung ist gut!
+    if (prozent <= 50) return 'niedrig';  // ROT - problematisch
+    if (prozent <= 80) return 'mittel';   // GELB - ok
+    return 'hoch';                        // GRÜN - optimal!
+}
+
+/**
+ * Berechnet prozentuale Auslastung einer Gruppe
+ * @param {number} aktuelleAnzahl - Aktuelle Anzahl
+ * @param {string} einrichtungId - ID der Einrichtung
+ * @param {string} gruppeName - Name der Gruppe
+ * @param {Array} einrichtungsStammdaten - Stammdaten
+ * @returns {number} Prozentsatz (0-100+)
+ */
+export function berechneProzentAuslastung(aktuelleAnzahl, einrichtungId, gruppeName, einrichtungsStammdaten) {
+    const einrichtung = einrichtungsStammdaten.find(e => e.id === einrichtungId);
+    if (!einrichtung || !einrichtung.gruppen) return 0;
+    
+    const gruppe = einrichtung.gruppen.find(g => g.name === gruppeName);
+    if (!gruppe || !gruppe.anzahl) return 0;
+    
+    return Math.round((aktuelleAnzahl / gruppe.anzahl) * 100);
 }
 
 /**
@@ -419,6 +486,7 @@ export async function getInformationenFürWoche(year, week) {
  */
 export async function markiereInformationAlsGelesen(year, week, informationId) {
     try {
+        // Verwende die korrekte Backend-API für das Markieren als gelesen
         const response = await fetch(`/api/informationen/${informationId}/read`, {
             method: 'PATCH',
             headers: {
@@ -428,11 +496,12 @@ export async function markiereInformationAlsGelesen(year, week, informationId) {
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
         }
         
         const result = await response.json();
-        return result.success;
+        return result.success || true; // Fallback zu true wenn success fehlt
         
     } catch (error) {
         console.error('Fehler beim Markieren der Information als gelesen:', error);
@@ -504,4 +573,24 @@ export function getInformationenFürEinrichtung(informationen, einrichtungId) {
     }
     
     return einrichtungInfos;
+}
+
+/**
+ * Lädt Einrichtungsstammdaten
+ * @returns {Promise<Array>} Einrichtungsstammdaten
+ */
+export async function getEinrichtungsStammdaten() {
+    try {
+        const response = await fetch('/shared/data/einrichtungen/einrichtungen.json');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const einrichtungen = await response.json();
+        return einrichtungen;
+        
+    } catch (error) {
+        console.error('Fehler beim Laden der Einrichtungsstammdaten:', error);
+        return [];
+    }
 } 

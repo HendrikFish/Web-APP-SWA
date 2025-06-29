@@ -23,12 +23,15 @@ import {
     getPreviousWeek,
     getNextWeek,
     formatWeekDisplay,
-    markiereInformationAlsGelesen
+    markiereInformationAlsGelesen,
+    hatUngeleseneInformationen,
+    getAnzahlUngeleseneInformationen
 } from './module/bestelldaten-api.js';
 
 import {
     renderDesktopTabelle,
     renderMobileAkkordeon,
+    renderAlleAnsichten,
     renderInfoModal,
     toggleLoadingState,
     showNoDatenState
@@ -153,9 +156,8 @@ async function ladeBestelldatenFürWoche(year, week) {
             return;
         }
         
-        // Rendere beide Ansichten
-        renderDesktopTabelle(bestelldaten);
-        renderMobileAkkordeon(bestelldaten);
+        // Rendere alle drei Ansichten (Desktop, Tablet, Smartphone)
+        renderAlleAnsichten(bestelldaten);
         
         toggleLoadingState(false);
         showLoadingIndicator(false);
@@ -257,16 +259,43 @@ function setupInfoModalListeners() {
     
     window.markiereInformationAlsGelesenHandler = async (informationId, year, week) => {
         try {
+            // Zeige Loading auf dem Button
+            const button = document.querySelector(`[data-info-id="${informationId}"]`);
+            const originalText = button?.innerHTML;
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Wird markiert...';
+            }
+            
+            // Backend-API aufrufen
             await markiereInformationAlsGelesen(year, week, informationId);
             
-            // Reload data to reflect changes
-            await ladeBestelldatenFürWoche(year, week);
+            // UI sofort aktualisieren ohne kompletten Reload
+            updateInformationKarteUI(informationId);
+            
+            // Lokale Daten aktualisieren
+            updateLokaleDatenFürGelesenInformation(informationId);
+            
+            // Info-Buttons in Tabelle/Accordion aktualisieren
+            updateInfoButtonStatus();
             
             showToast('Information als gelesen markiert', 'success');
+            
+            // Optional: Sanfter Hintergrund-Refresh nach 2 Sekunden
+            setTimeout(() => {
+                ladeBestelldatenFürWoche(year, week);
+            }, 2000);
             
         } catch (error) {
             console.error('Fehler beim Markieren der Information als gelesen:', error);
             showToast('Fehler beim Markieren als gelesen', 'error');
+            
+            // Button zurücksetzen bei Fehler
+            const button = document.querySelector(`[data-info-id="${informationId}"]`);
+            if (button && originalText) {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
         }
     };
 }
@@ -430,4 +459,124 @@ window.ZahlenAuswertung = {
 };
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeZahlenAuswertung); 
+document.addEventListener('DOMContentLoaded', initializeZahlenAuswertung);
+
+/**
+ * Aktualisiert das UI einer spezifischen Information-Karte sofort
+ * @param {string} informationId - ID der Information
+ */
+function updateInformationKarteUI(informationId) {
+    // Finde die Information-Karte
+    const infoKarte = document.querySelector(`[data-info-id="${informationId}"]`)?.closest('.information-karte');
+    if (!infoKarte) return;
+    
+    // Ändere von "ungelesen" zu "gelesen"
+    infoKarte.classList.remove('ungelesen');
+    infoKarte.classList.add('gelesen');
+    
+    // Entferne "ungelesen" Badge
+    const ungelesenesBadge = infoKarte.querySelector('.badge.bg-danger');
+    if (ungelesenesBadge && ungelesenesBadge.textContent.includes('ungelesen')) {
+        ungelesenesBadge.remove();
+    }
+    
+    // Verstecke/Entferne Button
+    const button = infoKarte.querySelector('.mark-info-read-btn');
+    if (button) {
+        const actionsContainer = button.parentElement;
+        if (actionsContainer && actionsContainer.classList.contains('information-actions')) {
+            // Entferne kompletten Actions-Container
+            actionsContainer.remove();
+        } else {
+            // Nur Button verstecken
+            button.style.display = 'none';
+        }
+    }
+    
+    // Sanfte Übergangsanimation
+    infoKarte.style.transition = 'all 0.3s ease';
+    infoKarte.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        infoKarte.style.transform = 'scale(1)';
+    }, 150);
+}
+
+/**
+ * Aktualisiert lokale Daten für eine als gelesen markierte Information
+ * @param {string} informationId - ID der Information
+ */
+function updateLokaleDatenFürGelesenInformation(informationId) {
+    if (!aktuelleBestelldaten) return;
+    
+    // Durchsuche alle Einrichtungen und ihre Informationen
+    aktuelleBestelldaten.einrichtungen.forEach(einrichtung => {
+        if (einrichtung.informationen) {
+            Object.values(einrichtung.informationen).forEach(tagInfos => {
+                if (Array.isArray(tagInfos)) {
+                    const info = tagInfos.find(i => i.id === informationId);
+                    if (info) {
+                        info.read = true;
+                        info.gelesen_am = new Date().toISOString();
+                        
+                        // Update Einrichtungs-Status
+                        einrichtung.hatUngeleseneInfos = hatUngeleseneInformationen(aktuelleBestelldaten.informationen, einrichtung.id);
+                        einrichtung.anzahlUngeleseneInfos = getAnzahlUngeleseneInformationen(aktuelleBestelldaten.informationen, einrichtung.id);
+                    }
+                }
+            });
+        }
+    });
+    
+    // Update globale Informationen-Daten
+    if (aktuelleBestelldaten.informationen) {
+        Object.values(aktuelleBestelldaten.informationen).forEach(tagDaten => {
+            if (tagDaten) {
+                Object.values(tagDaten).forEach(einrichtungInfos => {
+                    if (Array.isArray(einrichtungInfos)) {
+                        const info = einrichtungInfos.find(i => i.id === informationId);
+                        if (info) {
+                            info.read = true;
+                            info.gelesen_am = new Date().toISOString();
+                        }
+                    }
+                });
+            }
+        });
+    }
+}
+
+/**
+ * Aktualisiert den Status der Info-Buttons in Tabelle und Accordion
+ */
+function updateInfoButtonStatus() {
+    if (!aktuelleBestelldaten) return;
+    
+    aktuelleBestelldaten.einrichtungen.forEach(einrichtung => {
+        const infoButtons = document.querySelectorAll(`[data-einrichtung-id="${einrichtung.id}"].info-btn`);
+        
+        infoButtons.forEach(button => {
+            const badge = button.querySelector('.badge');
+            const hasUnread = einrichtung.hatUngeleseneInfos;
+            const anzahlUngelesen = einrichtung.anzahlUngeleseneInfos;
+            
+            // Update Button-Klassen
+            if (hasUnread) {
+                button.classList.add('ungelesen');
+                button.title = `${anzahlUngelesen} ungelesene Information(en)`;
+            } else {
+                button.classList.remove('ungelesen');
+                button.title = 'Informationen anzeigen';
+            }
+            
+            // Update Badge
+            if (badge) {
+                if (hasUnread) {
+                    badge.textContent = anzahlUngelesen;
+                    badge.style.display = 'block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        });
+    });
+} 

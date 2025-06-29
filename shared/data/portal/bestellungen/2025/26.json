@@ -2,7 +2,7 @@
   "year": 2025,
   "week": 26,
   "erstellt_am": "2025-06-23T08:00:00.000Z",
-  "letzte_änderung": "2025-06-28T19:08:34.253Z",
+  "letzte_änderung": "2025-06-29T18:14:58.608Z",
   "einrichtungen": {
     "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
       "info": {
@@ -106,14 +106,125 @@
         "höchster_tag": "donnerstag",
         "niedrigster_tag": "freitag"
       }
+    },
+    "136e90d8-255a-4d28-a1cb-85af9639ea9d": {
+      "info": {
+        "id": "136e90d8-255a-4d28-a1cb-85af9639ea9d",
+        "name": "VS-Schüttdorf",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "Schüler",
+            "anzahl": 34
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-29T18:14:44.034Z"
+      },
+      "tage": {
+        "donnerstag": {
+          "hauptspeise": {
+            "Schüler": 33
+          }
+        },
+        "freitag": {
+          "hauptspeise": {
+            "Schüler": 33
+          }
+        },
+        "samstag": {
+          "hauptspeise": {
+            "Schüler": 12
+          }
+        },
+        "mittwoch": {
+          "hauptspeise": {
+            "Schüler": 12
+          }
+        },
+        "dienstag": {
+          "hauptspeise": {
+            "Schüler": 22
+          }
+        },
+        "montag": {
+          "hauptspeise": {
+            "Schüler": 22
+          }
+        },
+        "sonntag": {
+          "hauptspeise": {
+            "Schüler": 3
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 137,
+        "durchschnitt_pro_tag": 19.571428571428573,
+        "höchster_tag": "freitag",
+        "niedrigster_tag": "sonntag"
+      },
+      "bestellhistorie": []
+    },
+    "17cf0076-e28f-4a11-9b21-49ad01039650": {
+      "info": {
+        "id": "17cf0076-e28f-4a11-9b21-49ad01039650",
+        "name": "Volkschule Zell ",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "Kinder",
+            "anzahl": 23
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-29T18:14:58.608Z"
+      },
+      "tage": {
+        "freitag": {
+          "hauptspeise": {
+            "Kinder": 12
+          }
+        },
+        "donnerstag": {
+          "hauptspeise": {
+            "Kinder": 21
+          }
+        },
+        "mittwoch": {
+          "hauptspeise": {
+            "Kinder": 1
+          }
+        },
+        "dienstag": {
+          "hauptspeise": {
+            "Kinder": 2
+          }
+        },
+        "montag": {
+          "hauptspeise": {
+            "Kinder": 22
+          }
+        },
+        "samstag": {
+          "hauptspeise": {
+            "Kinder": 23
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 81,
+        "durchschnitt_pro_tag": 13.5,
+        "höchster_tag": "samstag",
+        "niedrigster_tag": "mittwoch"
+      },
+      "bestellhistorie": []
     }
   },
   "wochenstatistik": {
-    "gesamt_einrichtungen": 2,
-    "gesamt_bestellungen": 94,
-    "durchschnitt_pro_einrichtung": 47,
+    "gesamt_einrichtungen": 4,
+    "gesamt_bestellungen": 312,
+    "durchschnitt_pro_einrichtung": 78,
     "einrichtungstypen": {
-      "extern": 2
+      "extern": 4
     }
   },
   "metadaten": {

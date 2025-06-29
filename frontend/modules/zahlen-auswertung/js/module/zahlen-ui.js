@@ -599,21 +599,22 @@ function berechneGruppenStatistiken(einrichtung) {
 }
 
 /**
- * Konvertiert Tagnamen zu vollständigen Namen
- * @param {string} tag - Interner Tagname
- * @returns {string} Vollständiger Name
+ * Hilfsfunktion: Wandelt Tageskürzel in vollständige Tagnamen um
+ * @param {string} tag - Tageskürzel (z.B. "MO", "TU", "WE")
+ * @returns {string} Vollständiger Tagname
  */
 function getVollständigerTagname(tag) {
-    const tageMap = {
-        'montag': 'Montag',
-        'dienstag': 'Dienstag',
-        'mittwoch': 'Mittwoch',
-        'donnerstag': 'Donnerstag',
-        'freitag': 'Freitag',
-        'samstag': 'Samstag',
-        'sonntag': 'Sonntag'
+    const tagnamen = {
+        'MO': 'Montag',
+        'TU': 'Dienstag', 
+        'WE': 'Mittwoch',
+        'TH': 'Donnerstag',
+        'FR': 'Freitag',
+        'SA': 'Samstag',
+        'SU': 'Sonntag'
     };
-    return tageMap[tag] || tag;
+    
+    return tagnamen[tag] || tag;
 }
 
 /**
@@ -675,6 +676,315 @@ export function showNoDatenState() {
     keineDatenContainer?.classList.remove('d-none');
     desktopAnsicht?.classList.add('d-none');
     mobileAnsicht?.classList.add('d-none');
+}
+
+/**
+ * Rendert alle Ansichten basierend auf den Bestelldaten
+ * @param {Object} bestelldaten - Verarbeitete Bestelldaten
+ */
+export function renderAlleAnsichten(bestelldaten) {
+    // Desktop-Ansicht (XL+)
+    renderDesktopTabelle(bestelldaten);
+    
+    // Tablet-Ansicht (LG)
+    renderTabletTabelle(bestelldaten);
+    
+    // Smartphone-Ansicht (MD und kleiner)
+    renderSmartphoneAnsicht(bestelldaten);
+}
+
+/**
+ * Rendert die Tablet-Tabelle (kompakte Version der Desktop-Ansicht)
+ * @param {Object} bestelldaten - Verarbeitete Bestelldaten
+ */
+export function renderTabletTabelle(bestelldaten) {
+    const tbody = document.getElementById('tablet-tabelle-body');
+    if (!tbody) {
+        console.error('❌ tablet-tabelle-body Element nicht gefunden');
+        return;
+    }
+
+    // Leere Tabelle
+    tbody.innerHTML = '';
+
+    // Validiere Eingabedaten (gleiche Logik wie Desktop)
+    if (!bestelldaten) {
+        console.error('❌ Keine Bestelldaten für Tablet erhalten');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-exclamation-triangle fs-4 mb-2"></i>
+                    <br>Fehler beim Laden der Bestelldaten
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    if (!bestelldaten.einrichtungen || !Array.isArray(bestelldaten.einrichtungen)) {
+        console.error('❌ Einrichtungen-Array fehlt für Tablet:', bestelldaten.einrichtungen);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-exclamation-triangle fs-4 mb-2"></i>
+                    <br>Einrichtungsdaten sind fehlerhaft
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    if (bestelldaten.einrichtungen.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox fs-4 mb-2"></i>
+                    <br>Keine Bestelldaten verfügbar
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const { einrichtungen, tage } = bestelldaten;
+    
+    console.log(`📱 Rendere ${einrichtungen.length} Einrichtungen für Tablet-Ansicht KW ${bestelldaten.week}/${bestelldaten.year}`);
+    
+    // Rendere Tablet-Zeilen (kompakter als Desktop)
+    einrichtungen.forEach((einrichtung, index) => {
+        try {
+            // Validiere Einrichtungsdaten
+            if (!einrichtung?.id || !einrichtung?.name || !einrichtung?.tage_daten) {
+                console.error(`❌ Tablet: Einrichtung ${index + 1} ungültig:`, einrichtung);
+                return;
+            }
+
+            const tr = document.createElement('tr');
+            
+            // Sichere HTML-Erstellung
+            const einrichtungName = String(einrichtung.name || 'Unbekannt').replace(/[<>&"']/g, '');
+            const einrichtungTyp = String(einrichtung.typ || 'unbekannt').replace(/[<>&"']/g, '');
+            
+            tr.innerHTML = `
+                <!-- Einrichtungs-Spalte - Kompakt -->
+                <td class="sticky-col">
+                    <div class="einrichtung-info-compact">
+                        <div class="einrichtung-name-compact">${einrichtungName}</div>
+                        <div class="einrichtung-typ-compact">${einrichtungTyp}</div>
+                    </div>
+                </td>
+                
+                <!-- Tage-Spalten - Kompakt -->
+                ${tage.map(tag => {
+                    const tagData = einrichtung.tage_daten[tag];
+                    if (!tagData) {
+                        return `<td class="zahlen-zelle-compact null"><div class="zahlen-hauptwert-compact">-</div></td>`;
+                    }
+                    
+                    const summe = tagData.summe || 0;
+                    
+                    // Dominante Klassifizierung (für Farbe)
+                    let dominanteKlassifizierung = 'null';
+                    if (tagData.gruppen_details && Array.isArray(tagData.gruppen_details) && tagData.gruppen_details.length > 0) {
+                        const klassifizierungen = tagData.gruppen_details.map(g => g.klassifizierung || 'null');
+                        if (klassifizierungen.includes('hoch')) dominanteKlassifizierung = 'hoch';
+                        else if (klassifizierungen.includes('mittel')) dominanteKlassifizierung = 'mittel';
+                        else if (klassifizierungen.includes('niedrig')) dominanteKlassifizierung = 'niedrig';
+                    }
+                    
+                    return `
+                        <td class="zahlen-zelle-compact ${dominanteKlassifizierung}">
+                            <div class="zahlen-hauptwert-compact">${summe || '-'}</div>
+                        </td>
+                    `;
+                }).join('')}
+                
+                <!-- Gesamt-Spalte -->
+                <td class="zahlen-zelle-compact gesamt-zelle-compact">
+                    ${einrichtung.gesamt_bestellungen || 0}
+                </td>
+                
+                <!-- Info-Button - Kompakt -->
+                <td class="text-center">
+                    <button class="btn btn-sm info-btn info-btn-compact ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
+                            data-einrichtung-id="${einrichtung.id}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#info-modal"
+                            title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen anzeigen'}">
+                        <i class="bi bi-info-circle"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+            
+        } catch (error) {
+            console.error(`❌ Tablet: Fehler beim Rendern von Einrichtung ${index + 1}:`, error);
+        }
+    });
+    
+    // Füge Tablet-Summen-Zeile hinzu
+    try {
+        rendereTabletSummenZeile(tbody, bestelldaten);
+        console.log('✅ Tablet-Ansicht erfolgreich gerendert');
+    } catch (error) {
+        console.error('❌ Fehler beim Rendern der Tablet-Summen-Zeile:', error);
+    }
+}
+
+/**
+ * Rendert die Summen-Zeile für die Tablet-Tabelle
+ * @param {HTMLElement} tbody - Tabellenkörper
+ * @param {Object} bestelldaten - Bestelldaten
+ */
+function rendereTabletSummenZeile(tbody, bestelldaten) {
+    const { einrichtungen, tage } = bestelldaten;
+    
+    // Berechne Tagessummen
+    const tagessummen = {};
+    let wochensumme = 0;
+    
+    tage.forEach(tag => {
+        tagessummen[tag] = einrichtungen.reduce((sum, einrichtung) => {
+            return sum + (einrichtung.tage_daten[tag]?.summe || 0);
+        }, 0);
+        wochensumme += tagessummen[tag];
+    });
+    
+    const summenZeile = document.createElement('tr');
+    summenZeile.className = 'table-secondary fw-bold';
+    summenZeile.innerHTML = `
+        <td class="sticky-col">
+            <div class="einrichtung-info-compact">
+                <div class="einrichtung-name-compact">GESAMT</div>
+                <div class="einrichtung-typ-compact">${einrichtungen.length} Einrichtungen</div>
+            </div>
+        </td>
+        
+        ${tage.map(tag => `
+            <td class="zahlen-zelle-compact">
+                ${tagessummen[tag]}
+            </td>
+        `).join('')}
+        
+        <td class="zahlen-zelle-compact gesamt-zelle-compact">
+            ${wochensumme}
+        </td>
+        
+        <td class="text-center">
+            <i class="bi bi-calculator text-muted"></i>
+        </td>
+    `;
+    
+    tbody.appendChild(summenZeile);
+}
+
+/**
+ * Rendert die Smartphone-Ansicht (tageweise mit allen Einrichtungen untereinander)
+ * @param {Object} bestelldaten - Verarbeitete Bestelldaten
+ */
+export function renderSmartphoneAnsicht(bestelldaten) {
+    const container = document.getElementById('smartphone-container');
+    if (!container) {
+        console.error('❌ smartphone-container Element nicht gefunden');
+        return;
+    }
+
+    container.innerHTML = '';
+
+    if (!bestelldaten || !bestelldaten.einrichtungen || bestelldaten.einrichtungen.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-inbox display-4 mb-3"></i>
+                <h5>Keine Bestelldaten verfügbar</h5>
+                <p>Für die ausgewählte Woche liegen noch keine Bestelldaten vor.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const { einrichtungen, tage } = bestelldaten;
+    
+    console.log(`📱 Rendere Smartphone-Ansicht: ${tage.length} Tage, ${einrichtungen.length} Einrichtungen`);
+    
+    // Rendere jeden Tag als eigene Sektion
+    tage.forEach(tag => {
+        const tagContainer = document.createElement('div');
+        tagContainer.className = 'smartphone-tag-sektion mb-4';
+        
+        // Berechne Tagessumme
+        const tagessumme = einrichtungen.reduce((sum, einrichtung) => {
+            return sum + (einrichtung.tage_daten[tag]?.summe || 0);
+        }, 0);
+        
+        tagContainer.innerHTML = `
+            <!-- Tag-Header -->
+            <div class="smartphone-tag-header">
+                <h5 class="smartphone-tag-titel">
+                    <i class="bi bi-calendar-day me-2"></i>
+                    ${getVollständigerTagname(tag)}
+                </h5>
+                <div class="smartphone-tag-summe">
+                    <span class="badge bg-primary">${tagessumme} Gesamt</span>
+                </div>
+            </div>
+            
+            <!-- Einrichtungen für diesen Tag -->
+            <div class="smartphone-einrichtungen-liste">
+                ${einrichtungen.map(einrichtung => {
+                    const tagData = einrichtung.tage_daten[tag];
+                    const summe = tagData?.summe || 0;
+                    
+                    if (summe === 0) {
+                        // Keine Bestellungen - kurz anzeigen
+                        return `
+                            <div class="smartphone-einrichtung-karte keine-bestellung">
+                                <div class="smartphone-einrichtung-header">
+                                    <span class="smartphone-einrichtung-name">${einrichtung.name}</span>
+                                    <span class="smartphone-anzahl-null">-</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Mit Bestellungen - detailliert anzeigen
+                    const gruppenDetailsHtml = (tagData.gruppen_details && Array.isArray(tagData.gruppen_details)) 
+                        ? tagData.gruppen_details.map(g => `
+                            <span class="smartphone-gruppe-badge">
+                                ${String(g.gruppe || '').replace(/[<>&"']/g, '')}: ${g.anzahl || 0}
+                            </span>
+                        `).join('')
+                        : '';
+                    
+                    return `
+                        <div class="smartphone-einrichtung-karte mit-bestellung">
+                            <div class="smartphone-einrichtung-header">
+                                <span class="smartphone-einrichtung-name">${einrichtung.name}</span>
+                                <span class="smartphone-anzahl">${summe}</span>
+                            </div>
+                            <div class="smartphone-einrichtung-typ">${einrichtung.typ}</div>
+                            ${gruppenDetailsHtml ? `
+                                <div class="smartphone-gruppen-detail">
+                                    ${gruppenDetailsHtml}
+                                </div>
+                            ` : ''}
+                            <button class="smartphone-info-btn info-btn ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
+                                    data-einrichtung-id="${einrichtung.id}"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#info-modal"
+                                    title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen anzeigen'}">
+                                <i class="bi bi-info-circle"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        
+        container.appendChild(tagContainer);
+    });
+    
+    console.log('✅ Smartphone-Ansicht erfolgreich gerendert');
 }
 
 // Global verfügbar machen für Event-Handler

@@ -68,8 +68,8 @@
             </div>
         </div>
 
-        <!-- Desktop-Ansicht: Tabelle -->
-        <div id="desktop-ansicht" class="d-none d-lg-block">
+        <!-- Desktop-Ansicht: Tabelle (XL+ Screens ab 1200px) -->
+        <div id="desktop-ansicht" class="d-none d-xl-block">
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -97,9 +97,38 @@
             </div>
         </div>
 
-        <!-- Mobile-Ansicht: Akkordeon -->
-        <div id="mobile-ansicht" class="d-lg-none">
-            <div class="accordion" id="mobile-accordion">
+        <!-- Tablet-Ansicht: Kompakte Tabelle (LG Screens 992px-1199px, iPad Air) -->
+        <div id="tablet-ansicht" class="d-none d-lg-block d-xl-none">
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 zahlen-tabelle tablet-tabelle">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th scope="col" class="sticky-col">Einrichtung</th>
+                                    <th scope="col" class="text-center">MO</th>
+                                    <th scope="col" class="text-center">DI</th>
+                                    <th scope="col" class="text-center">MI</th>
+                                    <th scope="col" class="text-center">DO</th>
+                                    <th scope="col" class="text-center">FR</th>
+                                    <th scope="col" class="text-center">SA</th>
+                                    <th scope="col" class="text-center">SO</th>
+                                    <th scope="col" class="text-center">Gesamt</th>
+                                    <th scope="col" class="text-center">Info</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablet-tabelle-body">
+                                <!-- Wird per JS gefüllt -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smartphone-Ansicht: Tageweise (MD und kleiner, bis 991px) -->
+        <div id="smartphone-ansicht" class="d-lg-none">
+            <div id="smartphone-container">
                 <!-- Wird per JS gefüllt -->
             </div>
         </div>
@@ -110,6 +139,37 @@
                 <span class="visually-hidden">Laden...</span>
             </div>
             <p class="mt-3 text-muted">Lade Bestelldaten...</p>
+        </div>
+
+        <!-- Prozentuale Klassifizierung Legende -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Prozentuale Auslastung:</strong>
+                        </div>
+                        <div class="prozent-legende">
+                            <div class="prozent-legende-item">
+                                <div class="prozent-legende-farbe niedrig"></div>
+                                <span>1-50% (Niedrig) - Geringe Auslastung</span>
+                            </div>
+                            <div class="prozent-legende-item">
+                                <div class="prozent-legende-farbe mittel"></div>
+                                <span>51-80% (Mittel) - Gute Auslastung</span>
+                            </div>
+                            <div class="prozent-legende-item">
+                                <div class="prozent-legende-farbe hoch"></div>
+                                <span>81-100%+ (Hoch) - Optimale Auslastung</span>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        Farben basieren auf dem Verhältnis der aktuellen Bestellungen zur maximalen Gruppenstärke der Einrichtung.
+                    </small>
+                </div>
+            </div>
         </div>
 
         <!-- Keine Daten -->

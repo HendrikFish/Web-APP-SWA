@@ -54,9 +54,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-29T10:56:51.676Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:48:52.613Z"
+        }
       },
       {
         "id": "7f19e118-5cf8-4f55-82b0-1b10a76544d0",
@@ -96,9 +101,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:34:45.985Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:48:26.315Z"
+        }
       },
       {
         "id": "a631322f-f86e-4538-88b5-5341c48a0c15",
@@ -115,9 +125,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:36:31.202Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:48:34.961Z"
+        }
       },
       {
         "id": "b7c25a28-aac7-42ea-aeae-31bbda06c157",
@@ -158,9 +173,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-29T11:23:58.490Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:48:59.581Z"
+        }
       },
       {
         "id": "fd3a795f-4204-40e7-99dc-8cb17e61f417",
@@ -177,9 +197,14 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-29T11:29:42.452Z"
         },
-        "read": false,
+        "read": true,
         "soft_deleted": false,
-        "einrichtung_name": "Hendrik Fischer"
+        "einrichtung_name": "Hendrik Fischer",
+        "gelesen_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:55:17.711Z"
+        }
       }
     ]
   }

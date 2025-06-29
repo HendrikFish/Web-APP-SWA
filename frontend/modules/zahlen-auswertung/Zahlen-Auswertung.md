@@ -9,6 +9,7 @@ Das **Zahlen-Auswertung-Modul** ist ein spezialisiertes Tool für die Küche, um
 - **Küchen-Übersicht**: Klare Darstellung der zu verpflegenden Personen
 - **Gruppierung**: Aufschlüsselung nach Einrichtungen und Personengruppen
 - **Responsive Design**: Desktop-Tabelle und Mobile-Akkordeon
+- **Informations-Integration**: Vollständige Integration mit dem Informationen-System
 - **Lesebestätigung**: System zur Bestätigung der Kenntnisnahme
 - **Export-Funktion**: CSV-Export für weitere Verarbeitung
 
@@ -20,6 +21,7 @@ Das **Zahlen-Auswertung-Modul** ist ein spezialisiertes Tool für die Küche, um
 - **Farbkodierung**: Niedrig (grün), mittel (gelb), hoch (rot)
 - **Gruppen-Details**: Aufschlüsselung pro Personengruppe
 - **Summen-Zeile**: Tages- und Wochensummen
+- **Info-Buttons**: Ungelesene Informationen mit pulsierender Animation
 
 ### Mobile-Ansicht
 - **Akkordeon-Layout**: Tageweise aufklappbar
@@ -29,9 +31,17 @@ Das **Zahlen-Auswertung-Modul** ist ein spezialisiertes Tool für die Küche, um
 
 ### Informations-System
 - **Detail-Modal**: Umfassende Einrichtungsinformationen
+- **Prioritäts-Anzeige**: Kritisch, Hoch, Normal, Niedrig mit farblicher Kennzeichnung
 - **Statistiken**: Wochenübersicht und Durchschnittswerte
-- **Lesebestätigung**: Markierung als gelesen mit Zeitstempel
+- **Lesebestätigung**: Markierung als gelesen mit Zeitstempel und automatischer UI-Aktualisierung
 - **Gruppen-Übersicht**: Personengruppen mit Anzahl
+- **Live-Updates**: Sofortige Aktualisierung der UI nach Aktionen
+
+### Navigation
+- **ISO 8601-konforme Kalenderwoche**: Korrekte KW-Berechnung nach internationalem Standard
+- **Heute-Button**: Moderne Optik mit 15px Border-Radius und Hover-Effekten (Design konsistent mit Menü-Portal)
+- **Wochennavigation**: Vor/Zurück mit korrekter Jahr-Grenze-Behandlung
+- **Tastatur-Shortcuts**: Pfeiltasten für Navigation, F5 für Refresh
 
 ## 🗂️ Datenstruktur
 
@@ -44,6 +54,16 @@ shared/data/portal/bestellungen/
 │   └── 27.json
 ├── 2026/
 └── stammdaten.json
+```
+
+### Informationen-Quelle
+```
+shared/data/portal/informationen/
+├── 2025/
+│   ├── 25.json
+│   ├── 26.json
+│   └── 27.json
+└── 2026/
 ```
 
 ### Datenformat
@@ -79,11 +99,27 @@ shared/data/portal/bestellungen/
 - **Gefahr**: `#dc3545` (Rot) - Hohe Zahlen
 - **Sekundär**: `#6c757d` (Grau)
 
+### Button-Design
+- **Heute-Button**: 15px Border-Radius, 1.2rem Padding, moderne Hover-Effekte
+- **Info-Buttons**: Pulsierende Animation bei ungelesenen Informationen
+- **Touch-Targets**: Mindestgröße 44px für mobile Geräte
+
 ### Klassifizierung
+
+Das **prozentuale Farbsystem** basiert auf der Auslastung der maximalen Gruppenstärke jeder Einrichtung:
+
 - **Null**: 0 Bestellungen (Grau)
-- **Niedrig**: 1-5 Bestellungen (Grün)
-- **Mittel**: 6-15 Bestellungen (Gelb)
-- **Hoch**: 16+ Bestellungen (Rot)
+- **Niedrig**: 1-50% der maximalen Gruppenstärke (Rot) - Geringe Auslastung ist problematisch
+- **Mittel**: 51-80% der maximalen Gruppenstärke (Gelb) - Gute Auslastung
+- **Hoch**: 81-100%+ der maximalen Gruppenstärke (Grün) - Optimale Auslastung
+
+Die maximalen Gruppenstärken werden aus `shared/data/einrichtungen/einrichtungen.json` geladen.
+
+**Beispiel:**
+- Einrichtung "Limberg" hat Gruppe "KR" mit max. 10 Personen
+- Bei 3 Bestellungen: 30% → Niedrig (Rot) - Weniger Personen als erwartet
+- Bei 7 Bestellungen: 70% → Mittel (Gelb) - Gute Auslastung
+- Bei 9 Bestellungen: 90% → Hoch (Grün) - Optimale Auslastung der Kapazitäten
 
 ## 🔧 Technische Implementierung
 
@@ -97,28 +133,47 @@ frontend/modules/zahlen-auswertung/
 │   └── module/
 │       ├── bestelldaten-api.js  # API-Funktionen
 │       └── zahlen-ui.js         # UI-Rendering
-└── path/paths.js           # Pfad-Konfiguration
+├── path/paths.js           # Pfad-Konfiguration
+└── Zahlen-Auswertung.md    # Diese Dokumentation
 ```
 
 ### Module
 
 #### bestelldaten-api.js
 ```javascript
+// ISO 8601-konforme Kalenderwoche-Berechnung
+- getAktuelleKalenderwoche()     // Korrekte KW nach ISO 8601
+- getISOWeek(date)              // ISO-Wochenberechnung
+- getWeeksInYear(year)          // Wochen pro Jahr (52/53)
+
 // Hauptfunktionen
-- getVerfügbareWochen()     // Lädt verfügbare Kalenderwochen
-- getBestelldaten(year, week) // Lädt Bestelldaten
-- markiereAlsGelesen()      // Lesebestätigung
-- exportiereAlsCSV()        // CSV-Export
+- getVerfügbareWochen()         // Lädt verfügbare Kalenderwochen
+- getBestelldaten(year, week)   // Lädt Bestelldaten
+- markiereAlsGelesen()          // Lesebestätigung für Bestelldaten
+- markiereInformationAlsGelesen() // Lesebestätigung für Informationen
+- exportiereAlsCSV()            // CSV-Export
+
+// Navigation
+- getPreviousWeek()             // Vorherige Woche mit Jahr-Grenze
+- getNextWeek()                 // Nächste Woche mit Jahr-Grenze
+- formatWeekDisplay()           // KW-Anzeige formatieren
 ```
 
 #### zahlen-ui.js
 ```javascript
 // UI-Funktionen
-- renderDesktopTabelle()    // Desktop-Raster
-- renderMobileAkkordeon()   // Mobile-Akkordeon
-- renderInfoModal()         // Detail-Modal
-- toggleLoadingState()      // Loading-Zustände
+- renderDesktopTabelle()        // Desktop-Raster
+- renderMobileAkkordeon()       // Mobile-Akkordeon
+- renderInfoModal()             // Detail-Modal mit Informationen
+- toggleLoadingState()          // Loading-Zustände
+- updateInformationButtons()    // Info-Button-Status aktualisieren
 ```
+
+### Informations-Integration
+- **Backend-API**: `/api/informationen/mark-as-read` für Lesebestätigung
+- **Echtzeit-Updates**: Automatische UI-Aktualisierung nach Aktionen
+- **Prioritäts-Anzeige**: Visuelle Kennzeichnung nach Wichtigkeit
+- **Ungelesen-Indikator**: Rote Badges und Animation bei ungelesenen Informationen
 
 ## 📱 Responsive Breakpoints
 
@@ -136,18 +191,19 @@ frontend/modules/zahlen-auswertung/
 ### Mobile (<768px)
 - Akkordeon-Layout
 - Vertikale Navigation
-- Große Touch-Targets
+- Große Touch-Targets (≥44px)
 - Vereinfachte Ansicht
 
 ## 🎮 Interaktionen
 
 ### Keyboard Shortcuts
-- **Ctrl+R**: Daten aktualisieren
-- **Ctrl+E**: CSV-Export
+- **Pfeiltasten Links/Rechts**: Wochennavigation
+- **Home**: Zur aktuellen Woche springen
+- **F5**: Daten aktualisieren
 - **Escape**: Modal schließen
 
 ### Touch-Gesten
-- **Tap**: Akkordeon öffnen/schließen
+- **Tap**: Akkordeon öffnen/schließen, Informationen anzeigen
 - **Long Press**: Info-Modal öffnen (Mobile)
 - **Swipe**: Horizontales Scrollen (Desktop-Tabelle)
 
@@ -171,7 +227,7 @@ window.stopAutoRefresh()   // Manuell stoppen
 - **Format**: Semikolon-getrennt
 - **Kodierung**: UTF-8 mit BOM
 - **Inhalt**: Einrichtung, Typ, Tageswerte, Gesamt
-- **Dateiname**: `bestelldaten_kw{week}_{year}.csv`
+- **Dateiname**: `zahlen-auswertung-kw{week}_{year}.csv`
 
 ### Zukünftige Formate
 - **PDF**: Druckoptimierte Übersicht
@@ -182,14 +238,15 @@ window.stopAutoRefresh()   // Manuell stoppen
 
 ### Input-Validierung
 - Jahr: 2020-2030
-- Kalenderwoche: 1-53
+- Kalenderwoche: 1-53 (ISO 8601-konform)
 - Einrichtungs-IDs: UUID-Format
+- Informations-IDs: UUID-Format
 
 ### Fehlerbehandlung
 - **Graceful Degradation**: Teilweises Laden bei Fehlern
 - **User Feedback**: Toast-Benachrichtigungen
 - **Logging**: Detaillierte Fehlerlogs
-- **Retry-Mechanismus**: Automatische Wiederholung
+- **Retry-Mechanismus**: Automatische Wiederholung bei API-Fehlern
 
 ## 🧪 Testing
 
@@ -198,79 +255,48 @@ window.stopAutoRefresh()   // Manuell stoppen
 // Daten-Verarbeitung
 - verarbeiteBestelldaten()
 - klassifiziereAnzahl()
-- formatiereZeitpunkt()
+- getISOWeek()                  // KW-Berechnung testen
+- getWeeksInYear()              // Jahr-Wochen-Berechnung
 
-// Validierung
-- validatePaths.isValidYear()
-- validatePaths.isValidWeek()
+// Navigation
+- getPreviousWeek()
+- getNextWeek()
 ```
 
 ### Integration Tests
-- API-Calls zu Bestelldaten
-- Modal-Interaktionen
-- Responsive Layout-Tests
-- Export-Funktionalität
-
-## 🚀 Performance
-
-### Optimierungen
-- **Lazy Loading**: Daten nur bei Bedarf laden
-- **Caching**: Browser-Cache für statische Ressourcen
-- **Debouncing**: Event-Handler-Optimierung
-- **Virtual Scrolling**: Für große Datensätze (zukünftig)
-
-### Metriken
-- **Initial Load**: <2 Sekunden
-- **Data Refresh**: <1 Sekunde
-- **Modal Open**: <300ms
-- **Export**: <5 Sekunden
-
-## 🔗 Integration
-
-### Dashboard-Anbindung
 ```javascript
-// Navigation zum Modul
-window.location.href = '/frontend/modules/zahlen-auswertung/';
+// API-Funktionen
+- markiereInformationAlsGelesen()
+- getInformationenFürWoche()
+- getBestelldaten()
 ```
 
-### Shared Components
-- **Header**: Globale Navigation
-- **Toast**: Benachrichtigungen
-- **Modal**: Bestätigungsdialoge
+## 📈 Performance-Optimierungen
 
-## 📈 Zukünftige Erweiterungen
+### Caching
+- **Daten-Cache**: Vermeidung redundanter API-Calls
+- **UI-State**: Erhaltung des Zustands bei Navigation
+- **Lazy Loading**: Informationen nur bei Bedarf laden
 
-### Geplante Features
-1. **Prognose-System**: KI-basierte Vorhersagen
-2. **Allergene-Übersicht**: Integration mit Rezept-Daten
-3. **Kostenkalkulation**: Automatische Preisberechnung
-4. **Lieferanten-Integration**: Direkter Export zu Lieferanten
-5. **Mobile App**: Native App-Version
+### Rendering
+- **Virtual Scrolling**: Für große Datensätze (geplant)
+- **Debouncing**: Navigation und Search
+- **Batch Updates**: Gruppierte DOM-Änderungen
 
-### Technische Verbesserungen
-- **WebSocket**: Real-time Updates
-- **PWA**: Offline-Funktionalität
-- **Graph Visualisierung**: Chart.js Integration
-- **Print Optimization**: Druckfreundliche Layouts
+## 🔮 Zukünftige Erweiterungen
 
-## 🐛 Bekannte Limitierungen
+### Features
+- **Filter-System**: Nach Einrichtungstyp, Personengruppe
+- **Suchfunktion**: Volltext-Suche in Informationen
+- **Dashboard-Widget**: Kompakte Übersichts-Kachel
+- **Benachrichtigungen**: Push-Notifications für kritische Informationen
 
-1. **Statische Daten**: Keine Echtzeit-Synchronisation
-2. **Browser-Support**: IE11 nicht unterstützt
-3. **Offline-Modus**: Nicht verfügbar
-4. **Bulk-Operationen**: Einzelne Lesebestätigungen
+### Integration
+- **Calendar-View**: Monatsübersicht mit Bestellzahlen
+- **Analytics**: Trends und Vorhersagen
+- **Export-API**: Automatisierte Datenabfrage für externe Systeme
 
-## 📞 Support
+---
 
-### Troubleshooting
-- **Keine Daten**: Prüfe Bestelldaten-Ordner
-- **Langsam**: Browser-Cache leeren
-- **Modal-Fehler**: Bootstrap-Version prüfen
-- **Export-Probleme**: Browser-Downloads aktivieren
-
-### Debug-Tools
-```javascript
-// Konsole-Befehle
-debugZahlenAuswertung()     // Debug-Informationen
-window.aktuelleBestelldaten // Daten-Inspektion
-``` 
+**Letzte Aktualisierung**: 29.06.2025  
+**Version**: 2.1.0 (ISO 8601 + Informations-Integration) 
