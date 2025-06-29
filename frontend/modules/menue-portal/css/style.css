@@ -2679,4 +2679,24 @@
     .form-footer .btn {
         width: 100%;
     }
-} 
+}
+
+/* ===== WEEK NAVIGATION BUTTONS ===== */
+
+/* "Heute" Button - mehr Platz links und rechts */
+#current-week {
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
+    min-width: 80px;
+    font-weight: 500;
+    border-radius: 15px !important; /* Komplett rechteckig, keine runden Ecken */
+}
+
+/* Hover-Effekt für bessere UX */
+#current-week:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+}
+
+/* ===== WEEK NAVIGATION COMPACT STYLES ===== */

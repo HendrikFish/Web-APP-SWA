@@ -11,12 +11,38 @@
     </header>
 
     <main class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="h2 mb-4">Verfügbare Module</h1>
+        <!-- User Welcome Bereich -->
+        <div class="user-welcome">
+            <p class="welcome-text">
+                <i class="bi bi-person-circle me-2"></i>
+                Willkommen zurück, <span id="user-welcome-name">Benutzer</span>!
+            </p>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard</h1>
+            <p class="dashboard-subtitle">Zugriff auf alle Ihre verfügbaren Module und Funktionen</p>
+        </div>
+
+        <!-- Schnellzugriff-Bereich (optional für häufig genutzte Funktionen) -->
+        <div class="quick-actions d-none" id="quick-actions">
+            <h5>
+                <i class="bi bi-lightning-charge me-2"></i>
+                Schnellzugriff
+            </h5>
+            <div class="d-flex flex-wrap">
+                <!-- Schnellzugriff-Buttons werden hier dynamisch eingefügt -->
             </div>
         </div>
-        <div id="module-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+
+        <!-- Benachrichtigungen als erste Card -->
+        <div id="notifications-container" class="mb-4">
+            <!-- Benachrichtigungs-Card wird hier dynamisch eingefügt -->
+        </div>
+
+        <!-- Module Container -->
+        <div id="module-container" class="dashboard-grid">
             <!-- Modul-Kacheln werden hier dynamisch per JavaScript eingefügt -->
         </div>
     </main>

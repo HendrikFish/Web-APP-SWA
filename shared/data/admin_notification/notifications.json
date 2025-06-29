@@ -22,5 +22,17 @@
     ],
     "active": true,
     "createdAt": "2025-06-29T05:31:39.438Z"
+  },
+  {
+    "id": "b9398be1-0b66-4efe-ac1f-99d249181fc5",
+    "title": "Ich arbeite zu Viel!",
+    "message": "Ja MAnn das tust du!",
+    "trigger": "onLogin",
+    "triggerValue": null,
+    "targetRoles": [
+      "admin"
+    ],
+    "active": true,
+    "createdAt": "2025-06-29T05:35:45.050Z"
   }
 ]
