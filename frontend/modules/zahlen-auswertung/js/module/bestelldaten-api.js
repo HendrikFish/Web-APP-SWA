@@ -260,23 +260,51 @@ export async function getAktuellsteWoche() {
 }
 
 /**
- * Berechnet die aktuelle Kalenderwoche
+ * Berechnet die aktuelle Kalenderwoche (ISO 8601-konform)
  * @returns {Object} Jahr und Woche
  */
 export function getAktuelleKalenderwoche() {
     const heute = new Date();
-    const jahr = heute.getFullYear();
-    
-    // Berechne Kalenderwoche (ISO 8601)
-    const startOfYear = new Date(jahr, 0, 1);
-    const pastDaysOfYear = (heute - startOfYear) / 86400000;
-    const week = Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
-    
-    return { year: jahr, week };
+    return getISOWeek(heute);
 }
 
 /**
- * Navigiert zu vorheriger Woche
+ * Berechnet die ISO 8601-konforme Kalenderwoche für ein Datum
+ * @param {Date} date - Das Datum
+ * @returns {object} Objekt mit { year, week } für korrektes Jahr/Woche-Mapping
+ */
+function getISOWeek(date) {
+    const d = new Date(date.getTime());
+    d.setHours(0, 0, 0, 0);
+    
+    // Donnerstag der gleichen Woche finden (ISO 8601: Woche gehört zum Jahr des Donnerstags)
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    
+    // 1. Januar im Jahr des Donnerstags
+    const week1 = new Date(d.getFullYear(), 0, 1);
+    
+    // Berechne die Wochennummer
+    const weekNumber = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    
+    return {
+        year: d.getFullYear(),
+        week: weekNumber
+    };
+}
+
+/**
+ * Berechnet die Anzahl der Wochen in einem Jahr (ISO 8601)
+ * @param {number} year - Jahr
+ * @returns {number} Anzahl der Wochen
+ */
+function getWeeksInYear(year) {
+    const dec28 = new Date(year, 11, 28);
+    const isoWeek = getISOWeek(dec28);
+    return isoWeek.year === year ? isoWeek.week : 52;
+}
+
+/**
+ * Navigiert zu vorheriger Woche (ISO 8601-konform)
  * @param {number} currentYear - Aktuelles Jahr
  * @param {number} currentWeek - Aktuelle Woche
  * @returns {Object} Vorherige Woche
@@ -286,15 +314,15 @@ export function getPreviousWeek(currentYear, currentWeek) {
     let newYear = currentYear;
     
     if (newWeek < 1) {
-        newWeek = 52; // Vorheriges Jahr
         newYear = currentYear - 1;
+        newWeek = getWeeksInYear(newYear);
     }
     
     return { year: newYear, week: newWeek };
 }
 
 /**
- * Navigiert zu nächster Woche
+ * Navigiert zu nächster Woche (ISO 8601-konform)
  * @param {number} currentYear - Aktuelles Jahr
  * @param {number} currentWeek - Aktuelle Woche
  * @returns {Object} Nächste Woche
@@ -303,8 +331,10 @@ export function getNextWeek(currentYear, currentWeek) {
     let newWeek = currentWeek + 1;
     let newYear = currentYear;
     
-    if (newWeek > 52) {
-        newWeek = 1; // Nächstes Jahr
+    const maxWeeks = getWeeksInYear(currentYear);
+    
+    if (newWeek > maxWeeks) {
+        newWeek = 1;
         newYear = currentYear + 1;
     }
     
@@ -337,20 +367,21 @@ export function formatWeekDisplay(year, week) {
 }
 
 /**
- * Berechnet Montag einer Kalenderwoche
+ * Berechnet Montag einer Kalenderwoche (ISO 8601-konform)
  * @param {number} year - Jahr
  * @param {number} week - Kalenderwoche
  * @returns {Date} Montag der Woche
  */
 function getMondayOfWeek(year, week) {
-    const firstDayOfYear = new Date(year, 0, 1);
-    const daysToFirstMonday = (8 - firstDayOfYear.getDay()) % 7;
-    const firstMonday = new Date(year, 0, 1 + daysToFirstMonday);
+    // 4. Januar ist immer in KW 1 (ISO 8601)
+    const jan4 = new Date(year, 0, 4);
+    const daysToMonday = 1 - jan4.getDay() || -6; // Montag = 1
+    const firstMonday = new Date(jan4.getTime() + daysToMonday * 24 * 60 * 60 * 1000);
     
-    const mondayOfWeek = new Date(firstMonday);
-    mondayOfWeek.setDate(firstMonday.getDate() + (week - 1) * 7);
+    // Gewünschte KW berechnen
+    const targetMonday = new Date(firstMonday.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
     
-    return mondayOfWeek;
+    return targetMonday;
 }
 
 /**
