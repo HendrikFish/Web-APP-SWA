@@ -55,7 +55,7 @@ export function renderRezeptFormular(rezept = null) {
 
         <div id="rezept-zusammenfassung" class="mb-3">
             <h5 class="h6">Live-Berechnung</h5>
-            <div class="card bg-light border">
+            <div class="card rezept--live-summary">
                 <div class="card-body p-3">
                     <div class="row g-2">
                         <div class="col-md-6">
@@ -160,25 +160,51 @@ export function renderAktuelleRezeptZutaten(aktuelleZutaten) {
         const menge = zutat.menge !== undefined ? zutat.menge : 1;
         const einheit = zutat.einheit || 'Stk';
 
+        const istStueckEinheit = einheit?.toLowerCase() === 'stk.' || einheit?.toLowerCase() === 'pkg.' || einheit?.toLowerCase() === 'stk' || einheit?.toLowerCase() === 'stück' || einheit?.toLowerCase() === 'packung';
+        const durchschnittsgewicht = zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat);
+
         li.innerHTML = `
-            <span>${zutat.name}</span>
-            <div class="d-flex align-items-center gap-2">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                    <button class="btn btn-outline-secondary" type="button" data-action="step-down" data-id="${zutat.id}">-</button>
-                    <input 
-                        type="number" 
-                        class="form-control text-center" 
-                        value="${menge}" 
-                        min="0"
-                        step="1"
-                        data-id="${zutat.id}"
-                        data-field="menge"
-                        id="menge-${zutat.id}"
-                    >
-                    <button class="btn btn-outline-secondary" type="button" data-action="step-up" data-id="${zutat.id}">+</button>
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                <div class="fw-medium">${zutat.name}</div>
+                <div class="d-flex flex-column flex-md-row align-items-md-center rezept--zutat-controls">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="input-group input-group-sm" style="width: 120px;">
+                            <button class="btn btn-outline-secondary" type="button" data-action="step-down" data-id="${zutat.id}">-</button>
+                            <input 
+                                type="number" 
+                                class="form-control text-center" 
+                                value="${menge}" 
+                                min="0"
+                                step="1"
+                                data-id="${zutat.id}"
+                                data-field="menge"
+                                id="menge-${zutat.id}"
+                            >
+                            <button class="btn btn-outline-secondary" type="button" data-action="step-up" data-id="${zutat.id}">+</button>
+                        </div>
+                        <span class="text-nowrap rezept--gewicht-label" style="width: 35px;">${einheit}</span>
+                    </div>
+                    ${istStueckEinheit ? `
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-muted small">@</span>
+                            <div class="input-group input-group-sm" style="width: 80px;">
+                                <input 
+                                    type="number" 
+                                    class="form-control text-center rezept--durchschnittsgewicht-input" 
+                                    value="${durchschnittsgewicht}" 
+                                    min="1"
+                                    step="1"
+                                    data-id="${zutat.id}"
+                                    data-field="durchschnittsgewicht"
+                                    id="gewicht-${zutat.id}"
+                                    title="Durchschnittsgewicht pro Stück/Packung"
+                                >
+                            </div>
+                            <span class="text-muted small rezept--gewicht-label">g</span>
+                        </div>
+                    ` : ''}
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-id="${zutat.id}" data-action="remove-zutat" title="Zutat entfernen">&times;</button>
                 </div>
-                <span style="width: 50px;">${einheit}</span>
-                <button type="button" class="btn btn-sm btn-outline-danger" data-id="${zutat.id}" data-action="remove-zutat">&times;</button>
             </div>
         `;
         ul.appendChild(li);
@@ -197,11 +223,25 @@ export function getRezeptFormularDaten(zutaten) {
     const rezeptAnleitung = form.querySelector('#rezept-anleitung').value;
     const rezeptKategorie = form.querySelector('#rezept-kategorie').value;
     
-    const zutatenFürPayload = zutaten.map(z => ({
-        zutatId: z.id,
-        menge: parseFloat(document.getElementById(`menge-${z.id}`).value) || 0,
-        einheit: z.einheit,
-    }));
+    const zutatenFürPayload = zutaten.map(z => {
+        const gewichtInput = document.getElementById(`gewicht-${z.id}`);
+        const benutzerDefiniertesDurchschnittsgewicht = gewichtInput ? 
+            parseFloat(gewichtInput.value) : null;
+        
+        const payload = {
+            zutatId: z.id,
+            menge: parseFloat(document.getElementById(`menge-${z.id}`).value) || 0,
+            einheit: z.einheit,
+        };
+        
+        // Nur benutzerdefinierte Durchschnittsgewichte speichern
+        if (benutzerDefiniertesDurchschnittsgewicht && 
+            benutzerDefiniertesDurchschnittsgewicht !== getDurchschnittsgewichtFürZutat(z)) {
+            payload.durchschnittsgewicht = benutzerDefiniertesDurchschnittsgewicht;
+        }
+        
+        return payload;
+    });
 
     return {
         name: rezeptName,
@@ -314,7 +354,10 @@ export function updateLiveSummary(aktuelleZutaten) {
         }
 
         // Gewicht und Volumen berechnen
-        const durchschnittsgewicht = zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat);
+        const gewichtInput = document.getElementById(`gewicht-${zutat.id}`);
+        const durchschnittsgewicht = gewichtInput ? 
+            parseFloat(gewichtInput.value) || getDurchschnittsgewichtFürZutat(zutat) : 
+            (zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat));
         const { gewicht, volumen } = konvertiereZuBasisEinheiten(menge, zutat.einheit, durchschnittsgewicht);
         totalGewicht += gewicht;
         totalVolumen += volumen;

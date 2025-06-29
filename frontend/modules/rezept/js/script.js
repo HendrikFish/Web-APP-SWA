@@ -174,6 +174,16 @@ function setupFormEventListeners() {
                 }
                 updateLiveSummary(aktuelleRezeptZutaten);
             }
+            
+            if (e.target.matches('input[data-field="durchschnittsgewicht"]')) {
+                const zutatId = e.target.dataset.id;
+                const neuesDurchschnittsgewicht = parseFloat(e.target.value) || 100;
+                const zutatImState = aktuelleRezeptZutaten.find(z => z.id === zutatId);
+                if (zutatImState) {
+                    zutatImState.durchschnittsgewicht = neuesDurchschnittsgewicht;
+                }
+                updateLiveSummary(aktuelleRezeptZutaten);
+            }
         });
     }
 }
@@ -249,7 +259,17 @@ async function handleListenAktion(e) {
         aktuelleRezeptZutaten = rezeptZumBearbeiten.zutaten.map(rezeptZutat => {
             const vollesZutatObjekt = alleZutaten.find(z => z.id === rezeptZutat.zutatId);
             const einheit = rezeptZutat.einheit || vollesZutatObjekt?.preis?.verwendungseinheit || 'Stk';
-            return { ...vollesZutatObjekt, menge: rezeptZutat.menge, einheit: einheit };
+            
+            // Durchschnittsgewicht laden oder aus Stammdaten ableiten
+            const durchschnittsgewicht = rezeptZutat.durchschnittsgewicht || 
+                vollesZutatObjekt?.durchschnittsgewicht;
+            
+            return { 
+                ...vollesZutatObjekt, 
+                menge: rezeptZutat.menge, 
+                einheit: einheit,
+                durchschnittsgewicht: durchschnittsgewicht
+            };
         });
         
         renderRezeptFormular(rezeptZumBearbeiten);
