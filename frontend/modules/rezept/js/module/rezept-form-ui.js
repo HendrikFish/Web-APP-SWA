@@ -72,12 +72,12 @@ export function renderRezeptFormular(rezept = null) {
                         </div>
                         <div class="col-md-6">
                             <p class="mb-1 d-flex justify-content-between">
-                                <strong><i class="bi bi-weight me-1"></i>Gewicht:</strong> 
+                                <strong><i class="bi bi-weight me-1"></i>Gesamtmenge:</strong> 
                                 <span id="summary-gewicht" class="fw-bold text-info">0 g</span>
                             </p>
                             <p class="mb-1 d-flex justify-content-between">
-                                <strong><i class="bi bi-droplet me-1"></i>Volumen:</strong> 
-                                <span id="summary-volumen" class="fw-bold text-primary">0 ml</span>
+                                <strong><i class="bi bi-info-circle me-1"></i>Hinweis:</strong> 
+                                <span id="summary-volumen" class="fw-bold text-muted small">ml = g</span>
                             </p>
                         </div>
                     </div>
@@ -164,6 +164,9 @@ export function renderAktuelleRezeptZutaten(aktuelleZutaten) {
 
         const istStueckEinheit = einheit?.toLowerCase() === 'stk.' || einheit?.toLowerCase() === 'pkg.' || einheit?.toLowerCase() === 'stk' || einheit?.toLowerCase() === 'stück' || einheit?.toLowerCase() === 'packung';
         const durchschnittsgewicht = zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat);
+        
+        // Prüfe ob Stück-Zutat ursprünglich als Stk definiert ist (für Einheiten-Dropdown)
+        const istUrsprünglichStückEinheit = zutat.preis?.basiseinheit?.toLowerCase() === 'stk.' || zutat.preis?.basiseinheit?.toLowerCase() === 'stk' || zutat.preis?.basiseinheit?.toLowerCase() === 'stück';
 
         li.innerHTML = `
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
@@ -184,10 +187,17 @@ export function renderAktuelleRezeptZutaten(aktuelleZutaten) {
                             >
                             <button class="btn btn-outline-secondary" type="button" data-action="step-up" data-id="${zutat.id}">+</button>
                         </div>
-                        <span class="text-nowrap rezept--gewicht-label" style="width: 35px;">${einheit}</span>
+                        ${istUrsprünglichStückEinheit ? `
+                            <select class="form-select form-select-sm rezept--einheit-select" data-id="${zutat.id}" id="einheit-${zutat.id}" style="width: 70px;">
+                                <option value="Stk." ${einheit === 'Stk.' ? 'selected' : ''}>Stk.</option>
+                                <option value="g" ${einheit === 'g' ? 'selected' : ''}>g</option>
+                            </select>
+                        ` : `
+                            <span class="text-nowrap rezept--gewicht-label" style="width: 35px;">${einheit}</span>
+                        `}
                     </div>
                     ${istStueckEinheit ? `
-                        <div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1" id="durchschnitts-container-${zutat.id}">
                             <span class="text-muted small">@</span>
                             <div class="input-group input-group-sm" style="width: 80px;">
                                 <input 
@@ -260,36 +270,36 @@ export function getRezeptFormularDaten(zutaten) {
  * @param {Array} aktuelleZutaten - Die Liste der aktuell im Formular befindlichen Zutaten.
  */
 /**
- * Konvertiert Mengen in Basis-Einheiten (Gramm für Gewicht, Milliliter für Volumen)
+ * Konvertiert Mengen in Basis-Einheiten (alles in Gramm für kombinierte Anzeige)
  * @param {number} menge - Die Menge
  * @param {string} einheit - Die Einheit (g, kg, ml, l, etc.)
  * @param {number} durchschnittsgewicht - Durchschnittsgewicht für Stück-Zutaten in Gramm
- * @returns {Object} - {gewicht: number, volumen: number} in Basis-Einheiten
+ * @returns {number} - Gesamtgewicht in Gramm (ml wird 1:1 als Gramm gerechnet)
  */
 function konvertiereZuBasisEinheiten(menge, einheit, durchschnittsgewicht = 0) {
     const einheitLower = einheit?.toLowerCase() || '';
     
     // Gewichts-Einheiten (in Gramm konvertieren)
     if (einheitLower === 'g') {
-        return { gewicht: menge, volumen: 0 };
+        return menge;
     } else if (einheitLower === 'kg') {
-        return { gewicht: menge * 1000, volumen: 0 };
+        return menge * 1000;
     }
     
-    // Volumen-Einheiten (in Milliliter konvertieren)
+    // Volumen-Einheiten (1ml = 1g Näherung)
     else if (einheitLower === 'ml') {
-        return { gewicht: 0, volumen: menge };
+        return menge; // 1ml ≈ 1g
     } else if (einheitLower === 'l') {
-        return { gewicht: 0, volumen: menge * 1000 };
+        return menge * 1000; // 1l ≈ 1000g
     }
     
     // Stück-Einheiten (Durchschnittsgewicht verwenden)
     else if (einheitLower === 'stk.' || einheitLower === 'stk' || einheitLower === 'stück' || einheitLower === 'pkg.' || einheitLower === 'packung') {
-        return { gewicht: menge * durchschnittsgewicht, volumen: 0 };
+        return menge * durchschnittsgewicht;
     }
     
     // Unbekannte Einheit
-    return { gewicht: 0, volumen: 0 };
+    return 0;
 }
 
 /**
@@ -330,27 +340,25 @@ export function updateLiveSummary(aktuelleZutaten) {
     const alleAllergene = new Set();
     let totalKalorien = 0;
     let totalGewicht = 0;
-    let totalVolumen = 0;
 
     aktuelleZutaten.forEach(zutat => {
         const mengenInput = document.getElementById(`menge-${zutat.id}`);
         const menge = mengenInput ? parseFloat(mengenInput.value) || 0 : (zutat.menge || 0);
 
-        // Benutzerdefiniertes Durchschnittsgewicht zuerst lesen
+        // Benutzerdefiniertes Durchschnittsgewicht zuerst lesen (für @-Feld bei Stück-Zutaten)
         const gewichtInput = document.getElementById(`gewicht-${zutat.id}`);
         const durchschnittsgewicht = gewichtInput ? 
             parseFloat(gewichtInput.value) || getDurchschnittsgewichtFürZutat(zutat) : 
             (zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat));
 
-        // Kosten berechnen mit benutzerdefinierten Durchschnittsgewicht
-        const kostenFürMenge = berechnePreisFürMenge(zutat, menge, zutat.einheit, durchschnittsgewicht);
+        // Erweiterte Preisberechnung: unterstützt jetzt auch g/ml Eingaben bei Stück-Zutaten
+        const kostenFürMenge = berechnePreisFlexibel(zutat, menge, zutat.einheit, durchschnittsgewicht);
         if (kostenFürMenge > 0) {
             totalKosten += kostenFürMenge;
             
             // Debug-Ausgabe für detaillierte Preisaufschlüsselung
             if (window.DEBUG_PREIS) {
-                const aufschlüsselung = erstellePreisaufschlüsselung(zutat, menge, zutat.einheit, durchschnittsgewicht);
-                console.log('Preisberechnung:', aufschlüsselung);
+                console.log(`Preis für ${zutat.name}: ${menge}${zutat.einheit} = ${kostenFürMenge.toFixed(4)}€`);
             }
         }
 
@@ -367,17 +375,16 @@ export function updateLiveSummary(aktuelleZutaten) {
             }
         }
 
-        // Gewicht und Volumen berechnen
-        const { gewicht, volumen } = konvertiereZuBasisEinheiten(menge, zutat.einheit, durchschnittsgewicht);
-        totalGewicht += gewicht;
-        totalVolumen += volumen;
+        // Kombiniertes Gewicht berechnen (ml wird als g gerechnet)
+        const gewichtInGramm = konvertiereZuBasisEinheiten(menge, zutat.einheit, durchschnittsgewicht);
+        totalGewicht += gewichtInGramm;
     });
 
-    // UI aktualisieren
+    // UI aktualisieren - kombinierte Gewichtsanzeige
     summaryKosten.textContent = `${totalKosten.toFixed(2).replace('.', ',')} €`;
     summaryKalorien.textContent = `${Math.round(totalKalorien)} kcal`;
     summaryGewicht.textContent = formatiereMengenangabe(totalGewicht, 'gewicht');
-    summaryVolumen.textContent = formatiereMengenangabe(totalVolumen, 'volumen');
+    summaryVolumen.textContent = 'Kombiniert'; // Wird nicht mehr separat angezeigt
 
     if (alleAllergene.size > 0) {
         summaryAllergene.textContent = Array.from(alleAllergene).join(', ');
@@ -386,6 +393,43 @@ export function updateLiveSummary(aktuelleZutaten) {
         summaryAllergene.textContent = 'Keine';
         summaryAllergene.className = 'badge bg-success';
     }
+}
+
+/**
+ * Flexible Preisberechnung die auch g/ml Eingaben bei Stück-Zutaten unterstützt
+ * @param {Object} zutat - Das Zutat-Objekt 
+ * @param {number} menge - Die benötigte Menge
+ * @param {string} einheit - Die Verwendungseinheit
+ * @param {number} durchschnittsgewicht - Durchschnittsgewicht für Stück-Zutaten
+ * @returns {number} - Berechneter Preis
+ */
+function berechnePreisFlexibel(zutat, menge, einheit, durchschnittsgewicht) {
+    if (!zutat.preis || !zutat.preis.basis) return 0;
+    
+    const verwendungseinheit = einheit?.toLowerCase();
+    const basisPreis = zutat.preis.basis;
+    const basisEinheit = zutat.preis.basiseinheit?.toLowerCase();
+    
+    // Fall 1: Direkte Verwendung (gleiche Einheiten)
+    if (verwendungseinheit === basisEinheit) {
+        return menge * basisPreis;
+    }
+    
+    // Fall 2: Stück-Zutat wird in g/ml verwendet (z.B. 7g vom Ei)
+    if (basisEinheit === 'stk.' || basisEinheit === 'stk' || basisEinheit === 'stück') {
+        if (verwendungseinheit === 'g' || verwendungseinheit === 'ml') {
+            // Berechnung: Preis pro Gramm = Stückpreis / Durchschnittsgewicht
+            const preisProGramm = basisPreis / durchschnittsgewicht;
+            return menge * preisProGramm;
+        }
+        // Stück zu Stück (mit angepasstem Durchschnittsgewicht über @-Feld)
+        else if (verwendungseinheit === 'stk.' || verwendungseinheit === 'stk' || verwendungseinheit === 'stück') {
+            return berechnePreisFürMenge(zutat, menge, einheit, durchschnittsgewicht);
+        }
+    }
+    
+    // Fall 3: Standard-Preisberechnung für alle anderen Fälle
+    return berechnePreisFürMenge(zutat, menge, einheit, durchschnittsgewicht);
 }
 
 /**

@@ -186,6 +186,49 @@ function setupFormEventListeners() {
                 updateLiveSummary(aktuelleRezeptZutaten);
             }
         });
+
+        // Event Listener für Einheiten-Dropdown (Stk. <-> g)
+        zutatenListeContainer.addEventListener('change', (e) => {
+            if (e.target.matches('select.rezept--einheit-select')) {
+                const zutatId = e.target.dataset.id;
+                const neueEinheit = e.target.value;
+                const zutatImState = aktuelleRezeptZutaten.find(z => z.id === zutatId);
+                
+                if (zutatImState) {
+                    zutatImState.einheit = neueEinheit;
+                    
+                    // @-Feld ein-/ausblenden je nach Einheit
+                    const durchschnittsContainer = document.getElementById(`durchschnitts-container-${zutatId}`);
+                    if (durchschnittsContainer) {
+                        if (neueEinheit === 'Stk.') {
+                            durchschnittsContainer.style.display = 'flex';
+                        } else {
+                            durchschnittsContainer.style.display = 'none';
+                        }
+                    }
+                    
+                                         // Bei Wechsel von Stk. zu g: Menge entsprechend anpassen
+                     if (neueEinheit === 'g' && zutatImState.menge === 1) {
+                         const durchschnittsgewicht = zutatImState.durchschnittsgewicht || getStandardDurchschnittsgewicht(zutatImState);
+                         zutatImState.menge = durchschnittsgewicht;
+                         const mengeInput = document.getElementById(`menge-${zutatId}`);
+                         if (mengeInput) {
+                             mengeInput.value = durchschnittsgewicht;
+                         }
+                     }
+                    // Bei Wechsel von g zu Stk.: Menge auf 1 setzen
+                    else if (neueEinheit === 'Stk.' && zutatImState.menge > 10) {
+                        zutatImState.menge = 1;
+                        const mengeInput = document.getElementById(`menge-${zutatId}`);
+                        if (mengeInput) {
+                            mengeInput.value = 1;
+                        }
+                    }
+                    
+                    updateLiveSummary(aktuelleRezeptZutaten);
+                }
+            }
+        });
     }
 }
 
@@ -287,6 +330,39 @@ async function handleListenAktion(e) {
             showToast('Kategorien konnten nicht geladen werden.', 'error');
         }
     }
+}
+
+/**
+ * Schätzt das Durchschnittsgewicht für gängige Stück-Zutaten
+ * @param {Object} zutat - Das Zutat-Objekt
+ * @returns {number} - Durchschnittsgewicht in Gramm
+ */
+function getStandardDurchschnittsgewicht(zutat) {
+    const name = zutat.name?.toLowerCase() || '';
+    
+    // Häufige Zutatenschätzungen (in Gramm)
+    const schätzungen = {
+        'ei': 60,
+        'eier': 60,
+        'zwiebel': 150,
+        'tomate': 120,
+        'kartoffel': 150,
+        'apfel': 180,
+        'zitrone': 100,
+        'packung': 250,  // Durchschnittliche Packung
+        'dose': 400,     // Durchschnittliche Dose
+        'scheibe': 25,   // Brotscheibe, Käsescheibe
+    };
+    
+    // Einfache Wort-Suche in Zutatennamen
+    for (const [schlüssel, gewicht] of Object.entries(schätzungen)) {
+        if (name.includes(schlüssel)) {
+            return gewicht;
+        }
+    }
+    
+    // Standard-Fallback: 100g pro Stück
+    return 100;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

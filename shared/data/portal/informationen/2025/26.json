@@ -16,7 +16,7 @@
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:23:55.213Z"
         },
-        "read": true,
+        "read": false,
         "soft_deleted": false,
         "einrichtung_name": "Hendrik Fischer"
       },
@@ -34,6 +34,44 @@
           "benutzer_id": "679f7a109d1d8b3535030897",
           "benutzer_name": "Admin System",
           "timestamp": "2025-06-28T16:32:18.876Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "3fd4d3b5-24cb-4d0e-bfde-f71a529f418d",
+        "titel": "Bitte Keine Tomate Schicken",
+        "inhalt": "Achtung Tomatenallergie",
+        "prioritaet": "kritisch",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T10:56:51.676Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T10:56:51.676Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "7f19e118-5cf8-4f55-82b0-1b10a76544d0",
+        "titel": "Achtung Tomatensoße",
+        "inhalt": "Bitte Keine Tomatensoße schicken!",
+        "prioritaet": "kritisch",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T10:59:17.375Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T10:59:17.375Z"
         },
         "read": false,
         "soft_deleted": false,

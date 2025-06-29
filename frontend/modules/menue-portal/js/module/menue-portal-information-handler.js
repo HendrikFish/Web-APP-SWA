@@ -25,7 +25,9 @@ export function setupInformationEventListeners() {
     
     // Event-Listener für Information-Updates
     window.addEventListener('informationCreated', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
+        console.log('📋 Information erstellt - Event empfangen:', e.detail);
+        
+        // Aktuelle UI-Informationen neu laden
         const currentEinrichtung = window.currentEinrichtung;
         const currentYear = window.currentYear;
         const currentWeek = window.currentWeek;
@@ -33,12 +35,28 @@ export function setupInformationEventListeners() {
         if (currentEinrichtung && currentYear && currentWeek) {
             loadInformationenData(currentEinrichtung, currentYear, currentWeek).then(() => {
                 updateInformationButtons();
+                console.log('✅ Informations-Buttons nach Erstellung aktualisiert');
             });
+        }
+        
+        // Zusätzlich: Wenn die Information für eine andere Woche erstellt wurde, Hinweis anzeigen
+        if (e.detail && e.detail.information) {
+            const infoKW = e.detail.information.kalenderwoche;
+            const infoJahr = e.detail.information.jahr;
+            
+            if (infoKW !== currentWeek || infoJahr !== currentYear) {
+                showToast(
+                    `Information wurde für KW ${infoKW}/${infoJahr} erstellt. Um sie zu sehen, navigieren Sie zu dieser Woche.`, 
+                    'info'
+                );
+            }
         }
     });
     
     window.addEventListener('informationUpdated', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
+        console.log('📋 Information aktualisiert - Event empfangen:', e.detail);
+        
+        // Aktuelle UI-Informationen neu laden
         const currentEinrichtung = window.currentEinrichtung;
         const currentYear = window.currentYear;
         const currentWeek = window.currentWeek;
@@ -46,12 +64,15 @@ export function setupInformationEventListeners() {
         if (currentEinrichtung && currentYear && currentWeek) {
             loadInformationenData(currentEinrichtung, currentYear, currentWeek).then(() => {
                 updateInformationButtons();
+                console.log('✅ Informations-Buttons nach Update aktualisiert');
             });
         }
     });
     
     window.addEventListener('informationDeleted', (e) => {
-        // Nur Informations-Icons aktualisieren, nicht komplette UI neu rendern
+        console.log('📋 Information gelöscht - Event empfangen:', e.detail);
+        
+        // Aktuelle UI-Informationen neu laden
         const currentEinrichtung = window.currentEinrichtung;
         const currentYear = window.currentYear;
         const currentWeek = window.currentWeek;
@@ -59,6 +80,7 @@ export function setupInformationEventListeners() {
         if (currentEinrichtung && currentYear && currentWeek) {
             loadInformationenData(currentEinrichtung, currentYear, currentWeek).then(() => {
                 updateInformationButtons();
+                console.log('✅ Informations-Buttons nach Löschung aktualisiert');
             });
         }
     });

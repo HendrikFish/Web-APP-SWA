@@ -149,7 +149,7 @@ function renderDesktopDayContent(dayData, categories, dayKey, currentEinrichtung
         }
         
         html += `
-            <div class="category-section mb-3">
+            <div class="category-section mb-3" data-day="${dayKey}" data-category="${categoryKey}">
                 <div class="category-header d-flex justify-content-between align-items-center mb-2">
                         <strong class="category-title">
                             <span class="category-icon me-1">${categoryInfo.icon}</span>

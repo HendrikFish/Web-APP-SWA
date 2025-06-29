@@ -1,0 +1,648 @@
+/* ===== Zahlen-Auswertung Modul Styles ===== */
+
+/* CSS-Variablen für einheitliches Design */
+:root {
+    --zahlen-primary: #0066cc;
+    --zahlen-secondary: #6c757d;
+    --zahlen-success: #198754;
+    --zahlen-warning: #ffc107;
+    --zahlen-danger: #dc3545;
+    --zahlen-info: #0dcaf0;
+    --zahlen-light: #f8f9fa;
+    --zahlen-dark: #212529;
+    
+    --zahlen-border-radius: 8px;
+    --zahlen-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --zahlen-transition: all 0.15s ease-in-out;
+}
+
+/* ===== Desktop-Tabelle ===== */
+.zahlen-tabelle {
+    font-size: 0.9rem;
+}
+
+.zahlen-tabelle .sticky-col {
+    position: sticky;
+    left: 0;
+    background-color: var(--bs-body-bg);
+    z-index: 10;
+    min-width: 200px;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.zahlen-tabelle thead .sticky-col {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.zahlen-tabelle th {
+    font-weight: 600;
+    border-bottom: 2px solid var(--zahlen-primary);
+    white-space: nowrap;
+    padding: 1rem 0.75rem;
+}
+
+.zahlen-tabelle td {
+    vertical-align: middle;
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Einrichtungs-Spalte */
+.einrichtung-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.einrichtung-name {
+    font-weight: 600;
+    color: var(--zahlen-dark);
+}
+
+.einrichtung-typ {
+    font-size: 0.8rem;
+    color: var(--zahlen-secondary);
+    text-transform: uppercase;
+}
+
+.einrichtung-gruppen {
+    font-size: 0.75rem;
+    color: var(--zahlen-info);
+}
+
+/* Zahlen-Zellen */
+.zahlen-zelle {
+    text-align: center;
+    font-weight: 600;
+    min-width: 80px;
+}
+
+.zahlen-zelle.null {
+    color: var(--zahlen-secondary);
+    font-weight: 400;
+}
+
+.zahlen-zelle.niedrig {
+    color: var(--zahlen-success);
+}
+
+.zahlen-zelle.mittel {
+    color: var(--zahlen-warning);
+}
+
+.zahlen-zelle.hoch {
+    color: var(--zahlen-danger);
+    font-weight: 700;
+}
+
+/* Gruppen-Aufschlüsselung */
+.gruppen-detail {
+    font-size: 0.75rem;
+    color: var(--zahlen-secondary);
+    margin-top: 0.25rem;
+}
+
+.gruppen-badge {
+    display: inline-block;
+    background-color: var(--zahlen-light);
+    color: var(--zahlen-dark);
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--zahlen-border-radius);
+    font-size: 0.7rem;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Gesamt-Spalte */
+.gesamt-zelle {
+    background-color: var(--zahlen-light);
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-left: 3px solid var(--zahlen-primary);
+}
+
+/* Info-Button */
+.info-btn {
+    position: relative;
+}
+
+.info-btn.ungelesen {
+    animation: pulse 2s infinite;
+}
+
+.info-btn.ungelesen::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--zahlen-danger);
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* ===== Mobile-Akkordeon ===== */
+.mobile-accordion-item {
+    border: 1px solid #dee2e6;
+    border-radius: var(--zahlen-border-radius);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.mobile-accordion-header {
+    background-color: var(--zahlen-light);
+    padding: 1rem;
+    cursor: pointer;
+    transition: var(--zahlen-transition);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.mobile-accordion-header:hover {
+    background-color: #e9ecef;
+}
+
+.mobile-accordion-header.aktiv {
+    background-color: var(--zahlen-primary);
+    color: white;
+}
+
+.mobile-einrichtung-header {
+    display: flex;
+    justify-content-between;
+    align-items: center;
+}
+
+.mobile-einrichtung-info h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.mobile-einrichtung-meta {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.mobile-wochensumme {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-accordion-content {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.mobile-accordion-content.aktiv {
+    max-height: 1000px;
+}
+
+.mobile-tage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.mobile-tag-karte {
+    text-align: center;
+    padding: 0.75rem;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: var(--zahlen-border-radius);
+    transition: var(--zahlen-transition);
+}
+
+.mobile-tag-karte:hover {
+    box-shadow: var(--zahlen-box-shadow);
+    transform: translateY(-1px);
+}
+
+.mobile-tag-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--zahlen-secondary);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.mobile-tag-anzahl {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--zahlen-primary);
+}
+
+.mobile-tag-gruppen {
+    font-size: 0.7rem;
+    color: var(--zahlen-secondary);
+    margin-top: 0.25rem;
+}
+
+/* ===== Info-Modal ===== */
+.modal-einrichtung-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--zahlen-light);
+    border-radius: var(--zahlen-border-radius);
+}
+
+.modal-einrichtung-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: var(--zahlen-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.modal-einrichtung-details h5 {
+    margin: 0;
+    color: var(--zahlen-dark);
+}
+
+.modal-einrichtung-details .text-muted {
+    font-size: 0.9rem;
+}
+
+.info-section {
+    margin-bottom: 1.5rem;
+}
+
+.info-section h6 {
+    color: var(--zahlen-primary);
+    border-bottom: 2px solid var(--zahlen-primary);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.statistik-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.statistik-karte {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--zahlen-light);
+    border-radius: var(--zahlen-border-radius);
+    border: 1px solid #dee2e6;
+}
+
+.statistik-wert {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--zahlen-primary);
+}
+
+.statistik-label {
+    font-size: 0.8rem;
+    color: var(--zahlen-secondary);
+    text-transform: uppercase;
+}
+
+/* Gruppen-Übersicht */
+.gruppen-liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.gruppen-badge-large {
+    padding: 0.5rem 1rem;
+    background-color: var(--zahlen-primary);
+    color: white;
+    border-radius: var(--zahlen-border-radius);
+    font-weight: 600;
+}
+
+/* Lesebestätigung */
+.lesebestaetigung-info {
+    padding: 1rem;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: var(--zahlen-border-radius);
+    color: #0c5460;
+}
+
+.lesebestaetigung-erfolg {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 991.98px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .mobile-tage-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .statistik-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .mobile-einrichtung-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .mobile-wochensumme {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .mobile-tage-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .input-group {
+        width: 100% !important;
+    }
+}
+
+/* ===== Utility Classes ===== */
+.text-highlight {
+    background-color: rgba(var(--bs-warning-rgb), 0.2);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+.border-start-primary {
+    border-left: 4px solid var(--zahlen-primary) !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--zahlen-primary) 0%, #0052a3 100%);
+}
+
+/* Loading States */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ===== Wochennavigation ===== */
+.week-navigation-compact {
+    position: relative;
+}
+
+#week-display {
+    color: var(--zahlen-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.week-navigation-compact .btn {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--zahlen-transition);
+}
+
+.week-navigation-compact .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.week-navigation-compact .btn-outline-secondary:hover {
+    background-color: var(--zahlen-secondary);
+    border-color: var(--zahlen-secondary);
+}
+
+.week-navigation-compact .btn-outline-primary:hover {
+    background-color: var(--zahlen-primary);
+    border-color: var(--zahlen-primary);
+}
+
+/* Loading Progress Bar */
+.loading-progress-bar {
+    height: 3px;
+    background-color: #e9ecef;
+    overflow: hidden;
+    border-radius: 0 0 var(--zahlen-border-radius) var(--zahlen-border-radius);
+}
+
+.loading-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--zahlen-primary), var(--zahlen-info));
+    width: 0%;
+    animation: loadingProgress 2s ease-in-out infinite;
+}
+
+@keyframes loadingProgress {
+    0% { width: 0%; transform: translateX(-100%); }
+    50% { width: 60%; transform: translateX(0%); }
+    100% { width: 100%; transform: translateX(100%); }
+}
+
+/* Responsive Wochennavigation */
+@media (max-width: 767.98px) {
+    .week-navigation-compact {
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    #week-display {
+        text-align: center !important;
+        margin-bottom: 0.75rem;
+    }
+    
+    .week-navigation-compact .d-flex {
+        justify-content: center !important;
+    }
+    
+    .week-navigation-compact .btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* ===== Informationen-Styles ===== */
+.informationen-liste {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.informationen-tag-gruppe {
+    border-left: 3px solid var(--zahlen-primary);
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+}
+
+.information-karte {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: var(--zahlen-border-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: var(--zahlen-transition);
+}
+
+.information-karte.ungelesen {
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+    border-color: #ff9800;
+    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.1);
+}
+
+.information-karte.gelesen {
+    background: #f1f8e9;
+    border-color: #c8e6c9;
+}
+
+.information-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.information-titel {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.information-inhalt {
+    color: #495057;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.information-actions {
+    border-top: 1px solid #e9ecef;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    text-align: right;
+}
+
+.mark-info-read-btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.mark-info-read-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+/* Info-Button mit Badge */
+.info-btn {
+    position: relative;
+    overflow: visible;
+}
+
+.info-btn .badge {
+    font-size: 0.6rem;
+    padding: 0.25em 0.4em;
+    line-height: 1;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-btn.ungelesen {
+    animation: pulseInfo 2s infinite;
+    border-color: var(--zahlen-warning) !important;
+    color: var(--zahlen-warning) !important;
+}
+
+@keyframes pulseInfo {
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+
+/* Responsive Informationen */
+@media (max-width: 767.98px) {
+    .informationen-liste {
+        max-height: 300px;
+    }
+    
+    .information-karte {
+        padding: 0.75rem;
+    }
+    
+    .information-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .information-titel {
+        width: 100%;
+    }
+    
+    .information-actions {
+        text-align: left;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .btn, .modal, #toast-container, .week-navigation-compact, .information-actions {
+        display: none !important;
+    }
+    
+    .zahlen-tabelle {
+        font-size: 0.8rem;
+    }
+    
+    .card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+    
+    .information-karte {
+        border: 1px solid #000;
+        break-inside: avoid;
+    }
+} 

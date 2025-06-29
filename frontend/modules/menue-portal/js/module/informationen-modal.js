@@ -228,9 +228,23 @@ window.submitInformation = async function() {
         const [dayPart, monthPart, yearPart] = datumStr.split('.');
         const datum = new Date(parseInt(yearPart), parseInt(monthPart) - 1, parseInt(dayPart));
         
+        // WICHTIG: Kalenderwoche aus dem tatsächlichen Datum berechnen, nicht aus aktueller Woche
+        const actualKalenderwoche = getISOWeek(datum);
+        const actualJahr = datum.getFullYear();
+        
+        console.log(`📅 Information wird gespeichert für:`, {
+            tag,
+            datum: datum.toISOString().split('T')[0],
+            actualJahr,
+            actualKalenderwoche,
+            // Zur Debug-Info: aktuelle Woche vs. tatsächliche Woche
+            currentWeek: window.currentWeek,
+            currentYear: window.currentYear
+        });
+        
         const informationData = {
-            jahr: datum.getFullYear(),
-            kalenderwoche: getISOWeek(datum),
+            jahr: actualJahr,
+            kalenderwoche: actualKalenderwoche,
             tag: tag,
             einrichtung_id: currentEinrichtung.id,
             einrichtung_name: currentEinrichtung.name,

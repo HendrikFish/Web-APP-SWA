@@ -362,7 +362,20 @@
     },
     "gewicht_pro_einheit": 15,
     "herkunft": "EU",
-    "allergene": [],
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      },
+      {
+        "code": "C",
+        "name": "Eier"
+      },
+      {
+        "code": "G",
+        "name": "Laktose"
+      }
+    ],
     "naehrwerte": {},
     "id": "zutat-1751180100000-fleischbaellchen",
     "zutatennummer": 19,

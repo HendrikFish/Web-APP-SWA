@@ -13,6 +13,14 @@ function serveSharedMiddleware() {
           const filePath = resolve(__dirname, '..', req.url.slice(1));
           
           if (fs.existsSync(filePath)) {
+            // Check if it's a directory - don't try to read directories
+            const stats = fs.statSync(filePath);
+            if (stats.isDirectory()) {
+              res.statusCode = 404;
+              res.end('Directory listing not allowed');
+              return;
+            }
+            
             // Determine content type based on file extension
             let contentType = 'application/octet-stream';
             if (filePath.endsWith('.json')) contentType = 'application/json';
@@ -104,7 +112,8 @@ export default defineConfig({
         rezept: resolve(__dirname, 'modules/rezept/index.html'),
         einrichtung: resolve(__dirname, 'modules/einrichtung/index.html'),
         menueplan: resolve(__dirname, 'modules/menueplan/index.html'),
-        menuePortal: resolve(__dirname, 'modules/menue-portal/index.html')
+        menuePortal: resolve(__dirname, 'modules/menue-portal/index.html'),
+        zahlenAuswertung: resolve(__dirname, 'modules/zahlen-auswertung/index.html')
       }
     }
   }

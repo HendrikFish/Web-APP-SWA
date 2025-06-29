@@ -27,5 +27,40 @@
       "name": "Admin System"
     },
     "isActive": true
+  },
+  {
+    "id": "rezept-1751184332411-wf69als",
+    "name": "Palatschinken",
+    "anleitung": "",
+    "kategorie": "Hauptspeise",
+    "portionen": 1,
+    "zutaten": [
+      {
+        "zutatId": "zutat-1751178935431-zqkr8dy",
+        "menge": 100,
+        "einheit": "g"
+      },
+      {
+        "zutatId": "zutat-1751178991769-y89bqvv",
+        "menge": 1,
+        "einheit": "Stk.",
+        "durchschnittsgewicht": 30
+      },
+      {
+        "zutatId": "zutat-1751179031602-5isw87w",
+        "menge": 20,
+        "einheit": "ml"
+      }
+    ],
+    "createdAt": "2025-06-29T08:05:32.411Z",
+    "createdBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "updatedBy": {
+      "userId": "679f7a109d1d8b3535030897",
+      "name": "Admin System"
+    },
+    "isActive": true
   }
 ]
