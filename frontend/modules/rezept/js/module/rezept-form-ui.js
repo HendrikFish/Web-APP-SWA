@@ -54,12 +54,36 @@ export function renderRezeptFormular(rezept = null) {
         <hr>
 
         <div id="rezept-zusammenfassung" class="mb-3">
-            <h5 class="h6">Live-Zusammenfassung</h5>
+            <h5 class="h6">Live-Berechnung</h5>
             <div class="card bg-light border">
                 <div class="card-body p-3">
-                    <p class="mb-1 d-flex justify-content-between"><strong>Geschätzte Kosten:</strong> <span id="summary-kosten" class="fw-bold">0,00 €</span></p>
-                    <p class="mb-1 d-flex justify-content-between"><strong>Allergene:</strong> <span id="summary-allergene" class="badge bg-warning text-dark">Keine</span></p>
-                    <p class="mb-0 d-flex justify-content-between"><strong>Kalorien (gesamt):</strong> <span id="summary-kalorien" class="fw-bold">0 kcal</span></p>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <p class="mb-1 d-flex justify-content-between">
+                                <strong><i class="bi bi-currency-euro me-1"></i>Kosten:</strong> 
+                                <span id="summary-kosten" class="fw-bold text-success">0,00 €</span>
+                            </p>
+                            <p class="mb-1 d-flex justify-content-between">
+                                <strong><i class="bi bi-speedometer2 me-1"></i>Kalorien:</strong> 
+                                <span id="summary-kalorien" class="fw-bold">0 kcal</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1 d-flex justify-content-between">
+                                <strong><i class="bi bi-weight me-1"></i>Gewicht:</strong> 
+                                <span id="summary-gewicht" class="fw-bold text-info">0 g</span>
+                            </p>
+                            <p class="mb-1 d-flex justify-content-between">
+                                <strong><i class="bi bi-droplet me-1"></i>Volumen:</strong> 
+                                <span id="summary-volumen" class="fw-bold text-primary">0 ml</span>
+                            </p>
+                        </div>
+                    </div>
+                    <hr class="my-2">
+                    <p class="mb-0 d-flex justify-content-between">
+                        <strong><i class="bi bi-exclamation-triangle me-1"></i>Allergene:</strong> 
+                        <span id="summary-allergene" class="badge bg-success">Keine</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -193,12 +217,69 @@ export function getRezeptFormularDaten(zutaten) {
  * und aktualisiert die Live-Zusammenfassung im Formular.
  * @param {Array} aktuelleZutaten - Die Liste der aktuell im Formular befindlichen Zutaten.
  */
+/**
+ * Konvertiert Mengen in Basis-Einheiten (Gramm für Gewicht, Milliliter für Volumen)
+ * @param {number} menge - Die Menge
+ * @param {string} einheit - Die Einheit (g, kg, ml, l, etc.)
+ * @param {number} durchschnittsgewicht - Durchschnittsgewicht für Stück-Zutaten in Gramm
+ * @returns {Object} - {gewicht: number, volumen: number} in Basis-Einheiten
+ */
+function konvertiereZuBasisEinheiten(menge, einheit, durchschnittsgewicht = 0) {
+    const einheitLower = einheit?.toLowerCase() || '';
+    
+    // Gewichts-Einheiten (in Gramm konvertieren)
+    if (einheitLower === 'g') {
+        return { gewicht: menge, volumen: 0 };
+    } else if (einheitLower === 'kg') {
+        return { gewicht: menge * 1000, volumen: 0 };
+    }
+    
+    // Volumen-Einheiten (in Milliliter konvertieren)
+    else if (einheitLower === 'ml') {
+        return { gewicht: 0, volumen: menge };
+    } else if (einheitLower === 'l') {
+        return { gewicht: 0, volumen: menge * 1000 };
+    }
+    
+    // Stück-Einheiten (Durchschnittsgewicht verwenden)
+    else if (einheitLower === 'stk.' || einheitLower === 'stk' || einheitLower === 'stück' || einheitLower === 'pkg.' || einheitLower === 'packung') {
+        return { gewicht: menge * durchschnittsgewicht, volumen: 0 };
+    }
+    
+    // Unbekannte Einheit
+    return { gewicht: 0, volumen: 0 };
+}
+
+/**
+ * Formatiert Gewichts- oder Volumen-Werte in benutzerfreundliche Einheiten
+ * @param {number} wert - Der Wert in Basis-Einheit (g oder ml)
+ * @param {string} typ - 'gewicht' oder 'volumen'
+ * @returns {string} - Formatierter String mit Einheit
+ */
+function formatiereMengenangabe(wert, typ) {
+    if (wert === 0) return '0 ' + (typ === 'gewicht' ? 'g' : 'ml');
+    
+    if (typ === 'gewicht') {
+        if (wert >= 1000) {
+            return `${(wert / 1000).toFixed(1)} kg`;
+        }
+        return `${Math.round(wert)} g`;
+    } else { // volumen
+        if (wert >= 1000) {
+            return `${(wert / 1000).toFixed(1)} l`;
+        }
+        return `${Math.round(wert)} ml`;
+    }
+}
+
 export function updateLiveSummary(aktuelleZutaten) {
     const summaryKosten = document.getElementById('summary-kosten');
     const summaryAllergene = document.getElementById('summary-allergene');
     const summaryKalorien = document.getElementById('summary-kalorien');
+    const summaryGewicht = document.getElementById('summary-gewicht');
+    const summaryVolumen = document.getElementById('summary-volumen');
 
-    if (!summaryKosten || !summaryAllergene || !summaryKalorien) {
+    if (!summaryKosten || !summaryAllergene || !summaryKalorien || !summaryGewicht || !summaryVolumen) {
         console.error("Summary-Elemente nicht gefunden!");
         return;
     }
@@ -206,30 +287,44 @@ export function updateLiveSummary(aktuelleZutaten) {
     let totalKosten = 0;
     const alleAllergene = new Set();
     let totalKalorien = 0;
+    let totalGewicht = 0;
+    let totalVolumen = 0;
 
     aktuelleZutaten.forEach(zutat => {
         const mengenInput = document.getElementById(`menge-${zutat.id}`);
         const menge = mengenInput ? parseFloat(mengenInput.value) || 0 : (zutat.menge || 0);
 
+        // Kosten berechnen
         if (zutat.preis && typeof zutat.preis.basis === 'number' && typeof zutat.preis.umrechnungsfaktor === 'number' && zutat.preis.umrechnungsfaktor !== 0) {
             const preisProVerwendungseinheit = zutat.preis.basis / zutat.preis.umrechnungsfaktor;
             totalKosten += preisProVerwendungseinheit * menge;
         }
 
+        // Allergene sammeln
         if (zutat.allergene && zutat.allergene.length > 0) {
             zutat.allergene.forEach(allergen => alleAllergene.add(allergen.code));
         }
 
+        // Kalorien berechnen
         if (zutat.naehrwerte && typeof zutat.naehrwerte.kalorien_kcal === 'number') {
             const einheitLowerCase = zutat.einheit?.toLowerCase() || '';
-            if (einheitLowerCase !== 'stück' && einheitLowerCase !== 'stk') {
+            if (einheitLowerCase !== 'stück' && einheitLowerCase !== 'stk' && einheitLowerCase !== 'stk.') {
                 totalKalorien += (zutat.naehrwerte.kalorien_kcal / 100) * menge;
             }
         }
+
+        // Gewicht und Volumen berechnen
+        const durchschnittsgewicht = zutat.durchschnittsgewicht || getDurchschnittsgewichtFürZutat(zutat);
+        const { gewicht, volumen } = konvertiereZuBasisEinheiten(menge, zutat.einheit, durchschnittsgewicht);
+        totalGewicht += gewicht;
+        totalVolumen += volumen;
     });
 
+    // UI aktualisieren
     summaryKosten.textContent = `${totalKosten.toFixed(2).replace('.', ',')} €`;
     summaryKalorien.textContent = `${Math.round(totalKalorien)} kcal`;
+    summaryGewicht.textContent = formatiereMengenangabe(totalGewicht, 'gewicht');
+    summaryVolumen.textContent = formatiereMengenangabe(totalVolumen, 'volumen');
 
     if (alleAllergene.size > 0) {
         summaryAllergene.textContent = Array.from(alleAllergene).join(', ');
@@ -238,6 +333,39 @@ export function updateLiveSummary(aktuelleZutaten) {
         summaryAllergene.textContent = 'Keine';
         summaryAllergene.className = 'badge bg-success';
     }
+}
+
+/**
+ * Schätzt das Durchschnittsgewicht für gängige Stück-Zutaten
+ * @param {Object} zutat - Das Zutat-Objekt
+ * @returns {number} - Durchschnittsgewicht in Gramm
+ */
+function getDurchschnittsgewichtFürZutat(zutat) {
+    const name = zutat.name?.toLowerCase() || '';
+    
+    // Häufige Zutatenschätzungen (in Gramm)
+    const schätzungen = {
+        'ei': 60,
+        'eier': 60,
+        'zwiebel': 150,
+        'tomate': 120,
+        'kartoffel': 150,
+        'apfel': 180,
+        'zitrone': 100,
+        'packung': 250,  // Durchschnittliche Packung
+        'dose': 400,     // Durchschnittliche Dose
+        'scheibe': 25,   // Brotscheibe, Käsescheibe
+    };
+    
+    // Einfache Wort-Suche in Zutatennamen
+    for (const [schlüssel, gewicht] of Object.entries(schätzungen)) {
+        if (name.includes(schlüssel)) {
+            return gewicht;
+        }
+    }
+    
+    // Standard-Fallback: 100g pro Stück
+    return 100;
 }
 
 export function resetRezeptFormular() {

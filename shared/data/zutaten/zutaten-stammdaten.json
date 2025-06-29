@@ -108,5 +108,26 @@
     { "name": "Liter", "abk": "l", "typ": "Volumen", "faktor": 1000 },
     { "name": "Stück", "abk": "Stk.", "typ": "Stück", "faktor": 1 },
     { "name": "Packung", "abk": "Pkg.", "typ": "Stück", "faktor": 1 }
-  ]
+  ],
+  "durchschnittsgewichte": {
+    "kommentar": "Durchschnittsgewichte für gängige Stück-Zutaten in Gramm - für Live-Berechnung",
+    "zutaten": {
+      "eier": { "stück": 60, "beschreibung": "1 Hühnerei (Größe M)" },
+      "zwiebel": { "stück": 150, "beschreibung": "1 mittelgroße Zwiebel" },
+      "tomate": { "stück": 120, "beschreibung": "1 mittelgroße Tomate" },
+      "kartoffel": { "stück": 150, "beschreibung": "1 mittelgroße Kartoffel" },
+      "apfel": { "stück": 180, "beschreibung": "1 mittelgroßer Apfel" },
+      "zitrone": { "stück": 100, "beschreibung": "1 Zitrone" },
+      "gurke": { "stück": 400, "beschreibung": "1 Salatgurke" },
+      "paprika": { "stück": 200, "beschreibung": "1 Paprika" },
+      "mohrrübe": { "stück": 100, "beschreibung": "1 Karotte/Mohrrübe" },
+      "banane": { "stück": 120, "beschreibung": "1 Banane ohne Schale" },
+      "putenschnitzel": { "stück": 100, "beschreibung": "1 Putenschnitzel" },
+      "scheibe_brot": { "stück": 25, "beschreibung": "1 Scheibe Brot" },
+      "scheibe_käse": { "stück": 20, "beschreibung": "1 Scheibe Käse" },
+      "packung_butter": { "stück": 250, "beschreibung": "1 Packung Butter" },
+      "dose_tomaten": { "stück": 400, "beschreibung": "1 Dose Tomaten (400g)" },
+      "packung_nudeln": { "stück": 500, "beschreibung": "1 Packung Nudeln (500g)" }
+    }
+  }
 }
