@@ -372,7 +372,8 @@ function displayInformationenInModal(informationen, tag) {
         // HTML für jede Information erstellen
         const informationenHTML = informationen.map(info => {
             const istGelesen = info.read === true;
-            const istEigeneInformation = currentUser && info.ersteller_id === currentUser.id;
+            const currentUser = window.currentUser;
+            const istEigeneInformation = currentUser && info.erstellt_von?.benutzer_id === currentUser.id;
             
             // Vereinfachter Gelesen-Status ohne Aktionen
             const gelesenStatusHTML = istGelesen ? `
@@ -380,7 +381,7 @@ function displayInformationenInModal(informationen, tag) {
                     <i class="bi bi-check-circle-fill text-success"></i>
                     <small class="text-success">
                         Gelesen von: ${info.gelesen_von?.benutzer_name || 'Unbekannt'} 
-                        am ${new Date(info.gelesen_von?.timestamp || info.erstellt_am).toLocaleString('de-DE')}
+                        am ${new Date(info.gelesen_von?.timestamp || info.erstellt_von?.timestamp).toLocaleString('de-DE')}
                     </small>
                 </div>
             ` : `
@@ -401,7 +402,7 @@ function displayInformationenInModal(informationen, tag) {
                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="editInformation('${info.id}')">
                                     <i class="bi bi-pencil-square"></i> Bearbeiten
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteInformation('${info.id}')">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteInformationConfirm('${info.id}')">
                                     <i class="bi bi-trash"></i> Löschen
                                 </button>
                             ` : ''}
@@ -415,10 +416,10 @@ function displayInformationenInModal(informationen, tag) {
                         ${gelesenStatusHTML}
                         <div class="information-meta">
                             <small class="text-muted">
-                                <i class="bi bi-person"></i> Erstellt von: ${info.ersteller_name || 'Unbekannt'} |
-                                <i class="bi bi-clock"></i> ${info.erstellt_am ? new Date(info.erstellt_am).toLocaleString('de-DE') : 'Datum unbekannt'}
-                                ${info.aktualisiert_am && info.aktualisiert_am !== info.erstellt_am ? 
-                                    `| <i class="bi bi-pencil"></i> Bearbeitet: ${new Date(info.aktualisiert_am).toLocaleString('de-DE')}` : ''}
+                                <i class="bi bi-person"></i> Erstellt von: ${info.erstellt_von?.benutzer_name || 'Unbekannt'} |
+                                <i class="bi bi-clock"></i> ${info.erstellt_von?.timestamp ? new Date(info.erstellt_von.timestamp).toLocaleString('de-DE') : 'Datum unbekannt'}
+                                ${info.bearbeitet_von?.timestamp && info.bearbeitet_von.timestamp !== info.erstellt_von?.timestamp ? 
+                                    `| <i class="bi bi-pencil"></i> Bearbeitet: ${new Date(info.bearbeitet_von.timestamp).toLocaleString('de-DE')}` : ''}
                             </small>
                         </div>
                     </div>

@@ -1,1 +1,25 @@
-{} 
+{
+  "dienstag": {
+    "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": [
+      {
+        "id": "b6e2eace-3658-4e7e-bff3-ce70a44197ca",
+        "titel": "Ich will das Testen",
+        "inhalt": "IN KW 27 wird diese information gespeichert",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:34:26.748Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:34:26.748Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
+      }
+    ]
+  }
+}
