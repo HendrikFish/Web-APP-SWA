@@ -267,8 +267,18 @@ window.submitInformation = async function() {
             if (response.success) {
                 showToast('Information erfolgreich aktualisiert!', 'success');
                 
-                // Zurück zur Übersicht nach erfolgreicher Bearbeitung
-                await loadAndDisplayInformationen(tag);
+                // Informationen für die spezifische Woche laden und anzeigen
+                const weekInformationen = await loadInformationenForSpecificWeek(actualJahr, actualKalenderwoche, currentEinrichtung.id);
+                
+                // Wenn die Information für die aktuell angezeigte Woche ist, globale Daten aktualisieren
+                if (actualJahr === window.currentYear && actualKalenderwoche === window.currentWeek) {
+                    window.currentInformationenData = weekInformationen;
+                }
+                
+                // Informationen für den Tag anzeigen (aus den spezifischen Wochendaten)
+                const tagInformationen = weekInformationen[tag] || [];
+                const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
+                displayInformationenInModal(activeInformationen, tag);
                 showOverviewMode();
                 
                 // Event emittieren für UI-Update
@@ -276,7 +286,9 @@ window.submitInformation = async function() {
                     detail: { 
                         information: response.information,
                         tag: tag,
-                        datum: datum
+                        datum: datum,
+                        kalenderwoche: actualKalenderwoche,
+                        jahr: actualJahr
                     }
                 }));
             } else {
@@ -286,10 +298,20 @@ window.submitInformation = async function() {
             const response = await createInformation(informationData);
             
             if (response.success) {
-                showToast('Information erfolgreich erstellt!', 'success');
+                showToast(`Information erfolgreich erstellt für KW ${actualKalenderwoche}/${actualJahr}!`, 'success');
                 
-                // Zurück zur Übersicht nach erfolgreicher Erstellung
-                await loadAndDisplayInformationen(tag);
+                // Informationen für die spezifische Woche laden und anzeigen
+                const weekInformationen = await loadInformationenForSpecificWeek(actualJahr, actualKalenderwoche, currentEinrichtung.id);
+                
+                // Wenn die Information für die aktuell angezeigte Woche ist, globale Daten aktualisieren
+                if (actualJahr === window.currentYear && actualKalenderwoche === window.currentWeek) {
+                    window.currentInformationenData = weekInformationen;
+                }
+                
+                // Informationen für den Tag anzeigen (aus den spezifischen Wochendaten)
+                const tagInformationen = weekInformationen[tag] || [];
+                const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
+                displayInformationenInModal(activeInformationen, tag);
                 showOverviewMode();
                 
                 // Event emittieren für UI-Update
@@ -297,7 +319,9 @@ window.submitInformation = async function() {
                     detail: { 
                         information: response.information,
                         tag: tag,
-                        datum: datum
+                        datum: datum,
+                        kalenderwoche: actualKalenderwoche,
+                        jahr: actualJahr
                     }
                 }));
             } else {
@@ -320,21 +344,15 @@ window.submitInformation = async function() {
 // ===== NEUE FUNKTIONEN FÜR INFORMATIONS-VERWALTUNG =====
 
 /**
- * Lädt und zeigt alle Informationen für einen bestimmten Tag an
- * @param {string} tag - Wochentag (montag, dienstag, ...)
+ * Zeigt Informationen direkt im Modal an
+ * @param {Array} informationen - Array von Informationen
+ * @param {string} tag - Wochentag
  */
-async function loadAndDisplayInformationen(tag) {
+function displayInformationenInModal(informationen, tag) {
     const informationList = document.getElementById('information-list');
     
     try {
-        // Globale Informationen-Daten verwenden
-        const informationenData = window.currentInformationenData || {};
-        const tagInformationen = informationenData[tag] || [];
-        
-        // Nur aktive (nicht gelöschte) Informationen anzeigen
-        const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
-        
-        if (activeInformationen.length === 0) {
+        if (informationen.length === 0) {
             informationList.innerHTML = `
                 <div class="no-informationen">
                     <div class="text-center text-muted p-4">
@@ -349,10 +367,10 @@ async function loadAndDisplayInformationen(tag) {
         
         // Informationen nach Priorität sortieren
         const priorityOrder = { 'kritisch': 4, 'hoch': 3, 'normal': 2, 'niedrig': 1 };
-        activeInformationen.sort((a, b) => priorityOrder[b.prioritaet] - priorityOrder[a.prioritaet]);
+        informationen.sort((a, b) => priorityOrder[b.prioritaet] - priorityOrder[a.prioritaet]);
         
         // HTML für jede Information erstellen
-        const informationenHTML = activeInformationen.map(info => {
+        const informationenHTML = informationen.map(info => {
             const istGelesen = info.read === true;
             const istEigeneInformation = currentUser && info.ersteller_id === currentUser.id;
             
@@ -411,14 +429,29 @@ async function loadAndDisplayInformationen(tag) {
         informationList.innerHTML = informationenHTML;
         
     } catch (error) {
-        console.error('Fehler beim Laden der Informationen:', error);
+        console.error('Fehler beim Anzeigen der Informationen:', error);
         informationList.innerHTML = `
             <div class="alert alert-danger">
                 <i class="bi bi-exclamation-triangle"></i>
-                Fehler beim Laden der Informationen: ${error.message}
+                Fehler beim Anzeigen der Informationen: ${error.message}
             </div>
         `;
     }
+}
+
+/**
+ * Lädt und zeigt alle Informationen für einen bestimmten Tag an
+ * @param {string} tag - Wochentag (montag, dienstag, ...)
+ */
+async function loadAndDisplayInformationen(tag) {
+    // Globale Informationen-Daten verwenden
+    const informationenData = window.currentInformationenData || {};
+    const tagInformationen = informationenData[tag] || [];
+    
+    // Nur aktive (nicht gelöschte) Informationen anzeigen
+    const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
+    
+    displayInformationenInModal(activeInformationen, tag);
 }
 
 // Modus-Wechsel-Funktionen jetzt im UI-Modul verfügbar
@@ -583,6 +616,33 @@ function getPriorityIcon(prioritaet) {
 }
 
 /**
+ * Lädt Informationen-Daten für eine spezifische Woche und Einrichtung
+ * @param {number} year - Jahr
+ * @param {number} week - Kalenderwoche
+ * @param {string} einrichtungId - Einrichtungs-ID
+ * @returns {Promise<object>} - Informationen-Daten
+ */
+async function loadInformationenForSpecificWeek(year, week, einrichtungId) {
+    try {
+        console.log(`📋 Lade Informationen für KW ${week}/${year}, Einrichtung-ID: ${einrichtungId}`);
+        
+        const result = await getInformationen(year, week, einrichtungId);
+        
+        if (result.success) {
+            console.log('✅ Informationen-Daten erfolgreich geladen:', Object.keys(result.informationen || {}).length, 'Tage');
+            return result.informationen || {};
+        } else {
+            console.warn('⚠️ Keine Informationen verfügbar:', result.message);
+            return {};
+        }
+        
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Informationen-Daten:', error);
+        return {};
+    }
+}
+
+/**
  * Lädt Informationen-Daten für die aktuelle Woche und Einrichtung
  */
 async function loadInformationenDataFromAPI() {
@@ -592,17 +652,8 @@ async function loadInformationenDataFromAPI() {
             return;
         }
         
-        console.log(`📋 Lade Informationen für KW ${currentWeek}/${currentYear}, Einrichtung: ${currentEinrichtung.name}`);
-        
-        const result = await getInformationen(currentYear, currentWeek, currentEinrichtung.id);
-        
-        if (result.success) {
-            window.currentInformationenData = result.informationen || {};
-            console.log('✅ Informationen-Daten erfolgreich geladen:', Object.keys(window.currentInformationenData).length, 'Tage');
-        } else {
-            console.warn('⚠️ Keine Informationen verfügbar:', result.message);
-            window.currentInformationenData = {};
-        }
+        const informationenData = await loadInformationenForSpecificWeek(currentYear, currentWeek, currentEinrichtung.id);
+        window.currentInformationenData = informationenData;
         
     } catch (error) {
         console.error('❌ Fehler beim Laden der Informationen-Daten:', error);

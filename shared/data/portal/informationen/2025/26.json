@@ -137,6 +137,25 @@
         "read": false,
         "soft_deleted": false,
         "einrichtung_name": "Hendrik Fischer"
+      },
+      {
+        "id": "0e0d024d-b676-4958-9d8a-c1cb3465ed21",
+        "titel": "Kein Essen GangBAng",
+        "inhalt": "Hilfe beim Tische Aufstellen!",
+        "prioritaet": "normal",
+        "erstellt_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:23:58.490Z"
+        },
+        "bearbeitet_von": {
+          "benutzer_id": "679f7a109d1d8b3535030897",
+          "benutzer_name": "Admin System",
+          "timestamp": "2025-06-29T11:23:58.490Z"
+        },
+        "read": false,
+        "soft_deleted": false,
+        "einrichtung_name": "Hendrik Fischer"
       }
     ]
   }
