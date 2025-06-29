@@ -559,12 +559,12 @@ function renderBestellungFields(dayKey, categoryKey, recipes, currentEinrichtung
 }
 
 /**
- * Rendert eine grüne Info-Karte wenn Informationen gelesen wurden (Mobile)
+ * Rendert eine Info-Karte für Informationen (gelesen/ungelesen) - Mobile
  * @param {string} dayKey - Wochentag-Key
  * @param {Date} dayDate - Datum des Tages
  * @param {object} currentEinrichtung - Aktuelle Einrichtung
  * @param {object} informationenData - Informationen-Daten
- * @returns {string} HTML für Info-gelesen-Karte oder leer
+ * @returns {string} HTML für Info-Karte oder leer
  */
 function renderMobileInfoGelesenCard(dayKey, dayDate, currentEinrichtung, informationenData) {
     const currentUser = window.currentUser;
@@ -573,27 +573,59 @@ function renderMobileInfoGelesenCard(dayKey, dayDate, currentEinrichtung, inform
         return '';
     }
     
-    // Prüfen ob Informationen für diesen Tag existieren und gelesen wurden
+    // Prüfen ob Informationen für diesen Tag existieren
     const tagInformationen = informationenData[dayKey] || [];
-    const gelesenInformationen = tagInformationen.filter(info => 
-        !info.soft_deleted && info.read === true
-    );
+    const activeInformationen = tagInformationen.filter(info => !info.soft_deleted);
     
-    if (gelesenInformationen.length === 0) {
-        return '';
+    if (activeInformationen.length === 0) {
+        return ''; // Keine Informationen = keine Karte
     }
     
-    const anzahlGelesen = gelesenInformationen.length;
-    const mehrereInformationen = anzahlGelesen > 1;
+    // Kategorisiere Informationen
+    const gelesenInformationen = activeInformationen.filter(info => info.read === true);
+    const ungelesenInformationen = activeInformationen.filter(info => info.read !== true);
+    
+    // Bestimme den dominanten Status und Style
+    let cardClass, iconClass, titel, cardStyle;
+    
+    if (ungelesenInformationen.length > 0) {
+        // Ungelesene Informationen haben Priorität
+        cardClass = 'info-ungelesen-card';
+        iconClass = 'bi bi-exclamation-circle-fill';
+        cardStyle = 'background: linear-gradient(135deg, #fff3cd, #ffeaa7); border: 1px solid #ffc107; color: #856404;';
+        
+        if (ungelesenInformationen.length === 1) {
+            titel = 'Information ungelesen';
+        } else {
+            titel = `${ungelesenInformationen.length} Informationen ungelesen`;
+        }
+        
+        // Zusätzlicher Hinweis wenn auch gelesene vorhanden sind
+        if (gelesenInformationen.length > 0) {
+            titel += ` (${gelesenInformationen.length} gelesen)`;
+        }
+    } else {
+        // Alle Informationen gelesen
+        cardClass = 'info-gelesen-card';
+        iconClass = 'bi bi-check-circle-fill';
+        cardStyle = 'background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 1px solid #2196f3; color: #1976d2;';
+        
+        if (gelesenInformationen.length === 1) {
+            titel = 'Information gelesen';
+        } else {
+            titel = `${gelesenInformationen.length} Informationen gelesen`;
+        }
+    }
     
     return `
-        <div class="info-gelesen-card mt-2" onclick="handleInformationClick('${dayKey}', '${dayDate.toISOString()}')">
-            <div class="card-title">
-                <i class="bi bi-check-circle-fill me-1"></i>
-                ${mehrereInformationen 
-                    ? `${anzahlGelesen} Informationen gelesen` 
-                    : 'Information gelesen'
-                }
+        <div class="${cardClass} mt-2" 
+             style="${cardStyle} border-radius: 8px; padding: 0.75rem; text-align: center; cursor: pointer; transition: all 0.2s ease;"
+             onclick="handleInformationClick('${dayKey}', '${dayDate.toISOString()}')"
+             onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)';"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+            <div class="card-title" style="font-weight: 600; font-size: 0.9rem; margin: 0;">
+                <i class="${iconClass} me-1"></i>
+                ${titel}
             </div>
         </div>
     `;
