@@ -1,5 +1,7 @@
 // In dieser Datei wird die Logik für das Rezept-Formular gekapselt.
-// z.B. renderRezeptFormular(), getFormData(), etc. 
+// z.B. renderRezeptFormular(), getFormData(), etc.
+
+import { berechnePreisFürMenge, erstellePreisaufschlüsselung } from './preis-berechnung.js'; 
 
 /**
  * Erstellt und rendert das HTML für das Rezept-Erstellungs- und Bearbeitungsformular.
@@ -334,10 +336,16 @@ export function updateLiveSummary(aktuelleZutaten) {
         const mengenInput = document.getElementById(`menge-${zutat.id}`);
         const menge = mengenInput ? parseFloat(mengenInput.value) || 0 : (zutat.menge || 0);
 
-        // Kosten berechnen
-        if (zutat.preis && typeof zutat.preis.basis === 'number' && typeof zutat.preis.umrechnungsfaktor === 'number' && zutat.preis.umrechnungsfaktor !== 0) {
-            const preisProVerwendungseinheit = zutat.preis.basis / zutat.preis.umrechnungsfaktor;
-            totalKosten += preisProVerwendungseinheit * menge;
+        // Kosten berechnen mit neuer Preisberechnung
+        const kostenFürMenge = berechnePreisFürMenge(zutat, menge, zutat.einheit);
+        if (kostenFürMenge > 0) {
+            totalKosten += kostenFürMenge;
+            
+            // Debug-Ausgabe für detaillierte Preisaufschlüsselung
+            if (window.DEBUG_PREIS) {
+                const aufschlüsselung = erstellePreisaufschlüsselung(zutat, menge, zutat.einheit);
+                console.log('Preisberechnung:', aufschlüsselung);
+            }
         }
 
         // Allergene sammeln

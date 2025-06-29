@@ -18,6 +18,7 @@ import {
     updateLiveSummary,
     resetRezeptFormular
 } from './module/rezept-form-ui.js';
+import { berechnePreisFürMenge, erstellePreisaufschlüsselung } from './module/preis-berechnung.js';
 
 // Globale State-Variablen für das Modul
 let alleZutaten = [];

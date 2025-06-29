@@ -129,5 +129,45 @@
       "dose_tomaten": { "stück": 400, "beschreibung": "1 Dose Tomaten (400g)" },
       "packung_nudeln": { "stück": 500, "beschreibung": "1 Packung Nudeln (500g)" }
     }
+  },
+  "preiskonzept_v2": {
+    "kommentar": "Erweiterte Preisstruktur für flexible Einkauf-zu-Verwendung-Umrechnung",
+    "struktur": {
+      "einkauf": {
+        "basis": "number - Einkaufspreis",
+        "einheit": "string - Einkaufseinheit (kg, l, Stk., etc.)"
+      },
+      "gewicht_pro_einheit": "number - Gramm pro Stück (nur bei Stück-Artikeln)",
+      "volumen_pro_einheit": "number - Milliliter pro Stück (nur bei Volumen-Stück-Artikeln)",
+      "automatische_berechnung": {
+        "pro_gramm": "number - Preis pro Gramm (automatisch berechnet)",
+        "pro_milliliter": "number - Preis pro Milliliter (automatisch berechnet)", 
+        "pro_stueck": "number - Preis pro Stück (automatisch berechnet)"
+      }
+    },
+    "beispiele": {
+      "eier_stueck_zu_gramm": {
+        "einkauf": { "basis": 0.20, "einheit": "Stk." },
+        "gewicht_pro_einheit": 60,
+        "berechnung": {
+          "pro_gramm": 0.0033,
+          "pro_stueck": 0.20
+        }
+      },
+      "fleischbaellchen_kg_zu_stueck": {
+        "einkauf": { "basis": 8.0, "einheit": "kg" },
+        "gewicht_pro_einheit": 15,
+        "berechnung": {
+          "pro_gramm": 0.008,
+          "pro_stueck": 0.12
+        }
+      },
+      "milch_liter_zu_ml": {
+        "einkauf": { "basis": 1.02, "einheit": "l" },
+        "berechnung": {
+          "pro_milliliter": 0.00102
+        }
+      }
+    }
   }
 }

@@ -24,15 +24,15 @@
     "createdAt": "2025-06-29T05:31:39.438Z"
   },
   {
-    "id": "b9398be1-0b66-4efe-ac1f-99d249181fc5",
+    "id": "543c79b3-5025-40db-91fd-35455f31b42b",
     "title": "Ich arbeite zu Viel!",
-    "message": "Ja MAnn das tust du!",
+    "message": "Hallo Admin du geile Sau!",
     "trigger": "onLogin",
     "triggerValue": null,
     "targetRoles": [
       "admin"
     ],
     "active": true,
-    "createdAt": "2025-06-29T05:35:45.050Z"
+    "createdAt": "2025-06-29T05:48:47.532Z"
   }
 ]

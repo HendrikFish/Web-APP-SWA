@@ -41,6 +41,13 @@ export function resetForm() {
     // Preisberechnung zurücksetzen und Einheiten-Dropdowns korrekt initialisieren
     document.getElementById('preis-verwendung').textContent = 'wird berechnet...';
     document.getElementById('verwendungseinheit').innerHTML = '<option value="">Bitte wählen...</option>';
+    
+    // Durchschnittsgewicht-Feld verstecken und zurücksetzen
+    const durchschnittsgewichtSection = document.getElementById('durchschnittsgewicht-section');
+    const durchschnittsgewichtInput = document.getElementById('durchschnittsgewicht');
+    durchschnittsgewichtSection.classList.add('d-none');
+    durchschnittsgewichtInput.value = '';
+    durchschnittsgewichtInput.required = false;
 }
 
 /**
@@ -86,6 +93,14 @@ export function startEditMode(zutat) {
         const verwendungseinheitSelect = document.getElementById('verwendungseinheit');
         verwendungseinheitSelect.value = preisDaten.verwendungseinheit || '';
         calculatePreisVerwendung();
+        
+        // Durchschnittsgewicht-Feld anzeigen und laden, falls vorhanden
+        toggleDurchschnittsgewichtField();
+        
+        if (zutat.gewicht_pro_einheit) {
+            const durchschnittsgewichtInput = document.getElementById('durchschnittsgewicht');
+            durchschnittsgewichtInput.value = zutat.gewicht_pro_einheit;
+        }
     }, 100);
 
     // Allergene Buttons setzen und Bereich ggf. anzeigen
@@ -175,6 +190,22 @@ export function initializeZutatenUI() {
     toggleAllergeneBtn.addEventListener('click', () => {
         allergeneSection.classList.toggle('d-none');
     });
+
+    // Event Listener für Zutatennamen-Änderungen (für intelligente Gewichts-Vorschläge)
+    zutatNameInput.addEventListener('blur', () => {
+        const durchschnittsgewichtSection = document.getElementById('durchschnittsgewicht-section');
+        const durchschnittsgewichtInput = document.getElementById('durchschnittsgewicht');
+        
+        // Nur vorschlagen, wenn Feld sichtbar und leer ist
+        if (!durchschnittsgewichtSection.classList.contains('d-none') && !durchschnittsgewichtInput.value) {
+            const zutatName = zutatNameInput.value.toLowerCase();
+            const vorschlag = getDurchschnittsgewichtVorschlag(zutatName);
+            if (vorschlag > 0) {
+                durchschnittsgewichtInput.value = vorschlag;
+                durchschnittsgewichtInput.placeholder = `Vorschlag: ${vorschlag}g`;
+            }
+        }
+    });
 }
 
 export function populateStammdaten(stammdaten) {
@@ -251,7 +282,10 @@ export function populateStammdaten(stammdaten) {
         });
 
         document.getElementById('preis-basis').addEventListener('input', calculatePreisVerwendung);
-        verwendungseinheitSelect.addEventListener('change', calculatePreisVerwendung);
+        verwendungseinheitSelect.addEventListener('change', () => {
+            calculatePreisVerwendung();
+            toggleDurchschnittsgewichtField();
+        });
     }
 }
 
@@ -290,6 +324,76 @@ function calculatePreisVerwendung() {
 }
 
 /**
+ * Blendet das Durchschnittsgewicht-Feld ein/aus basierend auf der gewählten Verwendungseinheit
+ */
+function toggleDurchschnittsgewichtField() {
+    const verwendungseinheitSelect = document.getElementById('verwendungseinheit');
+    const durchschnittsgewichtSection = document.getElementById('durchschnittsgewicht-section');
+    const durchschnittsgewichtInput = document.getElementById('durchschnittsgewicht');
+    
+    const verwendungseinheitAbk = verwendungseinheitSelect.value?.toLowerCase();
+    const istStueckEinheit = verwendungseinheitAbk === 'stk.' || verwendungseinheitAbk === 'pkg.';
+    
+    if (istStueckEinheit) {
+        durchschnittsgewichtSection.classList.remove('d-none');
+        durchschnittsgewichtInput.required = true;
+        
+        // Intelligente Vorschläge basierend auf Zutatennamen
+        if (!durchschnittsgewichtInput.value) {
+            const zutatName = document.getElementById('zutat-name').value.toLowerCase();
+            const vorschlag = getDurchschnittsgewichtVorschlag(zutatName);
+            if (vorschlag > 0) {
+                durchschnittsgewichtInput.value = vorschlag;
+                durchschnittsgewichtInput.placeholder = `Vorschlag: ${vorschlag}g`;
+            }
+        }
+    } else {
+        durchschnittsgewichtSection.classList.add('d-none');
+        durchschnittsgewichtInput.required = false;
+        durchschnittsgewichtInput.value = '';
+    }
+}
+
+/**
+ * Schlägt ein Durchschnittsgewicht basierend auf dem Zutatennamen vor
+ * @param {string} zutatName - Der Name der Zutat
+ * @returns {number} - Vorgeschlagenes Gewicht in Gramm
+ */
+function getDurchschnittsgewichtVorschlag(zutatName) {
+    const vorschläge = {
+        'ei': 60,
+        'eier': 60,
+        'zwiebel': 150,
+        'tomate': 120,
+        'kartoffel': 150,
+        'apfel': 180,
+        'zitrone': 100,
+        'gurke': 400,
+        'paprika': 200,
+        'karotte': 100,
+        'mohrrübe': 100,
+        'banane': 120,
+        'putenschnitzel': 100,
+        'schnitzel': 100,
+        'fleischbällchen': 15,
+        'bällchen': 15,
+        'semmelknödel': 80,
+        'knödel': 80,
+        'scheibe': 25,
+        'packung': 250,
+        'dose': 400
+    };
+    
+    for (const [schlüssel, gewicht] of Object.entries(vorschläge)) {
+        if (zutatName.includes(schlüssel)) {
+            return gewicht;
+        }
+    }
+    
+    return 0; // Kein Vorschlag
+}
+
+/**
  * Sammelt alle Daten aus dem Zutat-Formular, validiert sie
  * und gibt sie als sauberes, strukturiertes Objekt zurück.
  * @returns {object|null} Das Zutat-Datenobjekt oder null bei Validierungsfehlern.
@@ -317,6 +421,17 @@ export function getZutatFormularDaten() {
         allergene: [],
         naehrwerte: {}
     };
+
+    // Durchschnittsgewicht nur hinzufügen, wenn das Feld sichtbar und ausgefüllt ist
+    const durchschnittsgewichtSection = document.getElementById('durchschnittsgewicht-section');
+    const durchschnittsgewichtInput = document.getElementById('durchschnittsgewicht');
+    
+    if (!durchschnittsgewichtSection.classList.contains('d-none') && durchschnittsgewichtInput.value) {
+        const gewicht = parseFloat(durchschnittsgewichtInput.value);
+        if (!isNaN(gewicht) && gewicht > 0) {
+            data.gewicht_pro_einheit = gewicht;
+        }
+    }
 
     // Allergene nur hinzufügen, wenn der Bereich sichtbar ist
     if (!allergeneSection.classList.contains('d-none')) {

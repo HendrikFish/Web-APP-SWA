@@ -1,82 +1,54 @@
 [
   {
-    "name": "Tomaten",
-    "kategorie": "Gemüse",
+    "name": "Mehl 405 \"Weizenmehl\"",
+    "kategorie": "trockene Lebensmittel",
     "lieferant": "Transgourmet",
     "preis": {
-      "basis": 2.5,
+      "basis": 1.04,
       "basiseinheit": "kg",
       "verwendungseinheit": "g",
       "umrechnungsfaktor": 1000
     },
-    "herkunft": "Einheimisch",
-    "allergene": [],
-    "naehrwerte": {
-      "kalorien_kcal": 18,
-      "fett_g": 0.2,
-      "davon_zucker_g": 2.6,
-      "eiweiss_g": 0.9,
-      "kohlenhydrate_g": 3.9,
-      "salz_g": 0.005
-    },
-    "id": "zutat-1750769178658-4d3e5fd3",
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751178935431-zqkr8dy",
     "zutatennummer": 1,
     "isActive": true
   },
   {
-    "name": "Hähnchenbrust",
-    "kategorie": "Fleisch (frisch)",
-    "lieferant": "Eurogast",
+    "name": "Eier",
+    "kategorie": "Eier",
+    "lieferant": "Transgourmet",
     "preis": {
-      "basis": 8.99,
-      "basiseinheit": "kg",
-      "verwendungseinheit": "g",
-      "umrechnungsfaktor": 1000
+      "basis": 0.2,
+      "basiseinheit": "Stk.",
+      "verwendungseinheit": "Stk.",
+      "umrechnungsfaktor": 1
     },
-    "herkunft": "EU",
-    "allergene": [],
-    "naehrwerte": {
-      "kalorien_kcal": 110,
-      "fett_g": 1.2,
-      "davon_zucker_g": 0,
-      "eiweiss_g": 23.1,
-      "kohlenhydrate_g": 0,
-      "salz_g": 0.065
-    },
-    "id": "zutat-1750769178665-a16376b4",
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "C",
+        "name": "Eier"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751178991769-y89bqvv",
     "zutatennummer": 2,
     "isActive": true
   },
   {
-    "name": "Olivenöl",
-    "kategorie": "Flüssigkeiten",
-    "lieferant": "Hügli",
-    "preis": {
-      "basis": 6.5,
-      "basiseinheit": "l",
-      "verwendungseinheit": "ml",
-      "umrechnungsfaktor": 1000
-    },
-    "herkunft": "EU",
-    "allergene": [],
-    "naehrwerte": {
-      "kalorien_kcal": 884,
-      "fett_g": 100,
-      "davon_zucker_g": 0,
-      "eiweiss_g": 0,
-      "kohlenhydrate_g": 0,
-      "salz_g": 0
-    },
-    "id": "zutat-1750769178671-3589575a",
-    "zutatennummer": 3,
-    "isActive": true
-  },
-  {
-    "name": "Vollmilch 3.5%",
+    "name": "Milch ESL 3,5%",
     "kategorie": "Milchprodukte",
     "lieferant": "Pinzgau-Milch",
     "preis": {
-      "basis": 1.09,
+      "basis": 1.02,
       "basiseinheit": "l",
       "verwendungseinheit": "ml",
       "umrechnungsfaktor": 1000
@@ -88,24 +60,34 @@
         "name": "Laktose"
       }
     ],
-    "naehrwerte": {
-      "kalorien_kcal": 64,
-      "fett_g": 3.5,
-      "davon_zucker_g": 4.8,
-      "eiweiss_g": 3.4,
-      "kohlenhydrate_g": 4.8,
-      "salz_g": 0.13
+    "naehrwerte": {},
+    "id": "zutat-1751179031602-5isw87w",
+    "zutatennummer": 3,
+    "isActive": true
+  },
+  {
+    "name": "Tomaten Pulpe",
+    "kategorie": "Konserven",
+    "lieferant": "ChefsCulinar",
+    "preis": {
+      "basis": 1.72,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
     },
-    "id": "zutat-1750769178676-7af2cdda",
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179143119-3uflbaj",
     "zutatennummer": 4,
     "isActive": true
   },
   {
-    "name": "Butter",
-    "kategorie": "Milchprodukte",
-    "lieferant": "Pinzgau-Milch",
+    "name": "Penne \"Recheis\"",
+    "kategorie": "trockene Lebensmittel",
+    "lieferant": "Transgourmet",
     "preis": {
-      "basis": 14.52,
+      "basis": 2.65,
       "basiseinheit": "kg",
       "verwendungseinheit": "g",
       "umrechnungsfaktor": 1000
@@ -113,28 +95,43 @@
     "herkunft": "Einheimisch",
     "allergene": [
       {
-        "code": "G",
-        "name": "Laktose"
+        "code": "A",
+        "name": "Gluten"
       }
     ],
-    "naehrwerte": {
-      "kalorien_kcal": 717,
-      "fett_g": 81.1,
-      "davon_zucker_g": 0.6,
-      "eiweiss_g": 0.9,
-      "kohlenhydrate_g": 0.1,
-      "salz_g": 0.02
-    },
-    "id": "zutat-1750769178682-2ef3f7a1",
+    "naehrwerte": {},
+    "id": "zutat-1751179222982-bba10jw",
     "zutatennummer": 5,
     "isActive": true
   },
   {
-    "name": "Pommes Frites",
-    "kategorie": "Gemüse",
+    "name": "Spghetti \"Recheis\"",
+    "kategorie": "trockene Lebensmittel",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 2.6,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751179255879-nb1a10u",
+    "zutatennummer": 6,
+    "isActive": true
+  },
+  {
+    "name": "Faschiertes frisch \"Rind\"",
+    "kategorie": "Fleisch (frisch)",
     "lieferant": "Kröswang",
     "preis": {
-      "basis": 4.32,
+      "basis": 12.2,
       "basiseinheit": "kg",
       "verwendungseinheit": "g",
       "umrechnungsfaktor": 1000
@@ -142,8 +139,279 @@
     "herkunft": "Einheimisch",
     "allergene": [],
     "naehrwerte": {},
-    "id": "zutat-1750952534286-q2f2zb8",
-    "zutatennummer": 6,
+    "id": "zutat-1751179324937-b0gb1wr",
+    "zutatennummer": 7,
+    "isActive": true
+  },
+  {
+    "name": "Faschiertes frisch \"gemischt\"",
+    "kategorie": "Fleisch (frisch)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 9.5,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179353055-5kpxyih",
+    "zutatennummer": 8,
+    "isActive": true
+  },
+  {
+    "name": "Faschiertes (TK) \"gemischt\"",
+    "kategorie": "Fleisch (TK)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 9.5,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179385767-d0tk4pl",
+    "zutatennummer": 9,
+    "isActive": true
+  },
+  {
+    "name": "Faschiertes (TK) \"Rind\"",
+    "kategorie": "Fleisch (TK)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 9.88,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179417441-nys4wyx",
+    "zutatennummer": 10,
+    "isActive": true
+  },
+  {
+    "name": "Putenschnitzel (TK) natur 100g",
+    "kategorie": "Fleisch (TK)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 1.2,
+      "basiseinheit": "Stk.",
+      "verwendungseinheit": "Stk.",
+      "umrechnungsfaktor": 1
+    },
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179498616-j8u88po",
+    "zutatennummer": 11,
+    "isActive": true
+  },
+  {
+    "name": "Parmesan gerieben",
+    "kategorie": "Milchprodukte",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 13,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "G",
+        "name": "Laktose"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751179566125-8xr6ca1",
+    "zutatennummer": 12,
+    "isActive": true
+  },
+  {
+    "name": "Zwiebelwürfel",
+    "kategorie": "Gemüse",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 1.44,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179610875-u0pte3i",
+    "zutatennummer": 13,
+    "isActive": true
+  },
+  {
+    "name": "Tomatenmark",
+    "kategorie": "Konserven",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 5.4,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179635236-gbo6qo2",
+    "zutatennummer": 14,
+    "isActive": true
+  },
+  {
+    "name": "Rotwein",
+    "kategorie": "Flüssigkeiten",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 2.55,
+      "basiseinheit": "l",
+      "verwendungseinheit": "ml",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "O",
+        "name": "Sulfite"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751179865091-ct5mfiu",
+    "zutatennummer": 15,
+    "isActive": true
+  },
+  {
+    "name": "Rouxe hell",
+    "kategorie": "trockene Lebensmittel",
+    "lieferant": "Hügli",
+    "preis": {
+      "basis": 17,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751179900702-gqzlqzw",
+    "zutatennummer": 16,
+    "isActive": true
+  },
+  {
+    "name": "Roux dunkel",
+    "kategorie": "trockene Lebensmittel",
+    "lieferant": "Hügli",
+    "preis": {
+      "basis": 17,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751179928983-bzxj27a",
+    "zutatennummer": 17,
+    "isActive": true
+  },
+  {
+    "name": "Olivenöl extra vergine",
+    "kategorie": "Flüssigkeiten",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 7.4,
+      "basiseinheit": "l",
+      "verwendungseinheit": "ml",
+      "umrechnungsfaktor": 1000
+    },
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751179969330-eixbffw",
+    "zutatennummer": 18,
+    "isActive": true
+  },
+  {
+    "name": "Fleischbällchen (TK) 15g",
+    "kategorie": "Fleisch (TK)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 8,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "g",
+      "umrechnungsfaktor": 1000
+    },
+    "gewicht_pro_einheit": 15,
+    "herkunft": "EU",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751180100000-fleischbaellchen",
+    "zutatennummer": 19,
+    "isActive": true,
+    "kommentar": "Beispiel für kg→Stück Umrechnung: 1kg = 66,67 Stück à 15g"
+  },
+  {
+    "name": "Semmelknödel (TK) 80g",
+    "kategorie": "Convenience-Produkte",
+    "lieferant": "Transgourmet",
+    "preis": {
+      "basis": 6.5,
+      "basiseinheit": "kg",
+      "verwendungseinheit": "Stk.",
+      "umrechnungsfaktor": 12.5
+    },
+    "gewicht_pro_einheit": 80,
+    "herkunft": "Einheimisch",
+    "allergene": [
+      {
+        "code": "A",
+        "name": "Gluten"
+      },
+      {
+        "code": "C",
+        "name": "Eier"
+      }
+    ],
+    "naehrwerte": {},
+    "id": "zutat-1751180200000-semmelknoedel",
+    "zutatennummer": 20,
+    "isActive": true,
+    "kommentar": "Beispiel für kg→Stück Umrechnung: 1kg = 12,5 Stück à 80g"
+  },
+  {
+    "name": "Hendlbrust frisch",
+    "kategorie": "Fleisch (frisch)",
+    "lieferant": "Kröswang",
+    "preis": {
+      "basis": 1.34,
+      "basiseinheit": "Stk.",
+      "verwendungseinheit": "Stk.",
+      "umrechnungsfaktor": 1
+    },
+    "herkunft": "Einheimisch",
+    "allergene": [],
+    "naehrwerte": {},
+    "id": "zutat-1751180686041-isob9bs",
+    "zutatennummer": 19,
     "isActive": true
   }
 ]

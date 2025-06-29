@@ -11,10 +11,32 @@
         <!-- Der Header wird hier dynamisch durch JavaScript eingefügt -->
     </header>
 
-    <div class="container-fluid">
+    <!-- Mobile Layout (nur sichtbar auf kleinen Bildschirmen) -->
+    <div class="d-md-none container-fluid">
+        <div class="py-3">
+            <h1 class="h3 mb-4">
+                <i class="bi bi-gear-fill me-2"></i>
+                Admin Dashboard
+            </h1>
+            
+            <!-- Mobile Accordion Menu -->
+            <div class="accordion" id="mobileAdminAccordion">
+                <!-- Accordions werden hier dynamisch eingefügt -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Lade...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Lade Admin-Funktionen...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Layout (nur sichtbar auf größeren Bildschirmen) -->
+    <div class="d-none d-md-block container-fluid">
         <div class="row">
             <!-- Sidebar Navigation -->
-            <nav id="admin-sidebar" class="col-md-3 col-lg-2 d-md-block bg-white sidebar vh-100 border-end collapse">
+            <nav id="admin-sidebar" class="col-md-3 col-lg-2 d-md-block bg-white sidebar vh-100 border-end">
                 <div class="position-sticky pt-3">
                     <!-- Die Navigationslinks werden hier dynamisch eingefügt -->
                     <p class="text-muted px-3">Lade Navigation...</p>
@@ -24,17 +46,17 @@
             <!-- Main Content -->
             <main id="admin-content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    
-                    <button class="btn btn-light d-md-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#admin-sidebar" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    
-                    <h1 class="h2" id="admin-content-title">Benutzerverwaltung</h1>
+                    <h1 class="h2" id="admin-content-title">Admin Dashboard</h1>
                 </div>
 
                 <div id="admin-feature-container">
                     <!-- Der Inhalt des ausgewählten Features wird hier geladen -->
-                    <p>Lade Feature...</p>
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Lade...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Lade Feature...</p>
+                    </div>
                 </div>
             </main>
         </div>
