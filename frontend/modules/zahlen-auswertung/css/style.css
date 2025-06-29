@@ -48,6 +48,62 @@
     border-bottom: 1px solid #dee2e6;
 }
 
+/* Tabellen-Spalten mit alternierenden Hintergründen für besseren Überblick */
+.zahlen-tabelle th:nth-child(2),  /* Montag */
+.zahlen-tabelle td:nth-child(2) {
+    background-color: rgba(0, 102, 204, 0.03);
+}
+
+.zahlen-tabelle th:nth-child(3),  /* Dienstag */
+.zahlen-tabelle td:nth-child(3) {
+    background-color: rgba(0, 102, 204, 0.06);
+}
+
+.zahlen-tabelle th:nth-child(4),  /* Mittwoch */
+.zahlen-tabelle td:nth-child(4) {
+    background-color: rgba(0, 102, 204, 0.03);
+}
+
+.zahlen-tabelle th:nth-child(5),  /* Donnerstag */
+.zahlen-tabelle td:nth-child(5) {
+    background-color: rgba(0, 102, 204, 0.06);
+}
+
+.zahlen-tabelle th:nth-child(6),  /* Freitag */
+.zahlen-tabelle td:nth-child(6) {
+    background-color: rgba(0, 102, 204, 0.03);
+}
+
+.zahlen-tabelle th:nth-child(7),  /* Samstag */
+.zahlen-tabelle td:nth-child(7) {
+    background-color: rgba(0, 102, 204, 0.09);
+}
+
+.zahlen-tabelle th:nth-child(8),  /* Sonntag */
+.zahlen-tabelle td:nth-child(8) {
+    background-color: rgba(0, 102, 204, 0.09);
+}
+
+/* Gesamt-Zeile vergrößern */
+.table-secondary.fw-bold {
+    font-size: 1.3rem;      /* Größerer Text für Gesamt-Zeile */
+}
+
+.table-secondary.fw-bold .zahlen-zelle {
+    font-size: 1.4rem;      /* Noch größere Zahlen in der Gesamt-Zeile */
+    font-weight: 700;
+    padding: 1rem 0.75rem;  /* Mehr Padding für bessere Lesbarkeit */
+}
+
+.table-secondary.fw-bold .einrichtung-name {
+    font-size: 1.2rem;      /* "GESAMT" Text größer */
+    font-weight: 700;
+}
+
+.table-secondary.fw-bold .einrichtung-typ {
+    font-size: 1rem;        /* "X Einrichtungen" etwas größer */
+}
+
 /* Einrichtungs-Spalte */
 .einrichtung-info {
     display: flex;
@@ -79,39 +135,78 @@
 }
 
 .zahlen-zelle.null {
+    background-color: transparent;  /* Neutral */
     color: var(--zahlen-secondary);
-    font-weight: 400;
 }
 
 .zahlen-zelle.niedrig {
-    color: var(--zahlen-success);
+    background-color: transparent;  /* Neutral statt rot */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
 }
 
 .zahlen-zelle.mittel {
-    color: var(--zahlen-warning);
+    background-color: transparent;  /* Neutral statt gelb */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
 }
 
 .zahlen-zelle.hoch {
-    color: var(--zahlen-danger);
-    font-weight: 700;
+    background-color: transparent;  /* Neutral statt grün */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
 }
 
 /* Gruppen-Aufschlüsselung */
 .gruppen-detail {
-    font-size: 0.75rem;
-    color: var(--zahlen-secondary);
-    margin-top: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+    align-items: flex-start;
 }
 
 .gruppen-badge {
-    display: inline-block;
-    background-color: var(--zahlen-light);
-    color: var(--zahlen-dark);
-    padding: 0.2rem 0.4rem;
-    border-radius: var(--zahlen-border-radius);
-    font-size: 0.7rem;
-    margin-right: 0.25rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: help;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.gruppen-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Prozentuale Farbklassifizierung für Badges - UMGEDREHT */
+.gruppen-badge.null {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
+}
+
+.gruppen-badge.niedrig {
+    background-color: #f8d7da;  /* ROT - Geringe Auslastung ist problematisch */
+    color: #721c24;
+    border-color: #f5c2c7;
+}
+
+.gruppen-badge.mittel {
+    background-color: #fff3cd;  /* GELB - Mittlere Auslastung ist ok */
+    color: #664d03;
+    border-color: #ffda6a;
+}
+
+.gruppen-badge.hoch {
+    background-color: #d1e7dd;  /* GRÜN - Hohe Auslastung ist optimal! */
+    color: #0f5132;
+    border-color: #badbcc;
 }
 
 /* Gesamt-Spalte */
@@ -124,29 +219,83 @@
 
 /* Info-Button */
 .info-btn {
+    border: none;
+    transition: all 0.3s ease;
     position: relative;
 }
 
-.info-btn.ungelesen {
+/* Gelesen-Status: Grün */
+.info-btn-gelesen {
+    background-color: #28a745;
+    color: white;
+}
+
+.info-btn-gelesen:hover {
+    background-color: #218838;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Ungelesen-Status: Rot pulsierend */
+.info-btn-ungelesen {
+    background-color: #dc3545;
+    color: white;
     animation: pulse 2s infinite;
 }
 
-.info-btn.ungelesen::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--zahlen-danger);
-    border-radius: 50%;
-    border: 2px solid white;
+.info-btn-ungelesen:hover {
+    background-color: #c82333;
+    color: white;
+    transform: scale(1.05);
+    animation: none; /* Stoppe Pulsieren beim Hover */
 }
 
+/* Pulsier-Animation */
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+/* Mobile Info-Buttons - angepasst für kleinere Screens */
+@media (max-width: 768px) {
+    .info-btn {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .info-btn-ungelesen {
+        animation: pulse 1.5s infinite; /* Schnelleres Pulsieren auf Mobile */
+    }
+}
+
+/* Gruppen-Badge ohne Klassifizierung */
+.gruppen-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin: 0.1rem;
+    font-size: 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    color: #495057;
+}
+
+.mobile-gruppe-badge {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    margin: 0.1rem;
+    font-size: 0.7rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.2rem;
+    color: #495057;
 }
 
 /* ===== Mobile-Akkordeon ===== */
@@ -240,15 +389,84 @@
 }
 
 .mobile-tag-anzahl {
-    font-size: 1.2rem;
+    font-size: 1.8rem;      /* Größer für mobile Hauptwerte */
     font-weight: 700;
     color: var(--zahlen-primary);
+    margin-bottom: 4px;
+}
+
+/* Mobile Tag-Anzahl Klassifizierung - Neutral ohne Hintergrundfarbe */
+.mobile-tag-anzahl.null {
+    background-color: transparent;  /* Neutral */
+    color: var(--zahlen-secondary);
+}
+
+.mobile-tag-anzahl.niedrig {
+    background-color: transparent;  /* Neutral statt rot */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
+}
+
+.mobile-tag-anzahl.mittel {
+    background-color: transparent;  /* Neutral statt gelb */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
+}
+
+.mobile-tag-anzahl.hoch {
+    background-color: transparent;  /* Neutral statt grün */
+    color: var(--zahlen-dark);     /* Normale Textfarbe */
+    font-weight: 600;
 }
 
 .mobile-tag-gruppen {
-    font-size: 0.7rem;
-    color: var(--zahlen-secondary);
-    margin-top: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;               /* Kleinerer Gap auch für mobile */
+    margin-top: 6px;
+    align-items: center;
+}
+
+.mobile-gruppe-badge {
+    font-size: 0.8rem;      /* Kleiner für mobile */
+    padding: 3px 6px;       /* Kleinerer Padding */
+    border-radius: 5px;
+    white-space: nowrap;
+    font-weight: 500;       /* Weniger fett */
+    border: 1px solid transparent;
+    cursor: help;
+    transition: all 0.2s ease;
+    min-width: 80px;        /* Kleinere Mindestbreite */
+    text-align: center;
+}
+
+.mobile-gruppe-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Mobile Badge Farben - UMGEDREHT */
+.mobile-gruppe-badge.null {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
+}
+
+.mobile-gruppe-badge.niedrig {
+    background-color: #f8d7da;  /* ROT - Geringe Auslastung ist problematisch */
+    color: #721c24;
+    border-color: #f5c2c7;
+}
+
+.mobile-gruppe-badge.mittel {
+    background-color: #fff3cd;  /* GELB - Mittlere Auslastung ist ok */
+    color: #664d03;
+    border-color: #ffda6a;
+}
+
+.mobile-gruppe-badge.hoch {
+    background-color: #d1e7dd;  /* GRÜN - Hohe Auslastung ist optimal! */
+    color: #0f5132;
+    border-color: #badbcc;
 }
 
 /* ===== Info-Modal ===== */
@@ -522,18 +740,18 @@
     border-radius: var(--zahlen-border-radius);
     padding: 1rem;
     margin-bottom: 1rem;
-    transition: var(--zahlen-transition);
+    transition: all 0.3s ease;
 }
 
 .information-karte.ungelesen {
-    background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
-    border-color: #ff9800;
-    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.1);
+    border-left: 4px solid #dc3545;
+    background-color: #fff5f5;
 }
 
 .information-karte.gelesen {
-    background: #f1f8e9;
-    border-color: #c8e6c9;
+    border-left: 4px solid #198754;
+    background-color: #f8f9fa;
+    opacity: 0.85;
 }
 
 .information-header {
@@ -566,6 +784,12 @@
 .mark-info-read-btn {
     font-size: 0.875rem;
     padding: 0.375rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.mark-info-read-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .mark-info-read-btn:hover {
@@ -573,34 +797,7 @@
     box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
 }
 
-/* Info-Button mit Badge */
-.info-btn {
-    position: relative;
-    overflow: visible;
-}
-
-.info-btn .badge {
-    font-size: 0.6rem;
-    padding: 0.25em 0.4em;
-    line-height: 1;
-    min-width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.info-btn.ungelesen {
-    animation: pulseInfo 2s infinite;
-    border-color: var(--zahlen-warning) !important;
-    color: var(--zahlen-warning) !important;
-}
-
-@keyframes pulseInfo {
-    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
-}
+/* Alte Info-Button Styles entfernt - siehe neue Styles oben */
 
 /* Responsive Informationen */
 @media (max-width: 767.98px) {
@@ -662,4 +859,127 @@
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 0.25rem 0.5rem rgba(0, 102, 204, 0.2);
-} 
+}
+
+/* Zahlen-Hauptwert Styling - VERGRÖSSERT */
+.zahlen-hauptwert {
+    font-weight: 700;
+    font-size: 2.2rem;      /* Deutlich größer - ist die Hauptinfo */
+    color: var(--zahlen-primary);
+    margin-bottom: 8px;
+}
+
+/* Responsive Adjustments - angepasst an neue Größen */
+@media (max-width: 768px) {
+    .mobile-tag-gruppen {
+        margin-top: 4px;
+    }
+    
+    .mobile-gruppe-badge {
+        font-size: 0.75rem;    /* Noch kleiner für sehr kleine Screens */
+        padding: 2px 4px;
+        min-width: 70px;
+    }
+    
+    .gruppen-badge {
+        font-size: 0.8rem;     /* Desktop-Badges auf mobile kleiner */
+        padding: 3px 6px;
+        min-width: 80px;
+    }
+    
+    .zahlen-hauptwert {
+        font-size: 1.8rem;     /* Auf mobile etwas kleiner aber immer noch prominent */
+    }
+    
+    .mobile-tag-anzahl {
+        font-size: 1.5rem;     /* Mobile Hauptwerte angepasst */
+    }
+}
+
+@media (max-width: 480px) {
+    .gruppen-badge {
+        font-size: 0.7rem;     /* Noch kleinere Screens */
+        padding: 2px 4px;
+        min-width: 60px;
+    }
+    
+    .mobile-gruppe-badge {
+        font-size: 0.65rem;
+        padding: 1px 3px;
+        min-width: 50px;
+    }
+    
+    .zahlen-hauptwert {
+        font-size: 1.5rem;     /* Kleinster Screen */
+    }
+    
+    .mobile-tag-anzahl {
+        font-size: 1.3rem;
+    }
+}
+
+/* Tooltip für bessere UX */
+.gruppen-badge[title],
+.mobile-gruppe-badge[title] {
+    position: relative;
+}
+
+.gruppen-badge[title]:hover::after,
+.mobile-gruppe-badge[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 4px;
+}
+
+/* Legende für Prozentklassifizierung */
+.prozent-legende {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.prozent-legende-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.prozent-legende-farbe {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.prozent-legende-farbe.niedrig {
+    background-color: #f8d7da;  /* ROT - Geringe Auslastung ist problematisch */
+}
+
+.prozent-legende-farbe.mittel {
+    background-color: #fff3cd;  /* GELB - Mittlere Auslastung ist ok */
+}
+
+.prozent-legende-farbe.hoch {
+    background-color: #d1e7dd;  /* GRÜN - Hohe Auslastung ist optimal! */
+}
+
+/* Fade-out Animation für entfernte Elemente */
+.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
+}
+

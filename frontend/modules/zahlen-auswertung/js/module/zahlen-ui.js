@@ -3,7 +3,11 @@
  * Rendert Desktop-Tabelle und Mobile-Akkordeon
  */
 
-import { klassifiziereAnzahl, formatiereZeitpunkt } from './bestelldaten-api.js';
+import { 
+    klassifiziereAnzahl, 
+    formatiereZeitpunkt, 
+    berechneProzentAuslastung 
+} from './bestelldaten-api.js';
 
 /**
  * Rendert die Desktop-Tabelle mit Bestelldaten
@@ -11,11 +15,42 @@ import { klassifiziereAnzahl, formatiereZeitpunkt } from './bestelldaten-api.js'
  */
 export function renderDesktopTabelle(bestelldaten) {
     const tbody = document.getElementById('desktop-tabelle-body');
-    if (!tbody) return;
+    if (!tbody) {
+        console.error('❌ desktop-tabelle-body Element nicht gefunden');
+        return;
+    }
 
+    // Leere Tabelle
     tbody.innerHTML = '';
 
-    if (!bestelldaten || bestelldaten.einrichtungen.length === 0) {
+    // Validiere Eingabedaten
+    if (!bestelldaten) {
+        console.error('❌ Keine Bestelldaten erhalten');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-exclamation-triangle fs-3 mb-2"></i>
+                    <br>Fehler beim Laden der Bestelldaten
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    if (!bestelldaten.einrichtungen || !Array.isArray(bestelldaten.einrichtungen)) {
+        console.error('❌ Einrichtungen-Array fehlt oder ist ungültig:', bestelldaten.einrichtungen);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-exclamation-triangle fs-3 mb-2"></i>
+                    <br>Einrichtungsdaten sind fehlerhaft
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    if (bestelldaten.einrichtungen.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="text-center text-muted py-4">
@@ -29,64 +64,133 @@ export function renderDesktopTabelle(bestelldaten) {
 
     const { einrichtungen, tage } = bestelldaten;
     
-    // Rendere Datenzeilen
-    einrichtungen.forEach(einrichtung => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <!-- Einrichtungs-Spalte -->
-            <td class="sticky-col">
-                <div class="einrichtung-info">
-                    <div class="einrichtung-name">${einrichtung.name}</div>
-                    <div class="einrichtung-typ">${einrichtung.typ}</div>
-                    <div class="einrichtung-gruppen">
-                        ${einrichtung.gruppen.map(g => `${g.name}: ${g.anzahl}`).join(' • ')}
+    // Validiere Tage-Array
+    if (!tage || !Array.isArray(tage)) {
+        console.error('❌ Tage-Array fehlt oder ist ungültig:', tage);
+        return;
+    }
+    
+    console.log(`✅ Rendere ${einrichtungen.length} Einrichtungen für KW ${bestelldaten.week}/${bestelldaten.year}`);
+    
+    // Rendere Datenzeilen mit robuster Fehlerbehandlung
+    einrichtungen.forEach((einrichtung, index) => {
+        try {
+            // Validiere Einrichtungsdaten
+            if (!einrichtung || typeof einrichtung !== 'object') {
+                console.error(`❌ Einrichtung ${index + 1} ist ungültig:`, einrichtung);
+                return;
+            }
+
+            if (!einrichtung.id || !einrichtung.name) {
+                console.error(`❌ Einrichtung ${index + 1} fehlt ID oder Name:`, einrichtung);
+                return;
+            }
+
+            if (!einrichtung.tage_daten || typeof einrichtung.tage_daten !== 'object') {
+                console.error(`❌ Einrichtung ${index + 1} fehlt tage_daten:`, einrichtung);
+                return;
+            }
+
+            const tr = document.createElement('tr');
+            
+            // Sichere HTML-Erstellung
+            const einrichtungName = String(einrichtung.name || 'Unbekannt').replace(/[<>&"']/g, '');
+            const einrichtungTyp = String(einrichtung.typ || 'unbekannt').replace(/[<>&"']/g, '');
+            const gruppenText = (einrichtung.gruppen || [])
+                .map(g => `${String(g.name || '').replace(/[<>&"']/g, '')}: ${g.anzahl || 0}`)
+                .join(' • ');
+            
+            tr.innerHTML = `
+                <!-- Einrichtungs-Spalte -->
+                <td class="sticky-col">
+                    <div class="einrichtung-info">
+                        <div class="einrichtung-name">${einrichtungName}</div>
+                        <div class="einrichtung-typ">${einrichtungTyp}</div>
+                        <div class="einrichtung-gruppen">
+                            ${gruppenText}
+                        </div>
                     </div>
-                </div>
-            </td>
-            
-            <!-- Tage-Spalten -->
-            ${tage.map(tag => {
-                const tagData = einrichtung.tage_daten[tag];
-                const summe = tagData.summe;
-                const klassifizierung = klassifiziereAnzahl(summe);
+                </td>
                 
-                return `
-                    <td class="zahlen-zelle ${klassifizierung}">
-                        <div>${summe || '-'}</div>
-                        ${tagData.gruppen_details.length > 0 ? `
-                            <div class="gruppen-detail">
-                                ${tagData.gruppen_details.map(g => `
-                                    <span class="gruppen-badge">${g.gruppe}: ${g.anzahl}</span>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </td>
-                `;
-            }).join('')}
+                <!-- Tage-Spalten -->
+                ${tage.map(tag => {
+                    const tagData = einrichtung.tage_daten[tag];
+                    if (!tagData) {
+                        return `<td class="zahlen-zelle null"><div class="zahlen-hauptwert">-</div></td>`;
+                    }
+                    
+                    const summe = tagData.summe || 0;
+                    
+                    // Berechne prozentuale Klassifizierung für die Gesamtsumme
+                    let dominanteKlassifizierung = 'null';
+                    if (tagData.gruppen_details && Array.isArray(tagData.gruppen_details) && tagData.gruppen_details.length > 0) {
+                        const klassifizierungen = tagData.gruppen_details.map(g => g.klassifizierung || 'null');
+                        if (klassifizierungen.includes('hoch')) dominanteKlassifizierung = 'hoch';
+                        else if (klassifizierungen.includes('mittel')) dominanteKlassifizierung = 'mittel';
+                        else if (klassifizierungen.includes('niedrig')) dominanteKlassifizierung = 'niedrig';
+                    }
+                    
+                    const gruppenDetailsHtml = (tagData.gruppen_details && Array.isArray(tagData.gruppen_details)) 
+                        ? tagData.gruppen_details.map(g => `
+                            <span class="gruppen-badge" title="${g.gruppe}: ${g.anzahl || 0}">
+                                ${String(g.gruppe || '').replace(/[<>&"']/g, '')}: ${g.anzahl || 0}
+                            </span>
+                        `).join('')
+                        : '';
+                    
+                    return `
+                        <td class="zahlen-zelle ${dominanteKlassifizierung}">
+                            <div class="zahlen-hauptwert">${summe || '-'}</div>
+                            ${gruppenDetailsHtml ? `<div class="gruppen-detail">${gruppenDetailsHtml}</div>` : ''}
+                        </td>
+                    `;
+                }).join('')}
+                
+                <!-- Gesamt-Spalte -->
+                <td class="zahlen-zelle gesamt-zelle">
+                    ${einrichtung.gesamt_bestellungen || 0}
+                </td>
+                
+                <!-- Info-Button -->
+                <td class="text-center">
+                    <button class="btn btn-sm info-btn ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
+                            data-einrichtung-id="${einrichtung.id}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#info-modal"
+                            title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen anzeigen'}">
+                        <i class="bi bi-info-circle"></i>
+                    </button>
+                </td>
+            `;
             
-            <!-- Gesamt-Spalte -->
-            <td class="zahlen-zelle gesamt-zelle">
-                ${einrichtung.gesamt_bestellungen}
-            </td>
+            // Füge Zeile zur Tabelle hinzu
+            tbody.appendChild(tr);
+            console.log(`✅ Einrichtung ${index + 1}/${einrichtungen.length} erfolgreich gerendert: ${einrichtungName}`);
             
-            <!-- Info-Button -->
-            <td class="text-center">
-                <button class="btn btn-sm btn-outline-info info-btn ${(!einrichtung.read || einrichtung.hatUngeleseneInfos) ? 'ungelesen' : ''}" 
-                        data-einrichtung-id="${einrichtung.id}"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#info-modal"
-                        title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen anzeigen'}">
-                    <i class="bi bi-info-circle"></i>
-                    ${einrichtung.hatUngeleseneInfos ? `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${einrichtung.anzahlUngeleseneInfos}</span>` : ''}
-                </button>
-            </td>
-        `;
-        
-        tbody.appendChild(tr);
+        } catch (error) {
+            console.error(`❌ Fehler beim Rendern von Einrichtung ${index + 1}:`, error);
+            console.error('Einrichtungsdaten:', einrichtung);
+            
+            // Füge Fehler-Zeile hinzu
+            const errorTr = document.createElement('tr');
+            errorTr.innerHTML = `
+                <td colspan="10" class="text-center text-danger py-2">
+                    <small><i class="bi bi-exclamation-triangle"></i> Fehler beim Laden von Einrichtung ${index + 1}</small>
+                </td>
+            `;
+            tbody.appendChild(errorTr);
+        }
     });
     
+    console.log(`✅ Tabellen-Rendering abgeschlossen: ${tbody.children.length - 1} Zeilen erstellt (ohne Summen-Zeile)`);
+    
     // Füge Summen-Zeile hinzu
-    rendereDesktopSummenZeile(tbody, bestelldaten);
+    try {
+        rendereDesktopSummenZeile(tbody, bestelldaten);
+        console.log('✅ Summen-Zeile hinzugefügt');
+    } catch (error) {
+        console.error('❌ Fehler beim Rendern der Summen-Zeile:', error);
+    }
 }
 
 /**
@@ -176,14 +280,13 @@ export function renderMobileAkkordeon(bestelldaten) {
                     </div>
                     <div class="mobile-wochensumme">
                         <span>${einrichtung.gesamt_bestellungen}</span>
-                        <button class="btn btn-sm btn-outline-light info-btn ${(!einrichtung.read || einrichtung.hatUngeleseneInfos) ? 'ungelesen' : ''}" 
+                        <button class="btn btn-sm info-btn ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
                                 data-einrichtung-id="${einrichtung.id}"
                                 data-bs-toggle="modal" 
                                 data-bs-target="#info-modal"
                                 onclick="event.stopPropagation()"
                                 title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen'}">
                             <i class="bi bi-info-circle"></i>
-                            ${einrichtung.hatUngeleseneInfos ? `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${einrichtung.anzahlUngeleseneInfos}</span>` : ''}
                         </button>
                         <i class="bi bi-chevron-down accordion-icon"></i>
                     </div>
@@ -195,17 +298,29 @@ export function renderMobileAkkordeon(bestelldaten) {
                 <div class="mobile-tage-grid">
                     ${tage.map(tag => {
                         const tagData = einrichtung.tage_daten[tag];
-                        const klassifizierung = klassifiziereAnzahl(tagData.summe);
+                        
+                        // Berechne dominante Klassifizierung für Mobile-Ansicht
+                        let dominanteKlassifizierung = 'null';
+                        if (tagData.gruppen_details.length > 0) {
+                            const klassifizierungen = tagData.gruppen_details.map(g => g.klassifizierung);
+                            if (klassifizierungen.includes('hoch')) dominanteKlassifizierung = 'hoch';
+                            else if (klassifizierungen.includes('mittel')) dominanteKlassifizierung = 'mittel';
+                            else if (klassifizierungen.includes('niedrig')) dominanteKlassifizierung = 'niedrig';
+                        }
                         
                         return `
                             <div class="mobile-tag-karte">
                                 <div class="mobile-tag-name">${getTagDisplayName(tag)}</div>
-                                <div class="mobile-tag-anzahl ${klassifizierung}">
+                                <div class="mobile-tag-anzahl ${dominanteKlassifizierung}">
                                     ${tagData.summe || 0}
                                 </div>
                                 ${tagData.gruppen_details.length > 0 ? `
                                     <div class="mobile-tag-gruppen">
-                                        ${tagData.gruppen_details.map(g => `${g.gruppe}: ${g.anzahl}`).join(', ')}
+                                        ${tagData.gruppen_details.map(g => 
+                                            `<span class="mobile-gruppe-badge" title="${g.gruppe}: ${g.anzahl}">
+                                                ${g.gruppe}: ${g.anzahl}
+                                            </span>`
+                                        ).join('')}
                                     </div>
                                 ` : ''}
                             </div>
