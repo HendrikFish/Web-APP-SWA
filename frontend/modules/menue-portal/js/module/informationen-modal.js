@@ -356,7 +356,7 @@ async function loadAndDisplayInformationen(tag) {
             const istGelesen = info.read === true;
             const istEigeneInformation = currentUser && info.ersteller_id === currentUser.id;
             
-            // Gelesen-Status UI
+            // Vereinfachter Gelesen-Status ohne Aktionen
             const gelesenStatusHTML = istGelesen ? `
                 <div class="gelesen-status">
                     <i class="bi bi-check-circle-fill text-success"></i>
@@ -369,11 +369,6 @@ async function loadAndDisplayInformationen(tag) {
                 <div class="gelesen-status">
                     <i class="bi bi-circle text-muted"></i>
                     <small class="text-muted">Noch nicht gelesen</small>
-                    ${!istEigeneInformation ? `
-                        <button type="button" class="btn btn-sm btn-outline-success ms-2" onclick="markAsRead('${info.id}')">
-                            <i class="bi bi-check"></i> Als gelesen markieren
-                        </button>
-                    ` : ''}
                 </div>
             `;
             
@@ -391,16 +386,12 @@ async function loadAndDisplayInformationen(tag) {
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteInformation('${info.id}')">
                                     <i class="bi bi-trash"></i> Löschen
                                 </button>
-                            ` : `
-                                <button type="button" class="btn btn-sm btn-outline-info" onclick="expandInformation('${info.id}')">
-                                    <i class="bi bi-eye"></i> Details anzeigen
-                                </button>
-                            `}
+                            ` : ''}
                         </div>
                     </div>
                     <div class="information-content">
                         <h5 class="information-title">${info.titel}</h5>
-                        <p class="information-text ${istGelesen ? '' : 'collapsed-text'}" id="text-${info.id}">
+                        <p class="information-text" id="text-${info.id}">
                             ${info.inhalt}
                         </p>
                         ${gelesenStatusHTML}
@@ -590,89 +581,6 @@ function getPriorityIcon(prioritaet) {
     };
     return icons[prioritaet] || icons['normal'];
 }
-
-/**
- * Markiert eine Information als gelesen
- * @param {string} informationId - ID der Information
- */
-window.markAsRead = async function(informationId) {
-    try {
-        console.log('👁️ Markiere Information als gelesen:', informationId);
-        
-        const response = await markInformationAsRead(informationId);
-        
-        if (response.success) {
-            showToast('Information als gelesen markiert!', 'success');
-            
-            // Informationen neu laden um Gelesen-Status zu aktualisieren
-            const tagDatumText = document.getElementById('information-tag-datum').textContent;
-            const [tagName] = tagDatumText.split(', ');
-            
-            const tagMap = {
-                'Montag': 'montag',
-                'Dienstag': 'dienstag', 
-                'Mittwoch': 'mittwoch',
-                'Donnerstag': 'donnerstag',
-                'Freitag': 'freitag',
-                'Samstag': 'samstag',
-                'Sonntag': 'sonntag'
-            };
-            
-            const tag = tagMap[tagName];
-            
-            // Globale Daten aktualisieren und UI neu laden
-            if (currentEinrichtung) {
-                await loadInformationenDataFromAPI();
-                await loadAndDisplayInformationen(tag);
-                
-                // Information-Button-Zustände auch aktualisieren
-                window.dispatchEvent(new CustomEvent('informationUpdated', {
-                    detail: { informationId, tag }
-                }));
-            }
-            
-        } else {
-            showToast(response.message || 'Fehler beim Markieren als gelesen', 'error');
-        }
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Markieren als gelesen:', error);
-        showToast('Netzwerkfehler beim Markieren als gelesen', 'error');
-    }
-};
-
-/**
- * Zeigt/Versteckt die Details einer Information und markiert sie automatisch als gelesen
- * @param {string} informationId - ID der Information
- */
-window.expandInformation = async function(informationId) {
-    try {
-        const textElement = document.getElementById(`text-${informationId}`);
-        const informationItem = document.querySelector(`[data-id="${informationId}"]`);
-        
-        if (!textElement || !informationItem) return;
-        
-        const isCollapsed = textElement.classList.contains('collapsed-text');
-        
-        if (isCollapsed) {
-            // Details anzeigen
-            textElement.classList.remove('collapsed-text');
-            informationItem.classList.add('expanded');
-            
-            // Automatisch als gelesen markieren wenn Details angezeigt werden
-            if (informationItem.classList.contains('ungelesen')) {
-                await markAsRead(informationId);
-            }
-        } else {
-            // Details verstecken
-            textElement.classList.add('collapsed-text');
-            informationItem.classList.remove('expanded');
-        }
-        
-    } catch (error) {
-        console.error('❌ Fehler beim Erweitern der Information:', error);
-    }
-};
 
 /**
  * Lädt Informationen-Daten für die aktuelle Woche und Einrichtung
