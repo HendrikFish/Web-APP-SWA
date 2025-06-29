@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const User = require('../../../models/User'); // Das User-Modell für DB-Zugriff
 
-const notificationsFilePath = path.join(__dirname, '../../../../shared/data/notifications.json');
+const notificationsFilePath = path.join(__dirname, '../../../../shared/data/admin_notification/notifications.json');
 
 const getUnreadNotifications = async (req, res) => {
     try {

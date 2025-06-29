@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuidv4 } = require('uuid'); // Zur Erzeugung eindeutiger IDs
 
-const notificationsFilePath = path.join(__dirname, '../../../../shared/data/notifications.json');
+const notificationsFilePath = path.join(__dirname, '../../../../shared/data/admin_notification/notifications.json');
 
 const createNotification = async (req, res) => {
     try {

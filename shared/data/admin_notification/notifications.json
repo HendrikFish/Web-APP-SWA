@@ -1,0 +1,26 @@
+[
+  {
+    "id": "75f6e6ce-5693-4453-b0f9-3d697e5c7aae",
+    "title": "Test",
+    "message": "Test",
+    "trigger": "onLogin",
+    "triggerValue": null,
+    "targetRoles": [
+      "Koch"
+    ],
+    "active": true,
+    "createdAt": "2025-06-22T21:31:30.239Z"
+  },
+  {
+    "id": "65f35ca9-c561-4c66-811f-b58e22872efa",
+    "title": "Test",
+    "message": "Versuch NR  1. IM Menü",
+    "trigger": "once",
+    "triggerValue": null,
+    "targetRoles": [
+      "admin"
+    ],
+    "active": true,
+    "createdAt": "2025-06-29T05:25:23.180Z"
+  }
+]

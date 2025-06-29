@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const notificationsFilePath = path.join(__dirname, '../../../../shared/data/notifications.json');
+const notificationsFilePath = path.join(__dirname, '../../../../shared/data/admin_notification/notifications.json');
 
 const deleteNotification = async (req, res) => {
     try {
