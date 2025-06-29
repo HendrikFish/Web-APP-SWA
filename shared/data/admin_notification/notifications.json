@@ -12,15 +12,15 @@
     "createdAt": "2025-06-22T21:31:30.239Z"
   },
   {
-    "id": "65f35ca9-c561-4c66-811f-b58e22872efa",
-    "title": "Test",
-    "message": "Versuch NR  1. IM Menü",
-    "trigger": "once",
+    "id": "4391718d-6655-40a8-87af-234607eb368b",
+    "title": "Test NR 2.",
+    "message": "HALLO Du Sau",
+    "trigger": "onLogin",
     "triggerValue": null,
     "targetRoles": [
       "admin"
     ],
     "active": true,
-    "createdAt": "2025-06-29T05:25:23.180Z"
+    "createdAt": "2025-06-29T05:31:39.438Z"
   }
 ]

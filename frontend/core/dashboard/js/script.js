@@ -14,7 +14,7 @@ import '../css/style.css';
 
 import { initializeHeader } from '@shared/components/header/header.js';
 import allModules from '@shared/config/module-config.json';
-import { showToast } from '@shared/components/toast-notification/toast-notification.js';
+import { showToast, showNotificationToast } from '@shared/components/toast-notification/toast-notification.js';
 import { getUnreadNotifications, markNotificationAsRead } from './module/notification-api.js';
 
 // DOM-Elemente
@@ -72,7 +72,8 @@ async function fetchAndShowNotifications() {
 
     if (notifications && notifications.length > 0) {
         notifications.forEach(notification => {
-            showToast(notification.title, notification.message);
+            // Verwende die neue showNotificationToast Funktion für Titel und Nachricht
+            showNotificationToast(notification.title, notification.message, 'info', 6000);
             // Markiere die Benachrichtigung sofort als gelesen, um sie nicht erneut anzuzeigen.
             markNotificationAsRead(notification.id);
         });

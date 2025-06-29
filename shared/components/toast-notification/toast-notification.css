@@ -83,6 +83,29 @@
     filter: brightness(0) invert(1);
 }
 
+/* Toast Header (für Admin-Benachrichtigungen) */
+.toast .toast-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+.toast .toast-header strong {
+    font-size: 0.95rem;
+}
+
+.toast .toast-header .btn-close {
+    padding: 0.375rem 0.375rem;
+    margin-left: auto;
+}
+
+/* Toast Body (für Admin-Benachrichtigungen) */
+.toast .toast-body {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
 /* Animation Improvements */
 .toast.showing {
     animation: toastSlideIn 0.3s ease-out forwards;
