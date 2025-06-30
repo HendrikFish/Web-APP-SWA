@@ -220,3 +220,8 @@ npm start
 - `ANFÄNGER-GUIDE.md` (ausführliche Erklärungen)
 - `README.md` (technische Details)
 - Konsole (F12) für Fehlermeldungen 
+
+- 📋 [**README.md**](README.md) - Hauptdokumentation mit Architektur & Regeln
+- 📋 [**DEVELOPMENT-SETUP.md**](DEVELOPMENT-SETUP.md) - Setup-Anleitung für neue Entwickler  
+- 📋 [**GIT-KONVENTIONEN.md**](GIT-KONVENTIONEN.md) - Git Commit Standards (Deutsch)
+- 🧪 [**MCP-BROWSER-TOOLS-GUIDELINES.md**](MCP-BROWSER-TOOLS-GUIDELINES.md) - Qualitätssicherung mit Browser Tools 
