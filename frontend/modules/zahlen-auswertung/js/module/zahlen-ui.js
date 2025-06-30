@@ -536,6 +536,35 @@ export function renderInfoModal(einrichtung, bestelldaten) {
             </div>
         </div>
         
+        <!-- Prozentuale Auslastung Legende -->
+        <div class="info-section">
+            <div class="alert alert-info mb-0">
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Prozentuale Auslastung:</strong>
+                    </div>
+                    <div class="prozent-legende">
+                        <div class="prozent-legende-item">
+                            <div class="prozent-legende-farbe niedrig"></div>
+                            <span>1-50% (Niedrig) - Geringe Auslastung</span>
+                        </div>
+                        <div class="prozent-legende-item">
+                            <div class="prozent-legende-farbe mittel"></div>
+                            <span>51-80% (Mittel) - Gute Auslastung</span>
+                        </div>
+                        <div class="prozent-legende-item">
+                            <div class="prozent-legende-farbe hoch"></div>
+                            <span>81-100%+ (Hoch) - Optimale Auslastung</span>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    Farben basieren auf dem Verhältnis der aktuellen Bestellungen zur maximalen Gruppenstärke der Einrichtung.
+                </small>
+            </div>
+        </div>
+        
         <!-- Lesebestätigung -->
         <div class="info-section">
             <div class="lesebestaetigung-info ${einrichtung.read ? 'lesebestaetigung-erfolg' : ''}">

@@ -19,6 +19,29 @@
 /* ===== Desktop-Tabelle ===== */
 .zahlen-tabelle {
     font-size: 0.9rem;
+    table-layout: fixed; /* Ermöglicht gleichmäßige Spaltenbreiten */
+}
+
+/* Gleichmäßige Spaltenbreiten für Wochentage MO-SO, Gesamt und Info */
+.zahlen-tabelle th:nth-child(2),  /* MO */
+.zahlen-tabelle th:nth-child(3),  /* DI */
+.zahlen-tabelle th:nth-child(4),  /* MI */
+.zahlen-tabelle th:nth-child(5),  /* DO */
+.zahlen-tabelle th:nth-child(6),  /* FR */
+.zahlen-tabelle th:nth-child(7),  /* SA */
+.zahlen-tabelle th:nth-child(8),  /* SO */
+.zahlen-tabelle th:nth-child(9),  /* Gesamt */
+.zahlen-tabelle th:nth-child(10), /* Info */
+.zahlen-tabelle td:nth-child(2),  /* MO */
+.zahlen-tabelle td:nth-child(3),  /* DI */
+.zahlen-tabelle td:nth-child(4),  /* MI */
+.zahlen-tabelle td:nth-child(5),  /* DO */
+.zahlen-tabelle td:nth-child(6),  /* FR */
+.zahlen-tabelle td:nth-child(7),  /* SA */
+.zahlen-tabelle td:nth-child(8),  /* SO */
+.zahlen-tabelle td:nth-child(9),  /* Gesamt */
+.zahlen-tabelle td:nth-child(10)  /* Info */ {
+    width: 120px;
 }
 
 .zahlen-tabelle .sticky-col {
@@ -26,8 +49,12 @@
     left: 0;
     background-color: var(--bs-body-bg);
     z-index: 10;
-    min-width: 200px;
+    width: auto;
+    min-width: 160px;
+    max-width: 220px;
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
 }
 
 .zahlen-tabelle thead .sticky-col {
@@ -123,19 +150,22 @@
 }
 
 .einrichtung-gruppen {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--zahlen-dark);
-    line-height: 1.2;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .einrichtung-gruppen span {
     font-weight: 600;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .einrichtung-gruppen div {
-    margin: 1px 0;
+    margin: 0;
+    display: inline-block;
+    margin-right: 0.5rem;
 }
 
 /* Zahlen-Zellen */
@@ -143,6 +173,14 @@
     text-align: center;
     font-weight: 600;
     min-width: 80px;
+}
+
+/* Gesamt und Info Spalten gleiche Breite wie Wochentage */
+.zahlen-tabelle th:nth-child(9),
+.zahlen-tabelle th:nth-child(10),
+.zahlen-tabelle td:nth-child(9),
+.zahlen-tabelle td:nth-child(10) {
+    width: 120px;
 }
 
 .zahlen-zelle.null {

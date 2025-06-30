@@ -225,21 +225,53 @@ function setupEventListeners() {
  * Setup Event-Listener für Info-Modal
  */
 function setupInfoModalListeners() {
-    // Modal wird geöffnet - Einrichtung laden
     const modal = document.getElementById('info-modal');
-    if (modal) {
-        modal.addEventListener('show.bs.modal', (e) => {
-            const triggerButton = e.relatedTarget;
-            const einrichtungId = triggerButton?.getAttribute('data-einrichtung-id');
-            
-            if (einrichtungId && aktuelleBestelldaten) {
-                const einrichtung = aktuelleBestelldaten.einrichtungen.find(e => e.id === einrichtungId);
-                if (einrichtung) {
-                    renderInfoModal(einrichtung, aktuelleBestelldaten);
-                }
+    if (!modal) return;
+    
+    let triggerElement = null; // Referenz für Focus-Rückkehr
+    
+    // Modal wird geöffnet - Einrichtung laden
+    modal.addEventListener('show.bs.modal', (e) => {
+        triggerElement = e.relatedTarget; // Speichere auslösendes Element
+        const einrichtungId = triggerElement?.getAttribute('data-einrichtung-id');
+        
+        if (einrichtungId && aktuelleBestelldaten) {
+            const einrichtung = aktuelleBestelldaten.einrichtungen.find(e => e.id === einrichtungId);
+            if (einrichtung) {
+                renderInfoModal(einrichtung, aktuelleBestelldaten);
             }
-        });
-    }
+        }
+    });
+    
+    // Modal ist vollständig geöffnet - Focus management
+    modal.addEventListener('shown.bs.modal', () => {
+        // Entferne aria-hidden explizit (Bootstrap Bug workaround)
+        modal.removeAttribute('aria-hidden');
+        
+        // Setze Focus auf ersten focusable Element im Modal
+        const firstFocusable = modal.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) {
+            firstFocusable.focus();
+        }
+    });
+    
+    // Modal beginnt sich zu schließen - Focus preparation
+    modal.addEventListener('hide.bs.modal', () => {
+        // Entferne Focus von allen Modal-Elementen
+        const focusedElement = modal.querySelector(':focus');
+        if (focusedElement) {
+            focusedElement.blur();
+        }
+    });
+    
+    // Modal ist vollständig geschlossen - Focus zurücksetzen
+    modal.addEventListener('hidden.bs.modal', () => {
+        // Focus zurück zum auslösenden Element
+        if (triggerElement && typeof triggerElement.focus === 'function') {
+            triggerElement.focus();
+        }
+        triggerElement = null; // Referenz löschen
+    });
     
     // Als-Gelesen-Markieren Button (für Bestelldaten)
     const markReadBtn = document.getElementById('lesebestaetigung-btn');
