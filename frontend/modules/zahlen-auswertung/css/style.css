@@ -124,7 +124,18 @@
 
 .einrichtung-gruppen {
     font-size: 0.75rem;
-    color: var(--zahlen-info);
+    color: var(--zahlen-dark);
+    line-height: 1.2;
+}
+
+.einrichtung-gruppen span {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.einrichtung-gruppen div {
+    margin: 1px 0;
 }
 
 /* Zahlen-Zellen */
@@ -160,10 +171,12 @@
 /* Gruppen-Aufschlüsselung */
 .gruppen-detail {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    gap: 8px;
     margin-top: 6px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .gruppen-badge {
@@ -984,219 +997,14 @@
 }
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
-/* XL+: Desktop (1200px+) - Vollständige Tabelle */
-/* LG: Tablet (992px-1199px) - Kompakte Tabelle */ 
-/* MD-: Smartphone (bis 991px) - Tageweise Ansicht */
-
-/* ===== TABLET-ANSICHT (992px - 1199px) ===== */
-.tablet-tabelle {
-    font-size: 0.9rem; /* Kompakter als Desktop */
-}
-
-.tablet-tabelle .sticky-col {
-    min-width: 140px; /* Schmaler als Desktop */
-    background-color: var(--zahlen-light);
-    border-right: 2px solid var(--zahlen-primary);
-}
-
-.tablet-tabelle th {
-    padding: 0.6rem 0.4rem; /* Kompakter */
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.tablet-tabelle td {
-    padding: 0.6rem 0.4rem; /* Kompakter */
-    vertical-align: middle;
-}
-
-/* Tablet-spezifische Einrichtungs-Info */
-.einrichtung-info-compact {
-    text-align: left;
-}
-
-.einrichtung-name-compact {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--zahlen-dark);
-    margin-bottom: 0.2rem;
-    line-height: 1.2;
-}
-
-.einrichtung-typ-compact {
-    font-size: 0.75rem;
-    color: var(--zahlen-secondary);
-    text-transform: uppercase;
-    font-weight: 500;
-}
-
-/* Tablet-spezifische Zahlen-Zellen */
-.zahlen-zelle-compact {
-    text-align: center;
-    vertical-align: middle;
-    position: relative;
-    min-width: 50px; /* Schmaler als Desktop */
-    padding: 0.5rem 0.3rem;
-}
-
-.zahlen-hauptwert-compact {
-    font-weight: 700;
-    font-size: 1.4rem; /* Kleiner als Desktop */
-    color: var(--zahlen-primary);
-    margin-bottom: 0;
-}
-
-.gesamt-zelle-compact {
-    background-color: var(--zahlen-light);
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--zahlen-primary);
-}
-
-/* Tablet Info-Button */
-.info-btn-compact {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.6rem;
-}
-
-/* ===== SMARTPHONE-ANSICHT (bis 991px) ===== */
-.smartphone-tag-sektion {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.smartphone-tag-header {
-    background: linear-gradient(135deg, var(--zahlen-primary), #0056b3);
-    color: white;
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.smartphone-tag-titel {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-}
-
-.smartphone-tag-summe .badge {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    background-color: rgba(255,255,255,0.2) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.3);
-}
-
-.smartphone-einrichtungen-liste {
-    padding: 0;
-}
-
-.smartphone-einrichtung-karte {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid #f1f3f4;
-    position: relative;
-    transition: background-color 0.2s ease;
-}
-
-.smartphone-einrichtung-karte:last-child {
-    border-bottom: none;
-}
-
-.smartphone-einrichtung-karte:hover {
-    background-color: #f8f9fa;
-}
-
-/* Keine Bestellung - kompakt */
-.smartphone-einrichtung-karte.keine-bestellung {
-    padding: 0.75rem 1.25rem;
-    opacity: 0.6;
-}
-
-.smartphone-einrichtung-karte.keine-bestellung .smartphone-einrichtung-header {
-    margin-bottom: 0;
-}
-
-/* Mit Bestellung - detailliert */
-.smartphone-einrichtung-karte.mit-bestellung {
-    padding: 1rem 1.25rem;
-}
-
-.smartphone-einrichtung-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.smartphone-einrichtung-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--zahlen-dark);
-    margin-right: 1rem;
-    flex: 1;
-}
-
-.smartphone-anzahl {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--zahlen-primary);
-    background: linear-gradient(135deg, var(--zahlen-primary), #0056b3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.smartphone-anzahl-null {
-    font-size: 1.2rem;
-    color: var(--zahlen-secondary);
-    font-weight: 500;
-}
-
-.smartphone-einrichtung-typ {
-    font-size: 0.8rem;
-    color: var(--zahlen-secondary);
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 0.75rem;
-}
-
-.smartphone-gruppen-detail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
-}
-
-.smartphone-gruppe-badge {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-    background-color: #e3f2fd;
-    color: #1565c0;
-    border-radius: 12px;
-    border: 1px solid #bbdefb;
-    font-weight: 500;
-}
-
-.smartphone-info-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 0.9rem;
-    padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-}
+/* 819px+: Desktop + Tablet (iPad 820px) - Gleiche Tabelle, nur unterschiedliche Spaltenbreiten */
+/* bis 818px: Smartphone - Akkordeon mit Tagen (verwendet bestehende mobile-* Klassen) */
 
 /* ===== RESPONSIVE BREAKPOINTS ANPASSUNGEN ===== */
 
-/* Large Devices (Tablets) - 992px bis 1199px */
-@media (min-width: 992px) and (max-width: 1199.98px) {
+/* Large Devices (Tablets) - 819px bis 1170px (iPad Air optimiert) */
+/* Tablet nutzt die gleiche Desktop-Tabelle, nur schmäler */
+@media (min-width: 819px) and (max-width: 1170.98px) {
     .container-fluid {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -1211,10 +1019,39 @@
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
     }
+    
+    /* Tablet-optimierte Desktop-Tabelle */
+    .zahlen-tabelle .sticky-col {
+        min-width: 140px; /* Schmaler als Desktop (war 180px) */
+    }
+    
+    .zahlen-tabelle th,
+    .zahlen-tabelle td {
+        padding: 0.6rem 0.4rem; /* Kompakter als Desktop */
+        font-size: 0.9rem;
+    }
+    
+    .zahlen-tabelle .gruppen-badge {
+        font-size: 0.75rem;
+        padding: 2px 5px;
+        margin: 1px;
+    }
+    
+    .zahlen-tabelle .zahlen-hauptwert {
+        font-size: 1.4rem; /* Kleiner als Desktop */
+    }
+    
+    .zahlen-tabelle .einrichtung-name {
+        font-size: 0.9rem;
+    }
+    
+    .zahlen-tabelle .einrichtung-typ {
+        font-size: 0.75rem;
+    }
 }
 
-/* Medium Devices und kleiner (Smartphones) - bis 991px */
-@media (max-width: 991.98px) {
+/* Medium Devices und kleiner (Smartphones) - bis 818px */
+@media (max-width: 818px) {
     .container-fluid {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
@@ -1223,66 +1060,347 @@
     .card-body {
         padding: 0.75rem;
     }
-    
-    /* Smartphone Tag-Header anpassbar */
-    .smartphone-tag-header {
-        padding: 0.875rem 1rem;
-    }
-    
-    .smartphone-tag-titel {
-        font-size: 1rem;
-    }
-    
-    .smartphone-einrichtung-karte {
-        padding: 0.875rem 1rem;
-    }
-    
-    .smartphone-anzahl {
-        font-size: 1.6rem;
-    }
 }
 
 /* Small Devices (kleine Smartphones) - bis 575px */
 @media (max-width: 575.98px) {
-    .smartphone-tag-header {
-        padding: 0.75rem;
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem;
+    }
+}
+
+/* ===== SMARTPHONE-ANSICHT OPTIMIERT ===== */
+
+@media (max-width: 818px) {
+    /* Container-Optimierung */
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem;
+    }
+    
+    /* Navigation horizontal nebeneinander */
+    .week-navigation-compact {
+        margin-bottom: 1rem;
+    }
+    
+    .week-navigation-compact .d-flex {
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .week-navigation-compact .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        min-width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Akkordeon-Container */
+    #smartphone-tage-accordion {
+        display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        text-align: center;
+        gap: 6px;
+        margin-top: 1rem;
     }
     
-    .smartphone-tag-titel {
-        font-size: 0.95rem;
+    /* Akkordeon-Items */
+    .mobile-accordion-item {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid #e9ecef;
     }
     
-    .smartphone-einrichtung-karte {
+    /* Akkordeon-Header (nur Wochentag + Datum) */
+    .mobile-accordion-header {
+        background: #f8f9fa;
+        color: #495057;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .mobile-accordion-header:hover {
+        background: #e9ecef;
+    }
+    
+    .mobile-accordion-header.aktiv {
+        background: #007bff;
+        color: white;
+        border-bottom-color: #007bff;
+    }
+    
+    /* Header-Content (nur Tag + Datum) */
+    .mobile-tag-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+    
+    .mobile-tag-name {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .mobile-tag-datum {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+    
+    /* Info-Button (nur im geöffneten Zustand sichtbar) */
+    .mobile-tag-info-btn {
+        opacity: 0;
+        transform: translateX(10px);
+        transition: all 0.3s ease;
+        padding: 0.3rem;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        font-size: 0.8rem;
+    }
+    
+    .mobile-accordion-header.aktiv .mobile-tag-info-btn {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    /* Chevron */
+    .mobile-chevron {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+        color: currentColor;
+    }
+    
+    .mobile-accordion-header.aktiv .mobile-chevron {
+        transform: rotate(180deg);
+    }
+    
+    /* Akkordeon-Inhalt */
+    .mobile-accordion-content {
+        background: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        padding: 0;
+    }
+    
+    .mobile-accordion-content.show {
+        max-height: 500px;
+        padding: 0;
+    }
+    
+    /* Tabellen-Layout für Einrichtungen */
+    .mobile-einrichtungen-tabelle {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .mobile-einrichtungen-tabelle tr {
+        border-bottom: 1px solid #f1f3f4;
+        transition: background-color 0.2s ease;
+    }
+    
+    .mobile-einrichtungen-tabelle tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .mobile-einrichtungen-tabelle tr:last-child {
+        border-bottom: none;
+    }
+    
+    /* Spalte 1: Einrichtungsname */
+    .mobile-einrichtung-name {
         padding: 0.75rem;
+        vertical-align: top;
+        width: 50%;
     }
     
-    .smartphone-einrichtung-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
+    .mobile-einrichtung-name h6 {
+        margin: 0 0 4px 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #495057;
+        line-height: 1.2;
     }
     
-    .smartphone-anzahl {
-        font-size: 1.4rem;
-        align-self: flex-end;
-    }
-    
-    .smartphone-info-btn {
-        position: static;
-        margin-top: 0.5rem;
-        align-self: flex-start;
-    }
-    
-    .smartphone-gruppen-detail {
-        margin-bottom: 0.5rem;
-    }
-    
-    .smartphone-gruppe-badge {
+    .mobile-einrichtung-typ {
         font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+    
+    /* Spalte 2: Zahlen */
+    .mobile-einrichtung-zahlen {
+        padding: 0.75rem;
+        vertical-align: top;
+        width: 40%;
+        text-align: right;
+        position: relative;
+    }
+    
+    .mobile-hauptwert {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #007bff;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+    
+    .mobile-hauptwert.null {
+        color: #6c757d;
+    }
+    
+    .mobile-hauptwert.niedrig {
+        color: #17a2b8;
+    }
+    
+    .mobile-hauptwert.mittel {
+        color: #ffc107;
+    }
+    
+    .mobile-hauptwert.hoch {
+        color: #28a745;
+    }
+    
+    .mobile-gruppen-info {
+        font-size: 0.7rem;
+        color: #6c757d;
+        line-height: 1.3;
+    }
+    
+    .mobile-gruppen-badge-klein {
+        display: inline-block;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1px 4px;
+        margin: 1px;
+        font-size: 0.65rem;
+        color: #495057;
+    }
+    
+    /* Info-Button in Tabelle */
+    .mobile-einrichtung-info-btn {
+        padding: 0.25rem;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+    }
+    
+    /* Touch-Optimierungen */
+    .mobile-accordion-header,
+    .mobile-einrichtungen-tabelle tr,
+    .mobile-tag-info-btn,
+    .mobile-einrichtung-info-btn {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    /* Info-Button Stile */
+    .info-btn-gelesen {
+        background: rgba(108, 117, 125, 0.1);
+        border-color: rgba(108, 117, 125, 0.2);
+        color: #6c757d;
+    }
+    
+    .info-btn-gelesen:hover {
+        background: rgba(108, 117, 125, 0.2);
+        border-color: rgba(108, 117, 125, 0.3);
+        color: #495057;
+    }
+    
+    .info-btn-ungelesen {
+        background: #dc3545;
+        border-color: #dc3545;
+        color: white;
+        animation: pulse-soft 2s infinite;
+    }
+    
+    .info-btn-ungelesen:hover {
+        background: #c82333;
+        border-color: #bd2130;
+        color: white;
+        animation: none;
+    }
+    
+    @keyframes pulse-soft {
+        0%, 100% { 
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% { 
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+    }
+    
+    /* Sehr kleine Smartphones */
+    @media (max-width: 360px) {
+        .mobile-accordion-header {
+            padding: 0.6rem 0.8rem;
+        }
+        
+        .mobile-tag-name {
+            font-size: 0.9rem;
+        }
+        
+        .mobile-tag-datum {
+            font-size: 0.8rem;
+        }
+        
+        .mobile-einrichtung-name,
+        .mobile-einrichtung-zahlen {
+            padding: 0.6rem;
+        }
+        
+        .mobile-hauptwert {
+            font-size: 1.3rem;
+        }
+        
+        .week-navigation-compact .btn {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            min-width: 40px;
+            height: 40px;
+        }
     }
 }
 
