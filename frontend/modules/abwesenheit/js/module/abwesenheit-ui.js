@@ -29,7 +29,7 @@ let uiState = {
 /**
  * Initialisiert das UI nach erfolgreichem API-Load
  */
-export async function initAbwesenheitUI(apiData) {
+export async function initAbwesenheitUI(apiData, user = null) {
     try {
         console.log('🎨 Initialisiere Abwesenheiten UI V2.0...');
         
@@ -42,8 +42,9 @@ export async function initAbwesenheitUI(apiData) {
         // Tab-System initialisieren
         initTabSystem();
         
-        // Benutzer-spezifische UI
-        initUserSpecificUI(apiData.currentUser, apiData.isAdmin);
+        // Benutzer-spezifische UI - Verwende User aus Breadcrumb-Navbar falls verfügbar
+        const effectiveUser = user || apiData.currentUser;
+        initUserSpecificUI(effectiveUser, apiData.isAdmin);
         
         // Status-Legende aufbauen
         buildStatusLegende(apiData.statusDefinitionen);

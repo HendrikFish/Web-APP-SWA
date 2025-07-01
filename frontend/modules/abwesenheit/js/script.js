@@ -5,6 +5,7 @@
 
 import { initAbwesenheitAPI, isInitialized, hasLoadingErrors, cleanupOldYears } from './module/abwesenheit-api.js';
 import { initAbwesenheitUI, hideInitialLoadingSpinner, showErrorFallbackUI } from './module/abwesenheit-ui.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 
 /**
  * Hauptinitialisierung des Abwesenheiten-Moduls
@@ -13,29 +14,14 @@ async function initApp() {
     try {
         console.log('🚀 Starte Abwesenheiten-Modul V2.0...');
         
-        // Breadcrumb Navigation laden
-        const breadcrumbContainer = document.getElementById('breadcrumb-navbar-container');
-        if (breadcrumbContainer) {
-            breadcrumbContainer.innerHTML = `
-                <nav aria-label="breadcrumb" class="bg-light p-3 rounded mb-4">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item">
-                            <a href="/frontend/core/dashboard/index.html" class="text-decoration-none">
-                                <i class="bi bi-house-door me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">
-                            <i class="bi bi-calendar-x me-1"></i>Abwesenheiten & Kinderverteilung
-                        </li>
-                    </ol>
-                </nav>
-            `;
-        }
+        // 1. Breadcrumb-Navbar initialisieren (enthält Benutzeranzeige und Abmelden)
+        console.log('⏳ Lade Breadcrumb-Navigation...');
+        const user = await initializeBreadcrumbNavbar();
         
         // Bereinige alte Jahres-Daten beim Start
         cleanupOldYears();
         
-        // 1. API initialisieren und Basisdaten laden
+        // 2. API initialisieren und Basisdaten laden
         console.log('⏳ Initialisiere API...');
         const apiData = await initAbwesenheitAPI();
         
@@ -47,11 +33,11 @@ async function initApp() {
             console.warn('⚠️ Einige Daten konnten nicht geladen werden - verwende Fallback-Daten');
         }
         
-        // 2. UI initialisieren basierend auf API-Daten
+        // 3. UI initialisieren basierend auf API-Daten und User
         console.log('🎨 Initialisiere UI...');
-        await initAbwesenheitUI(apiData);
+        await initAbwesenheitUI(apiData, user);
         
-        // 3. Finale Kontrolle: Spinner sicher verstecken
+        // 4. Finale Kontrolle: Spinner sicher verstecken
         hideInitialLoadingSpinner();
         
         console.log('🎉 Abwesenheiten-Modul V2.0 erfolgreich geladen!');
