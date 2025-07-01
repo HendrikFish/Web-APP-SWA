@@ -1,27 +1,39 @@
-/* Abwesenheiten & Kinderverteilung Modul - V2.0 */
+/* Abwesenheiten & Kinderverteilung Modul - V3.0 Modern & Kompakt */
 
 /* ========================================
-   🏠 SEITEN-LAYOUT & PADDING
+   🏠 SEITEN-LAYOUT & PADDING - MAXIMALE BREITE
 ======================================== */
 
-/* Hauptcontainer mit seitlichem Padding */
+/* Hauptcontainer - ausgewogenes Padding für bessere Lesbarkeit */
 .container-fluid#app {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Kalender-Card ohne zusätzliche Margins */
+#jahreskalender-container .card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Row ohne zusätzliche Margins für maximale Breite */
+.row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 /* Responsive Padding-Anpassungen */
 @media (max-width: 768px) {
     .container-fluid#app {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
 }
 
 @media (max-width: 576px) {
     .container-fluid#app {
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
 }
 
@@ -89,212 +101,471 @@
 }
 
 /* ========================================
-   📅 JAHRESKALENDER STYLING
+   📅 MODERNE JAHRESKALENDER-ANSICHT
 ======================================== */
 
-/* Hauptcontainer - soll die komplette Breite nutzen */
-#jahreskalender-container {
-    width: 100%;
-    height: 80vh;
-    padding: 0;
-    margin: 0;
+/* Hauptcontainer für Kalender - maximale Breite und optimale Höhe */
+#jahreskalender-container,
+div[id="jahreskalender-container"] {
+    width: 100% !important;
+    height: 85vh !important; /* Höher für bessere Nutzung */
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important; /* Sichtbar für Debug */
+    display: block !important; /* NICHT flex - das könnte das Problem sein */
+    /* Debug */
+    background-color: #ff9999 !important; /* ROSA Debug-Hintergrund */
+    border: 3px solid #000000 !important; /* Schwarzer Rahmen */
 }
 
-/* Einrichtungs-Container - nutzt komplette verfügbare Breite */
+/* Einrichtung Container */
 .einrichtung-jahreskalender {
     width: 100%;
     height: 100%;
-    margin: 0;
     display: flex;
     flex-direction: column;
 }
 
-/* Das jahreskalender-monate Element wird zum Grid-Container für das 4x3 Layout */
-.jahreskalender-monate {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr) !important; /* 4 gleichmäßige Spalten */
-    grid-template-rows: repeat(3, 1fr) !important; /* 3 gleichmäßige Zeilen */
-    gap: 0.5rem; /* Mehr Gap für bessere Abgrenzung der modernen Cards */
-    height: 100% !important; /* Nutzt komplette verfügbare Höhe */
-    width: 100% !important; /* Nutzt komplette verfügbare Breite */
-    padding: 0.25rem; /* Minimaler Padding für bessere Positionierung */
-    flex: 1; /* Nimmt den kompletten verfügbaren Raum */
-    margin: 0;
-    box-sizing: border-box;
+/* ===== CARD-GRID LAYOUT - AGGRESSIVE GRID RULES ===== */
+.jahreskalender-grid-container,
+#jahreskalender-container,
+div[id="jahreskalender-container"] {
+    /* AGGRESSIVE CSS Grid - verhindert Überlappung */
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-rows: repeat(3, 1fr) !important;
+    gap: 16px !important; /* Perfekte Card-Abstände */
+    
+    /* Container Größe */
+    height: 75vh !important; /* Passt perfekt in Viewport */
+    width: 100% !important;
+    max-height: 75vh !important;
+    
+    /* Spacing */
+    padding: 16px !important; /* Card-Container Padding */
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    
+    /* Verhalten */
+    overflow: hidden !important; /* Verhindert Scroll */
+    background: #f1f5f9 !important; /* Hintergrund für Card-Kontrast */
+    
+    /* Grid-Spezifisch */
+    align-items: stretch !important;
+    justify-items: stretch !important;
 }
 
-/* Fallback für den alten Container (falls noch verwendet) */
-.jahreskalender-container {
-    display: block; /* Resettet Grid falls noch vorhanden */
+/* ===== MONATSKALENDER CARDS - KLAR ABGEGRENZT ===== */
+.monatskalender {
+    /* Layout - GRID-ITEM FIXES */
+    display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
-    padding: 0;
+    min-height: 0; /* Wichtig für Grid */
+    min-width: 0; /* Wichtig für Grid */
+    
+    /* CARD-DESIGN - Klar abgegrenzt */
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    
+    /* Starke Schatten für klare Abgrenzung */
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+    
+    /* KEINE MARGINS - Grid soll Spacing machen */
+    margin: 0;
+    
+    /* Hover-Effekt */
+    transition: all 0.3s ease;
+    
+    /* Grid-Item Positioning */
+    position: relative;
+    z-index: 1;
+    
+    /* Grid-Item Behavior - VERHINDERT ÜBERLAPPUNG */
+    align-self: stretch;
+    justify-self: stretch;
+    
+    /* Explizite Grid-Positionen für jeden Monat */
 }
 
-.monatskalender {
-    border: 1px solid #e0e6ed; /* Subtiler Border */
-    border-radius: 0.75rem; /* Moderner Border-Radius */
-    background: white;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06); /* Moderner Multi-Layer Shadow */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth Transition */
-    height: 100%; /* Nutzt komplette verfügbare Grid-Zellen-Höhe */
-    width: 100%; /* Nutzt komplette verfügbare Grid-Zellen-Breite */
-    display: flex;
-    flex-direction: column;
-    min-height: 0; /* Erlaubt Schrumpfung */
-    margin: 0.125rem; /* Minimaler Margin für bessere Abgrenzung */
-    position: relative; /* Für Hover-Effekt */
+/* Explizite Grid-Positionen für 12 Monate (4x3) */
+.monatskalender:nth-child(1) { grid-area: 1 / 1 / 2 / 2; } /* Januar */
+.monatskalender:nth-child(2) { grid-area: 1 / 2 / 2 / 3; } /* Februar */
+.monatskalender:nth-child(3) { grid-area: 1 / 3 / 2 / 4; } /* März */
+.monatskalender:nth-child(4) { grid-area: 1 / 4 / 2 / 5; } /* April */
+.monatskalender:nth-child(5) { grid-area: 2 / 1 / 3 / 2; } /* Mai */
+.monatskalender:nth-child(6) { grid-area: 2 / 2 / 3 / 3; } /* Juni */
+.monatskalender:nth-child(7) { grid-area: 2 / 3 / 3 / 4; } /* Juli */
+.monatskalender:nth-child(8) { grid-area: 2 / 4 / 3 / 5; } /* August */
+.monatskalender:nth-child(9) { grid-area: 3 / 1 / 4 / 2; } /* September */
+.monatskalender:nth-child(10) { grid-area: 3 / 2 / 4 / 3; } /* Oktober */
+.monatskalender:nth-child(11) { grid-area: 3 / 3 / 4 / 4; } /* November */
+.monatskalender:nth-child(12) { grid-area: 3 / 4 / 4 / 5; } /* Dezember */
+
+.monatskalender:hover {
+    border-color: #3b82f6;
+    box-shadow: 
+        0 10px 15px rgba(0, 0, 0, 0.15),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 0 0 2px rgba(59, 130, 246, 0.2);
+    transform: translateY(-3px) scale(1.02);
+    z-index: 10;
 }
 
 .monatskalender:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08); /* Verstärkter Hover-Shadow */
-    transform: translateY(-2px) scale(1.01); /* Sanfte Hover-Animation */
-    border-color: var(--bs-primary); /* Farbiger Border beim Hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    border-color: var(--bs-primary);
 }
 
+/* ===== MONATSKALENDER HEADER - CARD DESIGN ===== */
 .monatskalender-header {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #4f46e5 100%); /* Moderner Gradient */
+    /* Layout */
+    flex-shrink: 0;
+    padding: 8px 12px;
+    
+    /* CARD-HEADER Design */
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
-    padding: 0.4rem 0.5rem; /* Mehr Padding für bessere Optik */
+    font-weight: 700;
+    font-size: 11px;
     text-align: center;
-    font-weight: 600;
-    font-size: 0.7rem; /* Leicht größere Schriftgröße */
-    flex-shrink: 0; /* Header soll nicht schrumpfen */
-    line-height: 1.3; /* Bessere Lesbarkeit */
-    border-radius: 0.75rem 0.75rem 0 0; /* Abgerundete obere Ecken */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtiler Schatten unter Header */
+    line-height: 1.3;
+    
+    /* Starke Abgrenzung zum Body */
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    /* Typografie */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
+.monatskalender-header i {
+    margin-right: 3px;
+    font-size: 9px;
+    opacity: 0.9;
+}
+
+/* ===== CARD BODY - KALENDER GRID ===== */
 .monatskalender-grid {
+    /* Layout */
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px; /* Mehr Gap zwischen den Zellen */
-    background: #f8f9fa; /* Hellerer Hintergrund */
-    flex: 1; /* Nimmt den kompletten restlichen verfügbaren Platz */
-    grid-template-rows: auto repeat(6, 1fr); /* Header + 6 flexible Zeilen */
-    min-height: 0; /* Erlaubt Schrumpfung */
-    padding: 0.25rem; /* Padding um das Grid */
-    border-radius: 0 0 0.75rem 0.75rem; /* Abgerundete untere Ecken */
+    grid-template-rows: auto repeat(6, 1fr);
+    flex: 1;
+    gap: 2px;
+    
+    /* CARD-BODY Design */
+    background: #f8fafc;
+    padding: 8px;
+    min-height: 0;
+    margin: 0;
+    
+    /* Innere Struktur */
+    border: 1px solid #e2e8f0;
+    border-top: none; /* Verbindung zum Header */
 }
 
+/* ===== WOCHENTAG HEADER - MODERN ===== */
 .wochentag-header {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Moderner Gradient */
-    padding: 0.25rem 0.1rem; /* Mehr Padding */
-    text-align: center;
-    font-size: 0.6rem; /* Leicht größere Schriftgröße */
-    font-weight: 700; /* Kräftigere Schrift */
-    color: #495057; /* Dunklere Farbe für bessere Lesbarkeit */
-    line-height: 1.2; /* Bessere Lesbarkeit */
-    border-radius: 0.375rem; /* Abgerundete Ecken */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtiler Schatten */
-}
-
-.tag-zelle {
-    background: #f0fdf4; /* Moderneres hellgrün */
-    min-height: 24px; /* Mehr Höhe für bessere Klickbarkeit */
+    /* Layout */
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth Transition */
+    padding: 2px 1px;
+    min-height: 14px;
+    
+    /* Modernes Design */
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    border-radius: 3px;
+    min-height: 16px;
+}
+
+/* ===== TAG-ZELLEN - MODERNES DESIGN ===== */
+.tag-zelle {
+    /* Layout */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 18px;
     position: relative;
-    font-size: 0.7rem; /* Größere Schriftgröße */
-    font-weight: 600; /* Kräftigere Schrift */
-    border: 1px solid transparent;
-    line-height: 1.2; /* Bessere Lesbarkeit */
-    border-radius: 0.375rem; /* Abgerundete Ecken */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtiler Schatten */
+    
+    /* Basis-Styling */
+    background: #ffffff;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: 3px;
+    cursor: pointer;
+    
+    /* Transition */
+    transition: all 0.12s ease;
 }
 
-.tag-zelle:hover {
-    background: #dcfce7; /* Moderneres hover-grün */
-    transform: translateY(-1px) scale(1.02); /* Sanfterer Hover-Effekt */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08); /* Schönerer Schatten */
-    border-color: var(--bs-primary); /* Farbiger Border beim Hover */
-    z-index: 2;
+/* STANDARDMÄSSIG: Montag-Freitag = GRÜN (normale Arbeitstage) */
+.tag-zelle:not(.andere-monat):not(.wochenende):not(.feiertag) {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    color: #166534;
+    border: 1px solid #16a34a;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(22, 163, 74, 0.1);
 }
 
+.tag-zelle:not(.andere-monat):not(.wochenende):not(.feiertag):hover {
+    background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+    color: #14532d;
+    border-color: #15803d;
+    transform: scale(1.08);
+    box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+    z-index: 10;
+}
+
+/* ===== SPEZIELLE TAG-TYPEN ===== */
 .tag-zelle.andere-monat {
-    color: #adb5bd;
-    background: #f8f9fa;
-    cursor: not-allowed;
-    opacity: 0.6;
+    background: #f8fafc;
+    color: #94a3b8;
+    cursor: default;
+    opacity: 0.5;
+    border: 1px solid #e2e8f0;
+}
+
+.tag-zelle.andere-monat:hover {
+    background: #f8fafc;
+    color: #94a3b8;
+    transform: none;
 }
 
 .tag-zelle.heute {
-    font-weight: bold;
-    border: 2px solid var(--bs-primary); /* Dünner Border */
-    background: #cce5ff;
-    color: var(--bs-primary);
-    box-shadow: 0 0 4px rgba(13, 110, 253, 0.2); /* Kompakter Schatten */
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    font-weight: 700;
+    border: 2px solid #1e40af;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(59, 130, 246, 0.2);
 }
 
-/* Wochenend-Styling (Samstag=5, Sonntag=6) */
+.tag-zelle.heute:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4), 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
 .tag-zelle.wochenende {
-    background: #fff3cd; /* Wochenenden: hellgelb */
-    color: #664d03;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border: 1px solid #d97706;
+    font-weight: 500;
 }
 
 .tag-zelle.wochenende:hover {
-    background: #ffecb5;
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+    color: #78350f;
+    border-color: #b45309;
+    transform: scale(1.05);
 }
 
-.tag-zelle.wochenende.heute {
-    background: #ffe066;
-    border-color: #ffc107;
-    color: #664d03;
-}
-
-/* Feiertage (für zukünftige österreichische Feiertage) */
 .tag-zelle.feiertag {
-    background: #f8d7da;
-    color: #721c24;
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    color: #991b1b;
+    border: 1px solid #dc2626;
     font-weight: 600;
+    position: relative;
 }
 
 .tag-zelle.feiertag:hover {
-    background: #f1aeb5;
+    background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
+    color: #7f1d1d;
+    border-color: #b91c1c;
+    transform: scale(1.05);
 }
 
 .tag-zelle.feiertag::after {
     content: '🎉';
     position: absolute;
-    top: 1px; /* Kompakter Abstand */
+    top: 0px;
     right: 1px;
-    font-size: 7px; /* Sehr kleine Icon-Größe für maximale Flächennutzung */
+    font-size: 7px;
 }
 
-/* Status-Farben für Tage */
+/* ===== STATUS-SPEZIFISCHE FARBEN ===== */
 .tag-zelle.status-normal {
-    background: #d1eddb; /* Hellgrün */
-    color: #0f5132;
+    background: #e8f5e8;
+    color: #2e7d32;
 }
 
 .tag-zelle.status-ferien {
-    background: #f8d7da; /* Hellrot */
-    color: #721c24;
+    background: #ffebee;
+    color: #c62828;
 }
 
 .tag-zelle.status-sonderbetrieb {
-    background: #fff3cd; /* Hellgelb */
-    color: #664d03;
+    background: #fff8e1;
+    color: #f57c00;
 }
 
 .tag-zelle.status-ausflug {
-    background: #d1ecf1; /* Hellblau */
-    color: #055160;
+    background: #e1f5fe;
+    color: #0277bd;
 }
 
-.tag-zelle.hat-status::after {
+.tag-zelle.hat-status::before {
     content: '';
     position: absolute;
     top: 2px;
     right: 2px;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: var(--bs-primary);
+    background: currentColor;
+}
+
+/* ========================================
+   📱 RESPONSIVE DESIGN - MODERN
+======================================== */
+
+/* Ultra Wide Screens: 4x3 Grid (Optimiert für maximale Breite) */
+@media (min-width: 1681px) {
+    .container-fluid#app {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    
+    #jahreskalender-container {
+        gap: 16px !important;
+        padding: 16px !important;
+    }
+    
+    .monatskalender-header {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+    
+    .tag-zelle {
+        min-height: 28px;
+        font-size: 12px;
+    }
+    
+    .wochentag-header {
+        font-size: 11px;
+        min-height: 20px;
+    }
+}
+
+/* Desktop: 4x3 Grid (Standard) */
+@media (min-width: 1201px) and (max-width: 1680px) {
+    #jahreskalender-container {
+        gap: 14px !important;
+        padding: 14px !important;
+    }
+    
+    .monatskalender-header {
+        font-size: 12px;
+        padding: 10px 14px;
+    }
+    
+    .tag-zelle {
+        min-height: 24px;
+        font-size: 11px;
+    }
+    
+    .wochentag-header {
+        font-size: 10px;
+        min-height: 18px;
+    }
+}
+
+/* Tablets: 3x4 Grid */
+@media (max-width: 1200px) and (min-width: 901px) {
+    #jahreskalender-container {
+        grid-template-columns: repeat(3, 1fr) !important;
+        grid-template-rows: repeat(4, 1fr) !important;
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+    
+    .monatskalender-header {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    .tag-zelle {
+        min-height: 22px;
+        font-size: 10px;
+    }
+    
+    .wochentag-header {
+        font-size: 9px;
+        min-height: 16px;
+    }
+}
+
+/* Tablets Klein: 2x6 Grid */
+@media (max-width: 900px) and (min-width: 601px) {
+    #jahreskalender-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: repeat(6, 1fr) !important;
+        gap: 8px !important;
+        padding: 8px !important;
+    }
+    
+    .monatskalender-header {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+    
+    .tag-zelle {
+        min-height: 20px;
+        font-size: 9px;
+    }
+    
+    .wochentag-header {
+        font-size: 8px;
+        min-height: 14px;
+    }
+}
+
+/* Mobile: 1x12 Grid */
+@media (max-width: 600px) {
+    #jahreskalender-container {
+        height: 85vh;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: repeat(12, 1fr) !important;
+        gap: 6px !important;
+        padding: 6px !important;
+    }
+    
+    .monatskalender-header {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    
+    .tag-zelle {
+        min-height: 18px;
+        font-size: 9px;
+    }
+    
+    .wochentag-header {
+        font-size: 8px;
+        min-height: 12px;
+    }
+    
+    .monatskalender-grid {
+        gap: 0.5px !important;
+        padding: 2px !important;
+    }
 }
 
 /* ========================================
@@ -524,165 +795,6 @@
     background: #d1ecf1;
     color: #055160;
     border-color: #17a2b8;
-}
-
-/* ========================================
-   📱 RESPONSIVE DESIGN
-======================================== */
-
-/* Große Tablets: 3 Spalten, 4 Zeilen - modernes responsives Design */
-@media (max-width: 1200px) {
-    .jahreskalender-monate {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(4, 1fr);
-        gap: 0.4rem; /* Angepasster Gap für moderne Cards */
-        padding: 0.2rem;
-    }
-    
-    .monatskalender {
-        margin: 0.1rem; /* Reduzierter Margin */
-        border-radius: 0.625rem; /* Leicht kleinerer Radius */
-    }
-    
-    .tag-zelle {
-        min-height: 20px;
-        font-size: 0.65rem;
-        border-radius: 0.25rem; /* Kleinerer Radius */
-    }
-    
-    .monatskalender-header {
-        padding: 0.3rem 0.4rem;
-        font-size: 0.65rem;
-        border-radius: 0.625rem 0.625rem 0 0;
-    }
-    
-    .wochentag-header {
-        padding: 0.2rem 0.05rem;
-        font-size: 0.55rem;
-        border-radius: 0.25rem;
-    }
-    
-    .monatskalender-grid {
-        padding: 0.2rem;
-        border-radius: 0 0 0.625rem 0.625rem;
-    }
-}
-
-/* Mittlere Tablets: 2 Spalten, 6 Zeilen - modernes responsives Design */
-@media (max-width: 900px) {
-    .jahreskalender-monate {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(6, 1fr);
-        gap: 0.3rem; /* Angepasster Gap */
-        padding: 0.15rem;
-    }
-    
-    .monatskalender {
-        margin: 0.05rem;
-        border-radius: 0.5rem;
-    }
-    
-    .tag-zelle {
-        min-height: 18px;
-        font-size: 0.6rem;
-        border-radius: 0.25rem;
-    }
-    
-    .monatskalender-header {
-        padding: 0.25rem 0.3rem;
-        font-size: 0.6rem;
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-    
-    .wochentag-header {
-        padding: 0.15rem 0.05rem;
-        font-size: 0.5rem;
-        border-radius: 0.25rem;
-    }
-    
-    .monatskalender-grid {
-        padding: 0.15rem;
-        border-radius: 0 0 0.5rem 0.5rem;
-        gap: 1.5px;
-    }
-}
-
-/* Mobile: 1 Spalte, 12 Zeilen - modernes responsives Design */
-@media (max-width: 600px) {
-    .jahreskalender-monate {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(12, 1fr);
-        gap: 0.25rem; /* Moderater Gap auch auf Mobile */
-        padding: 0.1rem;
-    }
-    
-    .monatskalender {
-        margin: 0.03rem;
-        border-radius: 0.375rem;
-    }
-    
-    .tag-zelle {
-        min-height: 16px;
-        font-size: 0.55rem;
-        border-radius: 0.2rem;
-    }
-    
-    .monatskalender-header {
-        padding: 0.2rem 0.25rem;
-        font-size: 0.55rem;
-        border-radius: 0.375rem 0.375rem 0 0;
-    }
-    
-    .wochentag-header {
-        padding: 0.1rem 0.03rem;
-        font-size: 0.45rem;
-        border-radius: 0.2rem;
-    }
-    
-    .monatskalender-grid {
-        padding: 0.1rem;
-        border-radius: 0 0 0.375rem 0.375rem;
-        gap: 1px;
-    }
-}
-
-/* Sehr kleine Bildschirme: 1 Spalte, kompakte moderne Darstellung */
-@media (max-width: 400px) {
-    .jahreskalender-monate {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(12, 1fr);
-        gap: 0.2rem; /* Minimaler aber sichtbarer Gap */
-        padding: 0.05rem;
-    }
-    
-    .monatskalender {
-        margin: 0.02rem;
-        border-radius: 0.25rem;
-    }
-    
-    .tag-zelle {
-        min-height: 14px;
-        font-size: 0.5rem;
-        border-radius: 0.15rem;
-    }
-    
-    .monatskalender-header {
-        padding: 0.15rem 0.2rem;
-        font-size: 0.5rem;
-        border-radius: 0.25rem 0.25rem 0 0;
-    }
-    
-    .wochentag-header {
-        padding: 0.05rem 0.02rem;
-        font-size: 0.4rem;
-        border-radius: 0.15rem;
-    }
-    
-    .monatskalender-grid {
-        padding: 0.05rem;
-        border-radius: 0 0 0.25rem 0.25rem;
-        gap: 1px;
-    }
 }
 
 /* ========================================

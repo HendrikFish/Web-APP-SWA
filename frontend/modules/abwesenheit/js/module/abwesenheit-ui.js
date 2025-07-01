@@ -277,12 +277,65 @@ async function loadFerienTab() {
         }
         
         container.innerHTML = '';
+        console.log('🔧 Container gefunden:', container);
+        console.log('🔧 Container Klassen:', container.className);
+        console.log('🔧 Anzuzeigende Einrichtungen:', anzuzeigeEinrichtungen.length);
         
-        // Für jede anzuzeigende Einrichtung einen Jahreskalender erstellen
-        anzuzeigeEinrichtungen.forEach(einrichtung => {
-            const kalenderHTML = buildJahreskalender(jahr, einrichtung, jahresDaten, statusDefinitionen);
-            container.insertAdjacentHTML('beforeend', kalenderHTML);
-        });
+        // WICHTIG: NUR EINE EINRICHTUNG zur Zeit anzeigen!
+        // Bei mehreren Einrichtungen zeigen wir nur die erste oder die ausgewählte
+        let anzuzeigeEinrichtung;
+        if (uiState.selectedEinrichtung) {
+            anzuzeigeEinrichtung = einrichtungen.find(e => e.kuerzel === uiState.selectedEinrichtung);
+        } else {
+            anzuzeigeEinrichtung = einrichtungen[0]; // Erste verfügbare Einrichtung
+        }
+        
+        if (!anzuzeigeEinrichtung) {
+            container.innerHTML = '<div class="alert alert-warning">Keine Einrichtung verfügbar</div>';
+            return;
+        }
+        
+        // WICHTIG: Container selbst zum Grid machen - CARD-LAYOUT für 12 MONATE!
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = 'repeat(4, 1fr)';
+        container.style.gridTemplateRows = 'repeat(3, 1fr)';
+        container.style.gap = '16px'; // Perfekte Abstände zwischen Cards
+        container.style.height = '75vh'; // Passt perfekt in Viewport
+        container.style.maxHeight = '75vh'; // Verhindert Overflow
+        container.style.padding = '16px'; // Mehr Padding um Container
+        container.style.overflow = 'hidden'; // Kein Scroll
+        container.style.background = '#f1f5f9'; // Hintergrund für Card-Kontrast
+        container.style.alignItems = 'stretch'; // Alle Items gleich hoch
+        container.style.justifyItems = 'stretch'; // Alle Items gleich breit
+        container.classList.add('jahreskalender-grid-container');
+        console.log('📅 Container: 4x3 Grid mit Card-Layout für 12 Monate erstellt!');
+        
+        // Info-Div außerhalb des Grids anzeigen (wenn mehrere Einrichtungen)
+        if (einrichtungen.length > 1) {
+            const parentContainer = container.parentElement;
+            let infoDiv = parentContainer.querySelector('.einrichtung-info');
+            if (!infoDiv) {
+                infoDiv = document.createElement('div');
+                infoDiv.className = 'einrichtung-info alert alert-info mb-3';
+                parentContainer.insertBefore(infoDiv, container);
+            }
+            infoDiv.innerHTML = `
+                <strong>Angezeigt:</strong> ${anzuzeigeEinrichtung.name} 
+                (${einrichtungen.length - 1} weitere verfügbar - verwende Einrichtungsfilter)
+            `;
+        }
+        
+        // EINEN Jahreskalender für die ausgewählte Einrichtung erstellen
+        console.log(`🔧 Erstelle Kalender für:`, anzuzeigeEinrichtung.name);
+        const kalenderHTML = buildJahreskalender(jahr, anzuzeigeEinrichtung, jahresDaten, statusDefinitionen);
+        console.log('🔧 Generiertes HTML (erste 200 Zeichen):', kalenderHTML.substring(0, 200));
+        container.insertAdjacentHTML('beforeend', kalenderHTML);
+        
+        // Prüfe was tatsächlich im Container ist
+        console.log('🔧 Container Inhalt nach dem Laden:', container.innerHTML.substring(0, 500));
+        console.log('🔧 Monatskalender gefunden:', container.querySelectorAll('.monatskalender').length);
+        console.log('🔧 Container ist jetzt Grid:', window.getComputedStyle(container).display);
+        console.log('🔧 Grid Template Columns:', window.getComputedStyle(container).gridTemplateColumns);
         
         // Event-Listener für Tag-Klicks registrieren
         registerDayClickListeners();
@@ -305,22 +358,19 @@ function buildJahreskalender(jahr, einrichtung, jahresDaten, statusDefinitionen)
     
     const wochentage = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     
-    // Einfache Struktur: nur das Grid mit den Monatskalendern
-    // Die äußere Card-Struktur existiert bereits im HTML
-    let kalenderHTML = `
-        <div class="einrichtung-jahreskalender" data-einrichtung="${einrichtung.kuerzel}">
-            <div class="jahreskalender-monate">
-    `;
+    // DIREKTE GRID-STRUKTUR ohne zusätzliche Wrapper!
+    // Der Container wird direkt zum Grid-Container
+    let kalenderHTML = '';
     
-    // 12 Monatskalender generieren
+    // 12 Monatskalender generieren - DIREKT als Grid-Items
+    console.log('🔧 Generiere 12 Monatskalender direkt als Grid-Items...');
     for (let monat = 0; monat < 12; monat++) {
-        kalenderHTML += buildMonatskalender(jahr, monat, einrichtung, jahresDaten, statusDefinitionen, monate[monat], wochentage);
+        console.log(`🔧 Erstelle Monat ${monat + 1}: ${monate[monat]}`);
+        const monatsHTML = buildMonatskalender(jahr, monat, einrichtung, jahresDaten, statusDefinitionen, monate[monat], wochentage);
+        console.log(`🔧 HTML für ${monate[monat]} (erste 100 Zeichen):`, monatsHTML.substring(0, 100));
+        kalenderHTML += monatsHTML;
     }
-    
-    kalenderHTML += `
-            </div>
-        </div>
-    `;
+    console.log('🔧 Alle 12 Monate generiert - OHNE Wrapper!');
     
     return kalenderHTML;
 }
