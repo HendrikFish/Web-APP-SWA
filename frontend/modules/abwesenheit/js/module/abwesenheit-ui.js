@@ -221,17 +221,26 @@ function initUserSpecificUI(currentUser, isAdmin) {
         einrichtungSelector.style.display = 'block';
         const einrichtungen = getEinrichtungen();
         
+        // WICHTIG: Select aktivieren für Admins!
+        einrichtungSelect.disabled = false;
+        
         einrichtungSelect.innerHTML = '<option value="">Alle Einrichtungen</option>';
         einrichtungen.forEach(einrichtung => {
             einrichtungSelect.innerHTML += `<option value="${einrichtung.kuerzel}">${einrichtung.name}</option>`;
         });
         
-        einrichtungSelect.addEventListener('change', async () => {
-            uiState.selectedEinrichtung = einrichtungSelect.value || null;
-            if (uiState.currentTab === 'ferien') {
-                await loadFerienTab();
-            }
-        });
+        // Event-Listener nur einmal hinzufügen
+        einrichtungSelect.removeEventListener('change', handleEinrichtungChange);
+        einrichtungSelect.addEventListener('change', handleEinrichtungChange);
+    }
+}
+
+// Separate Event-Handler-Funktion für bessere Performance
+async function handleEinrichtungChange(event) {
+    uiState.selectedEinrichtung = event.target.value || null;
+    console.log('🔄 Einrichtung gewechselt zu:', uiState.selectedEinrichtung);
+    if (uiState.currentTab === 'ferien') {
+        await loadFerienTab();
     }
 }
 
@@ -270,27 +279,25 @@ async function loadFerienTab() {
         const statusDefinitionen = getStatusDefinitionen();
         const einrichtungen = getEinrichtungen();
         
-        // Filtere Einrichtungen basierend auf User-Berechtigung
-        let anzuzeigeEinrichtungen = einrichtungen;
-        if (uiState.selectedEinrichtung) {
-            anzuzeigeEinrichtungen = einrichtungen.filter(e => e.kuerzel === uiState.selectedEinrichtung);
-        }
-        
         container.innerHTML = '';
         console.log('🔧 Container gefunden:', container);
         console.log('🔧 Container Klassen:', container.className);
-        console.log('🔧 Anzuzeigende Einrichtungen:', anzuzeigeEinrichtungen.length);
         
-        // WICHTIG: NUR EINE EINRICHTUNG zur Zeit anzeigen!
-        // Bei mehreren Einrichtungen zeigen wir nur die erste oder die ausgewählte
-        let anzuzeigeEinrichtung;
+        // DYNAMISCHE EINRICHTUNGSAUSWAHL basierend auf Filter
+        let anzuzeigeEinrichtungen = [];
+        
         if (uiState.selectedEinrichtung) {
-            anzuzeigeEinrichtung = einrichtungen.find(e => e.kuerzel === uiState.selectedEinrichtung);
+            // Spezifische Einrichtung ausgewählt
+            const einrichtung = einrichtungen.find(e => e.kuerzel === uiState.selectedEinrichtung);
+            if (einrichtung) {
+                anzuzeigeEinrichtungen = [einrichtung];
+            }
         } else {
-            anzuzeigeEinrichtung = einrichtungen[0]; // Erste verfügbare Einrichtung
+            // "Alle Einrichtungen" oder keine Auswahl
+            anzuzeigeEinrichtungen = einrichtungen.slice(0, 1); // Erstmal nur erste Einrichtung
         }
         
-        if (!anzuzeigeEinrichtung) {
+        if (anzuzeigeEinrichtungen.length === 0) {
             container.innerHTML = '<div class="alert alert-warning">Keine Einrichtung verfügbar</div>';
             return;
         }
@@ -298,10 +305,10 @@ async function loadFerienTab() {
         // WICHTIG: Container selbst zum Grid machen - CARD-LAYOUT für 12 MONATE!
         container.style.display = 'grid';
         container.style.gridTemplateColumns = 'repeat(4, 1fr)';
-        container.style.gridTemplateRows = 'repeat(3, minmax(280px, 1fr))'; // Mindesthöhe pro Zeile
+        container.style.gridTemplateRows = 'repeat(3, minmax(320px, 1fr))'; // Mindesthöhe pro Zeile
         container.style.gap = '16px'; // Perfekte Abstände zwischen Cards
-        container.style.height = 'max(90vh, 920px)'; // Dynamische Höhe
-        container.style.minHeight = 'calc((280px * 3) + (16px * 2) + (16px * 2))'; // 920px minimum
+        container.style.height = 'max(90vh, 1200px)'; // Dynamische Höhe
+        container.style.minHeight = 'calc((320px * 3) + (16px * 2) + (16px * 2))'; // 920px minimum
         container.style.maxHeight = '95vh'; // Max für sehr große Bildschirme
         container.style.padding = '16px'; // Mehr Padding um Container
         container.style.overflow = 'hidden'; // Kein Scroll
@@ -311,7 +318,7 @@ async function loadFerienTab() {
         container.classList.add('jahreskalender-grid-container');
         console.log('📅 Container: 4x3 Grid mit Card-Layout für 12 Monate erstellt!');
         
-        // Info-Div außerhalb des Grids anzeigen (wenn mehrere Einrichtungen)
+        // Info-Div außerhalb des Grids anzeigen (wenn mehrere Einrichtungen verfügbar)
         if (einrichtungen.length > 1) {
             const parentContainer = container.parentElement;
             let infoDiv = parentContainer.querySelector('.einrichtung-info');
@@ -321,14 +328,17 @@ async function loadFerienTab() {
                 parentContainer.insertBefore(infoDiv, container);
             }
             infoDiv.innerHTML = `
-                <strong>Angezeigt:</strong> ${anzuzeigeEinrichtung.name} 
-                (${einrichtungen.length - 1} weitere verfügbar - verwende Einrichtungsfilter)
+                <strong>Angezeigt:</strong> ${anzuzeigeEinrichtungen.map(e => e.name).join(', ')} 
+                (${einrichtungen.length - anzuzeigeEinrichtungen.length} weitere verfügbar - verwende Einrichtungsfilter)
             `;
         }
         
-        // EINEN Jahreskalender für die ausgewählte Einrichtung erstellen
-        console.log(`🔧 Erstelle Kalender für:`, anzuzeigeEinrichtung.name);
-        const kalenderHTML = buildJahreskalender(jahr, anzuzeigeEinrichtung, jahresDaten, statusDefinitionen);
+        console.log(`🔧 Anzuzeigende Einrichtungen:`, anzuzeigeEinrichtungen.length);
+        
+        // Jahreskalender für die erste ausgewählte Einrichtung erstellen (Grid kann nur 12 Monate)
+        const hauptEinrichtung = anzuzeigeEinrichtungen[0];
+        console.log(`🔧 Erstelle Kalender für:`, hauptEinrichtung.name);
+        const kalenderHTML = buildJahreskalender(jahr, hauptEinrichtung, jahresDaten, statusDefinitionen);
         console.log('🔧 Generiertes HTML (erste 200 Zeichen):', kalenderHTML.substring(0, 200));
         container.insertAdjacentHTML('beforeend', kalenderHTML);
         
