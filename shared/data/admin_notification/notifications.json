@@ -15,7 +15,7 @@
     "id": "4391718d-6655-40a8-87af-234607eb368b",
     "title": "Test NR 2.",
     "message": "HALLO Du Sau",
-    "trigger": "onLogin",
+    "trigger": "once",
     "triggerValue": null,
     "targetRoles": [
       "admin"

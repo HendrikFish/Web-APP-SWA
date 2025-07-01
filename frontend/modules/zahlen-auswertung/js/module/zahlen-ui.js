@@ -1,6 +1,7 @@
 /**
  * UI-Funktionen für Zahlen-Auswertung
  * Rendert Desktop-Tabelle und Mobile-Akkordeon
+ * OPTIMIERT: Verwendet neuen Event-Manager statt DOM-Cloning
  */
 
 import { 
@@ -8,56 +9,116 @@ import {
     formatiereZeitpunkt, 
     berechneProzentAuslastung 
 } from './bestelldaten-api.js';
+import { sanitizeHTML } from './data-validator.js';
 
 /**
- * Rendert die Desktop-Tabelle mit Bestelldaten
+ * Zeigt Loading-Spinner an (EXPORT für script.js)
+ */
+export function showLoading() {
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const errorContainer = document.getElementById('error-container');
+    const desktopContainer = document.getElementById('desktop-container');
+    const smartphoneContainer = document.getElementById('smartphone-container');
+    
+    if (loadingSpinner) loadingSpinner.style.display = 'block';
+    if (errorContainer) errorContainer.classList.add('d-none');
+    if (desktopContainer) desktopContainer.style.display = 'none';
+    if (smartphoneContainer) smartphoneContainer.style.display = 'none';
+    
+    console.log('⏳ Loading-Spinner angezeigt');
+}
+
+/**
+ * Versteckt Loading-Spinner (EXPORT für script.js)
+ */
+export function hideLoading() {
+    const loadingSpinner = document.getElementById('loading-spinner');
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'none';
+    }
+    console.log('✅ Loading-Spinner versteckt');
+}
+
+/**
+ * Zeigt Fehlermeldung an (EXPORT für script.js)
+ * @param {string} message - Fehlermeldung
+ */
+export function showError(message) {
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+    
+    if (errorContainer && errorMessage) {
+        errorMessage.textContent = sanitizeHTML(message);
+        errorContainer.classList.remove('d-none');
+        console.error('🚨 Fehler angezeigt:', message);
+    }
+}
+
+/**
+ * Hauptfunktion zum Rendern der Bestelldaten (EXPORT für script.js)
+ * @param {Object} bestelldaten - Bestelldaten
+ */
+export function renderBestelldaten(bestelldaten) {
+    console.log('🎨 Rendere Bestelldaten für aktuellen Viewport');
+    
+    hideLoading();
+    
+    // Responsive Logik: Desktop vs Mobile basierend auf Bildschirmbreite
+    const istMobile = window.innerWidth < 819;
+    console.log(`📱 Mobile Ansicht (< 819px): ${istMobile ? 'JA' : 'NEIN'} (${window.innerWidth}px)`);
+    
+    if (istMobile) {
+        // Mobile: Akkordeon-Ansicht nach Tagen im gleichen Container
+        renderMobileAkkordeonInContainer(bestelldaten);
+    } else {
+        // Desktop/Tablet: Tabellen-Ansicht
+        renderDesktopTabelle(bestelldaten);
+    }
+}
+
+/**
+ * Rendert die Desktop-Tabelle mit Bestelldaten (ANGEPASST für neue HTML-Struktur)
  * @param {Object} bestelldaten - Verarbeitete Bestelldaten
  */
 export function renderDesktopTabelle(bestelldaten) {
-    const tbody = document.getElementById('desktop-tabelle-body');
-    if (!tbody) {
-        console.error('❌ desktop-tabelle-body Element nicht gefunden');
+    const container = document.getElementById('zahlen-container');
+    if (!container) {
+        console.error('❌ zahlen-container Element nicht gefunden');
         return;
     }
-
-    // Leere Tabelle
-    tbody.innerHTML = '';
 
     // Validiere Eingabedaten
     if (!bestelldaten) {
         console.error('❌ Keine Bestelldaten erhalten');
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="text-center text-muted py-4">
+        container.innerHTML = `
+            <div class="alert alert-warning text-center">
                     <i class="bi bi-exclamation-triangle fs-3 mb-2"></i>
                     <br>Fehler beim Laden der Bestelldaten
-                </td>
-            </tr>
+            </div>
         `;
         return;
     }
 
     if (!bestelldaten.einrichtungen || !Array.isArray(bestelldaten.einrichtungen)) {
         console.error('❌ Einrichtungen-Array fehlt oder ist ungültig:', bestelldaten.einrichtungen);
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="text-center text-muted py-4">
+        container.innerHTML = `
+            <div class="alert alert-warning text-center">
                     <i class="bi bi-exclamation-triangle fs-3 mb-2"></i>
                     <br>Einrichtungsdaten sind fehlerhaft
-                </td>
-            </tr>
+            </div>
         `;
         return;
     }
 
     if (bestelldaten.einrichtungen.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="text-center text-muted py-4">
+        container.innerHTML = `
+            <div class="alert alert-info text-center">
                     <i class="bi bi-inbox fs-3 mb-2"></i>
                     <br>Keine Bestelldaten verfügbar
-                </td>
-            </tr>
+            </div>
         `;
         return;
     }
@@ -71,6 +132,50 @@ export function renderDesktopTabelle(bestelldaten) {
     }
     
     console.log(`✅ Rendere ${einrichtungen.length} Einrichtungen für KW ${bestelldaten.week}/${bestelldaten.year}`);
+    
+    // Erstelle Desktop-Tabelle
+    const tableHtml = `
+        <div class="card shadow-sm">
+            <div class="card-body p-3">
+                <table class="table table-hover mb-0 zahlen-tabelle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col" class="sticky-col">Einrichtung</th>
+                            <th scope="col" class="text-center">MO</th>
+                            <th scope="col" class="text-center">DI</th>
+                            <th scope="col" class="text-center">MI</th>
+                            <th scope="col" class="text-center">DO</th>
+                            <th scope="col" class="text-center">FR</th>
+                            <th scope="col" class="text-center">SA</th>
+                            <th scope="col" class="text-center">SO</th>
+                            <th scope="col" class="text-center">Gesamt</th>
+                            <th scope="col" class="text-center">Info</th>
+                        </tr>
+                    </thead>
+                    <tbody id="desktop-tabelle-body">
+                        ${renderTableRows(einrichtungen, tage)}
+                    </tbody>
+                    <tfoot class="table-secondary fw-bold">
+                        ${renderGesamtZeile(einrichtungen, tage)}
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = tableHtml;
+    
+    console.log(`✅ Desktop-Tabelle erfolgreich gerendert: ${einrichtungen.length} Einrichtungen`);
+}
+
+/**
+ * Rendert die Tabellenzeilen für Einrichtungen
+ * @param {Array} einrichtungen - Einrichtungen-Array
+ * @param {Array} tage - Tage-Array
+ * @returns {string} HTML für Tabellenzeilen
+ */
+function renderTableRows(einrichtungen, tage) {
+    let html = '';
     
     // Rendere Datenzeilen mit robuster Fehlerbehandlung
     einrichtungen.forEach((einrichtung, index) => {
@@ -90,20 +195,19 @@ export function renderDesktopTabelle(bestelldaten) {
                 console.error(`❌ Einrichtung ${index + 1} fehlt tage_daten:`, einrichtung);
                 return;
             }
-
-            const tr = document.createElement('tr');
             
             // Sichere HTML-Erstellung
-            const einrichtungName = String(einrichtung.name || 'Unbekannt').replace(/[<>&"']/g, '');
-            const einrichtungTyp = String(einrichtung.typ || 'unbekannt').replace(/[<>&"']/g, '');
+            const einrichtungName = sanitizeHTML(einrichtung.name || 'Unbekannt');
+            const einrichtungTyp = sanitizeHTML(einrichtung.typ || 'unbekannt');
             const gruppenHtml = (einrichtung.gruppen || []).length > 0 
                 ? `<span>Maximal:</span>` + 
                   (einrichtung.gruppen || []).map(g => 
-                      `<div>${String(g.name || '').replace(/[<>&"']/g, '')}: ${g.anzahl || 0}</div>`
+                      `<div>${sanitizeHTML(g.name || '')}: ${g.anzahl || 0}</div>`
                   ).join('')
                 : '';
             
-            tr.innerHTML = `
+            html += `
+                <tr>
                 <!-- Einrichtungs-Spalte -->
                 <td class="sticky-col">
                     <div class="einrichtung-info">
@@ -134,11 +238,17 @@ export function renderDesktopTabelle(bestelldaten) {
                     }
                     
                     const gruppenDetailsHtml = (tagData.gruppen_details && Array.isArray(tagData.gruppen_details)) 
-                        ? tagData.gruppen_details.map(g => `
-                            <span class="gruppen-badge" title="${g.gruppe}: ${g.anzahl || 0}">
-                                ${String(g.gruppe || '').replace(/[<>&"']/g, '')}: ${g.anzahl || 0}
-                            </span>
-                        `).join('')
+                        ? tagData.gruppen_details.map(g => {
+                            // Tablet-spezifische zweizeilige Darstellung
+                            const gruppenText = `${sanitizeHTML(g.gruppe || '')}:\n${g.anzahl || 0}`;
+                            const titleText = `${sanitizeHTML(g.gruppe)}: ${g.anzahl || 0}`;
+                            
+                            return `
+                                <span class="gruppen-badge" title="${titleText}">
+                                    ${gruppenText}
+                                </span>
+                            `;
+                        }).join('')
                         : '';
                     
                     return `
@@ -157,17 +267,16 @@ export function renderDesktopTabelle(bestelldaten) {
                 <!-- Info-Button -->
                 <td class="text-center">
                     <button class="btn btn-sm info-btn ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
-                            data-einrichtung-id="${einrichtung.id}"
+                                data-einrichtung-id="${sanitizeHTML(einrichtung.id)}"
                             data-bs-toggle="modal" 
                             data-bs-target="#info-modal"
                             title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen anzeigen'}">
                         <i class="bi bi-info-circle"></i>
                     </button>
                 </td>
+                </tr>
             `;
             
-            // Füge Zeile zur Tabelle hinzu
-            tbody.appendChild(tr);
             console.log(`✅ Einrichtung ${index + 1}/${einrichtungen.length} erfolgreich gerendert: ${einrichtungName}`);
             
         } catch (error) {
@@ -175,72 +284,71 @@ export function renderDesktopTabelle(bestelldaten) {
             console.error('Einrichtungsdaten:', einrichtung);
             
             // Füge Fehler-Zeile hinzu
-            const errorTr = document.createElement('tr');
-            errorTr.innerHTML = `
+            html += `
+                <tr>
                 <td colspan="10" class="text-center text-danger py-2">
                     <small><i class="bi bi-exclamation-triangle"></i> Fehler beim Laden von Einrichtung ${index + 1}</small>
                 </td>
+                </tr>
             `;
-            tbody.appendChild(errorTr);
         }
     });
     
-    console.log(`✅ Tabellen-Rendering abgeschlossen: ${tbody.children.length - 1} Zeilen erstellt (ohne Summen-Zeile)`);
-    
-    // Füge Summen-Zeile hinzu
-    try {
-        rendereDesktopSummenZeile(tbody, bestelldaten);
-        console.log('✅ Summen-Zeile hinzugefügt');
-    } catch (error) {
-        console.error('❌ Fehler beim Rendern der Summen-Zeile:', error);
-    }
+    return html;
 }
 
 /**
- * Rendert die Summen-Zeile für die Desktop-Tabelle
- * @param {HTMLElement} tbody - Tabellenkörper
- * @param {Object} bestelldaten - Bestelldaten
+ * Rendert die Gesamt-Zeile für Desktop-Tabelle
+ * @param {Array} einrichtungen - Einrichtungen-Array
+ * @param {Array} tage - Tage-Array
+ * @returns {string} HTML für Gesamt-Zeile
  */
-function rendereDesktopSummenZeile(tbody, bestelldaten) {
-    const { einrichtungen, tage } = bestelldaten;
+function renderGesamtZeile(einrichtungen, tage) {
+    // Berechne Gesamt-Summen pro Tag
+    const tagesSummen = {};
+    let gesamtAlleEinrichtungen = 0;
     
-    // Berechne Tagessummen
-    const tagessummen = {};
-    let wochensumme = 0;
-    
+    // Initialisiere alle Tage mit 0
     tage.forEach(tag => {
-        tagessummen[tag] = einrichtungen.reduce((sum, einrichtung) => {
-            return sum + (einrichtung.tage_daten[tag]?.summe || 0);
-        }, 0);
-        wochensumme += tagessummen[tag];
+        tagesSummen[tag] = 0;
     });
     
-    const summenZeile = document.createElement('tr');
-    summenZeile.className = 'table-secondary fw-bold';
-    summenZeile.innerHTML = `
+    // Summiere alle Einrichtungen
+    einrichtungen.forEach(einrichtung => {
+        if (einrichtung.tage_daten) {
+    tage.forEach(tag => {
+                const tagData = einrichtung.tage_daten[tag];
+                if (tagData && tagData.summe) {
+                    tagesSummen[tag] += tagData.summe;
+                }
+            });
+        }
+        if (einrichtung.gesamt_bestellungen) {
+            gesamtAlleEinrichtungen += einrichtung.gesamt_bestellungen;
+        }
+    });
+    
+    return `
+        <tr>
         <td class="sticky-col">
             <div class="einrichtung-info">
                 <div class="einrichtung-name">GESAMT</div>
                 <div class="einrichtung-typ">${einrichtungen.length} Einrichtungen</div>
             </div>
         </td>
-        
         ${tage.map(tag => `
-            <td class="zahlen-zelle">
-                ${tagessummen[tag]}
+                <td class="zahlen-zelle gesamt-zelle text-center">
+                    ${tagesSummen[tag] || 0}
             </td>
         `).join('')}
-        
-        <td class="zahlen-zelle gesamt-zelle">
-            ${wochensumme}
+            <td class="zahlen-zelle gesamt-zelle text-center">
+                ${gesamtAlleEinrichtungen}
         </td>
-        
         <td class="text-center">
-            <i class="bi bi-calculator text-muted"></i>
+                <i class="bi bi-check-circle text-success"></i>
         </td>
+        </tr>
     `;
-    
-    tbody.appendChild(summenZeile);
 }
 
 /**
@@ -253,91 +361,247 @@ export function renderMobileAkkordeon(bestelldaten) {
 
     accordion.innerHTML = '';
 
-    if (!bestelldaten || bestelldaten.einrichtungen.length === 0) {
+    // ✅ KORREKTUR: Auch bei leeren Daten die Datumsstruktur anzeigen
+    if (!bestelldaten) {
         accordion.innerHTML = `
             <div class="text-center text-muted py-5">
-                <i class="bi bi-inbox display-4 mb-3"></i>
-                <h5>Keine Bestelldaten verfügbar</h5>
-                <p>Für die ausgewählte Woche liegen noch keine Bestelldaten vor.</p>
+                <i class="bi bi-exclamation-triangle display-4 mb-3"></i>
+                <h5>Fehler beim Laden der Daten</h5>
             </div>
         `;
         return;
     }
 
-    const { einrichtungen, tage } = bestelldaten;
+    // ✅ VERBESSERUNG: Stelle sicher dass year/week verfügbar sind, auch bei leeren Einrichtungen
+    const currentYear = bestelldaten.year || new Date().getFullYear();
+    const currentWeek = bestelldaten.week || getCurrentWeek();
     
-    einrichtungen.forEach((einrichtung, index) => {
-        const accordionItem = document.createElement('div');
-        accordionItem.className = 'mobile-accordion-item';
-        
-        accordionItem.innerHTML = `
-            <!-- Akkordeon-Header -->
-            <div class="mobile-accordion-header" data-toggle="accordion" data-target="mobile-content-${index}">
-                <div class="mobile-einrichtung-header">
-                    <div class="mobile-einrichtung-info">
-                        <h6>${einrichtung.name}</h6>
-                        <div class="mobile-einrichtung-meta">
-                            ${einrichtung.typ.toUpperCase()} • 
-                            ${einrichtung.gruppen.map(g => `${g.name}: ${g.anzahl}`).join(' • ')}
-                        </div>
-                    </div>
-                    <div class="mobile-wochensumme">
-                        <span>${einrichtung.gesamt_bestellungen}</span>
-                        <button class="btn btn-sm info-btn ${einrichtung.hatUngeleseneInfos ? 'info-btn-ungelesen' : 'info-btn-gelesen'}" 
-                                data-einrichtung-id="${einrichtung.id}"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#info-modal"
-                                onclick="event.stopPropagation()"
-                                title="${einrichtung.hatUngeleseneInfos ? `${einrichtung.anzahlUngeleseneInfos} ungelesene Information(en)` : 'Informationen'}">
-                            <i class="bi bi-info-circle"></i>
-                        </button>
-                        <i class="bi bi-chevron-down accordion-icon"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Akkordeon-Content -->
-            <div class="mobile-accordion-content" id="mobile-content-${index}">
-                <div class="mobile-tage-grid">
-                    ${tage.map(tag => {
-                        const tagData = einrichtung.tage_daten[tag];
-                        
-                        // Berechne dominante Klassifizierung für Mobile-Ansicht
-                        let dominanteKlassifizierung = 'null';
-                        if (tagData.gruppen_details.length > 0) {
-                            const klassifizierungen = tagData.gruppen_details.map(g => g.klassifizierung);
-                            if (klassifizierungen.includes('hoch')) dominanteKlassifizierung = 'hoch';
-                            else if (klassifizierungen.includes('mittel')) dominanteKlassifizierung = 'mittel';
-                            else if (klassifizierungen.includes('niedrig')) dominanteKlassifizierung = 'niedrig';
-                        }
-                        
-                        return `
-                            <div class="mobile-tag-karte">
-                                <div class="mobile-tag-name">${getTagDisplayName(tag)}</div>
-                                <div class="mobile-tag-anzahl ${dominanteKlassifizierung}">
-                                    ${tagData.summe || 0}
-                                </div>
-                                ${tagData.gruppen_details.length > 0 ? `
-                                    <div class="mobile-tag-gruppen">
-                                        ${tagData.gruppen_details.map(g => 
-                                            `<span class="mobile-gruppe-badge" title="${g.gruppe}: ${g.anzahl}">
-                                                ${g.gruppe}: ${g.anzahl}
-                                            </span>`
-                                        ).join('')}
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
+    // Wenn keine Einrichtungen vorhanden sind, zeige trotzdem die Tagesstruktur
+    if (!bestelldaten.einrichtungen || bestelldaten.einrichtungen.length === 0) {
+        console.log('📱 Rendere leere Smartphone-Ansicht mit Datumsheadern');
+        renderEmptyMobileView(accordion, currentYear, currentWeek);
+        return;
+    }
+
+    // Normale Anzeige mit Daten
+    renderSmartphoneAnsicht(bestelldaten);
+}
+
+/**
+ * Rendert Mobile-Akkordeon-Ansicht im zahlen-container (NEUE IMPLEMENTATION)
+ * @param {Object} bestelldaten - Verarbeitete Bestelldaten
+ */
+function renderMobileAkkordeonInContainer(bestelldaten) {
+    const container = document.getElementById('zahlen-container');
+    if (!container) {
+        console.error('❌ zahlen-container Element nicht gefunden');
+        return;
+    }
+
+    // Validiere Eingabedaten
+    if (!bestelldaten) {
+        container.innerHTML = `
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-exclamation-triangle fs-3 mb-2"></i>
+                <br>Fehler beim Laden der Bestelldaten
             </div>
         `;
-        
-        accordion.appendChild(accordionItem);
+        return;
+    }
+
+    if (!bestelldaten.einrichtungen || bestelldaten.einrichtungen.length === 0) {
+        container.innerHTML = `
+            <div class="alert alert-info text-center">
+                <i class="bi bi-inbox fs-3 mb-2"></i>
+                <br>Keine Bestelldaten verfügbar
+            </div>
+        `;
+        return;
+    }
+
+    console.log(`📱 Rendere Mobile-Akkordeon für ${bestelldaten.einrichtungen.length} Einrichtungen`);
+
+    // Wochentage definieren
+    const wochentage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
+    const wochentageName = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+
+    let html = '<div id="smartphone-tage-accordion">';
+
+    wochentage.forEach((tag, index) => {
+        const tagName = wochentageName[index];
+        const tagDatum = getTagDatum(bestelldaten?.year || new Date().getFullYear(), bestelldaten?.week || getCurrentWeek(), tag);
+        const tagDatumFormatiert = tagDatum.toLocaleDateString('de-DE', { 
+            day: '2-digit', 
+            month: '2-digit' 
+        });
+
+        // Tages-Gesamtsumme berechnen
+        let tagesGesamtsumme = 0;
+        const tagesEinrichtungen = [];
+
+        bestelldaten.einrichtungen.forEach(einrichtung => {
+            const tagesWert = getTagesWert(einrichtung, tag);
+            tagesGesamtsumme += tagesWert;
+            
+            // Sanitisiere alle Ausgabedaten
+            const einrichtungsDaten = {
+                id: sanitizeHTML(einrichtung.id),
+                name: sanitizeHTML(einrichtung.name),
+                typ: sanitizeHTML(einrichtung.typ),
+                tagesWert: tagesWert,
+                gruppenDetail: getGruppenDetail(einrichtung, tag),
+                infoStatus: einrichtung.hatUngeleseneInfos ? 'ungelesen' : 'gelesen'
+            };
+            tagesEinrichtungen.push(einrichtungsDaten);
+        });
+
+        const isFirst = index === 0;
+        const collapseId = `collapse-${tag}`;
+        const tagesInfoStatus = tagesEinrichtungen.some(e => e.infoStatus === 'ungelesen') ? 'ungelesen' : 'gelesen';
+
+        html += `
+            <div class="mobile-accordion-item">
+                <!-- Header: Wochentag + Datum + Gesamtzahl -->
+                <div class="mobile-accordion-header ${isFirst ? 'aktiv' : ''}" 
+                     data-accordion-target="${sanitizeHTML(collapseId)}"
+                     role="button"
+                     tabindex="0"
+                     aria-expanded="${isFirst ? 'true' : 'false'}" 
+                     aria-controls="${sanitizeHTML(collapseId)}">
+                    
+                    <div class="mobile-tag-header">
+                        <h6 class="mobile-tag-name">${sanitizeHTML(tagName)}</h6>
+                        <span class="mobile-tag-datum">${sanitizeHTML(tagDatumFormatiert)}</span>
+                        <span class="mobile-tag-gesamtzahl">${tagesGesamtsumme || 0}</span>
+                    </div>
+                    
+                    <i class="bi bi-chevron-down mobile-chevron"></i>
+                </div>
+                
+                <!-- Content: Tabellen-Layout -->
+                <div id="${sanitizeHTML(collapseId)}" 
+                     class="mobile-accordion-content ${isFirst ? 'show' : ''}"
+                     aria-labelledby="header-${sanitizeHTML(collapseId)}">
+                    
+                    <table class="mobile-einrichtungen-tabelle">
+                        <tbody>`;
+
+        // Einrichtungs-Zeilen in Tabellenformat
+        tagesEinrichtungen.forEach(einrichtung => {
+            const tagesWertKlasse = getTagesWertKlasse(einrichtung.tagesWert);
+            const hauptwert = einrichtung.tagesWert || '-';
+            
+            // Gruppen-Details als kleine Badges
+            let gruppenHtml = '';
+            if (einrichtung.gruppenDetail) {
+                const gruppenMatches = einrichtung.gruppenDetail.match(/title="([^"]+)"/g);
+                if (gruppenMatches) {
+                    gruppenMatches.forEach(match => {
+                        const gruppenInfo = match.replace('title="', '').replace('"', '');
+                        gruppenHtml += `<span class="mobile-gruppen-badge-klein">${sanitizeHTML(gruppenInfo)}</span>`;
+                    });
+                }
+            }
+            
+            html += `
+                <tr>
+                    <!-- Spalte 1: Einrichtungsname -->
+                    <td class="mobile-einrichtung-name">
+                        <h6>${einrichtung.name}</h6>
+                        <div class="mobile-einrichtung-typ">${einrichtung.typ}</div>
+                    </td>
+                    
+                    <!-- Spalte 2: Hauptwert -->
+                    <td class="mobile-einrichtung-zahlen">
+                        <div class="mobile-hauptwert ${sanitizeHTML(tagesWertKlasse)}">${sanitizeHTML(String(hauptwert))}</div>
+                    </td>
+                    
+                    <!-- Spalte 3: Gruppen-Info + Info-Button -->
+                    <td class="mobile-gruppen-spalte">
+                        <div class="mobile-gruppen-info">${gruppenHtml}</div>
+                        
+                        <!-- Info-Button für Einrichtung -->
+                        <button class="btn mobile-einrichtung-info-btn info-btn-${sanitizeHTML(einrichtung.infoStatus)}" 
+                                data-einrichtung-id="${einrichtung.id}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#info-modal" 
+                                title="Informationen anzeigen">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+
+        html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>`;
     });
+
+    html += '</div>';
+    container.innerHTML = html;
     
-    // Event-Listener für Akkordeon-Toggle
-    setupMobileAccordionListeners();
+    // Setup für Akkordeon-Events
+    setupMobileAccordionEvents();
+    
+    console.log(`✅ Mobile-Akkordeon erfolgreich gerendert`);
+}
+
+/**
+ * Setup für Mobile-Akkordeon Events (KORRIGIERTE VERSION)
+ */
+function setupMobileAccordionEvents() {
+    console.log('🎛️ Setup Mobile-Akkordeon Events');
+    
+    const headers = document.querySelectorAll('.mobile-accordion-header');
+    
+    headers.forEach(header => {
+        header.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const targetId = header.getAttribute('data-accordion-target');
+            const content = document.getElementById(targetId);
+            const chevron = header.querySelector('.mobile-chevron');
+            
+            if (!content || !chevron) return;
+            
+            // Toggle aktuellen Content
+            const isAktiv = content.classList.contains('show');
+            
+            // Schließe alle anderen Akkordeons
+            document.querySelectorAll('.mobile-accordion-content').forEach(otherContent => {
+                if (otherContent !== content) {
+                    otherContent.classList.remove('show');
+                }
+            });
+            
+            document.querySelectorAll('.mobile-accordion-header').forEach(otherHeader => {
+                if (otherHeader !== header) {
+                    otherHeader.classList.remove('aktiv');
+                    const otherChevron = otherHeader.querySelector('.mobile-chevron');
+                    if (otherChevron) {
+                        otherChevron.classList.remove('bi-chevron-up');
+                        otherChevron.classList.add('bi-chevron-down');
+                    }
+                }
+            });
+            
+            if (isAktiv) {
+                // Schließen
+                content.classList.remove('show');
+                header.classList.remove('aktiv');
+                chevron.classList.remove('bi-chevron-up');
+                chevron.classList.add('bi-chevron-down');
+            } else {
+                // Öffnen
+                content.classList.add('show');
+                header.classList.add('aktiv');
+                chevron.classList.remove('bi-chevron-down');
+                chevron.classList.add('bi-chevron-up');
+            }
+        });
+    });
 }
 
 /**
@@ -359,51 +623,14 @@ function getTagDisplayName(tag) {
 }
 
 /**
- * Setup Event-Listener für Mobile-Akkordeon
- */
-function setupMobileAccordionListeners() {
-    const headers = document.querySelectorAll('.mobile-accordion-header[data-toggle="accordion"]');
-    
-    headers.forEach(header => {
-        header.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const targetId = header.getAttribute('data-target');
-            const content = document.getElementById(targetId);
-            const icon = header.querySelector('.accordion-icon');
-            
-            if (!content) return;
-            
-            // Toggle aktuellen Content
-            const isAktiv = content.classList.contains('aktiv');
-            
-            if (isAktiv) {
-                // Schließen
-                content.classList.remove('aktiv');
-                header.classList.remove('aktiv');
-                icon.classList.remove('bi-chevron-up');
-                icon.classList.add('bi-chevron-down');
-            } else {
-                // Öffnen
-                content.classList.add('aktiv');
-                header.classList.add('aktiv');
-                icon.classList.remove('bi-chevron-down');
-                icon.classList.add('bi-chevron-up');
-            }
-        });
-    });
-}
-
-/**
  * Rendert Info-Modal mit Einrichtungsdetails
  * @param {Object} einrichtung - Einrichtungsdaten
  * @param {Object} bestelldaten - Komplette Bestelldaten
  */
 export function renderInfoModal(einrichtung, bestelldaten) {
     const modalBody = document.getElementById('modal-body-content');
-    const leseBtn = document.getElementById('lesebestaetigung-btn');
     
-    if (!modalBody || !leseBtn) return;
+    if (!modalBody) return;
     
     // Berechne zusätzliche Statistiken
     const tageStats = berechneTageStatistiken(einrichtung, bestelldaten.tage);
@@ -564,32 +791,7 @@ export function renderInfoModal(einrichtung, bestelldaten) {
                 </small>
             </div>
         </div>
-        
-        <!-- Lesebestätigung -->
-        <div class="info-section">
-            <div class="lesebestaetigung-info ${einrichtung.read ? 'lesebestaetigung-erfolg' : ''}">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-${einrichtung.read ? 'check-circle-fill' : 'info-circle'} fs-5"></i>
-                    <div>
-                        ${einrichtung.read ? 
-                            `<strong>Bereits gelesen</strong><br>
-                             <small>Bestätigt am: ${formatiereZeitpunkt(einrichtung.gelesen_am || einrichtung.letzte_aktualisierung)}</small>` :
-                            `<strong>Noch nicht gelesen</strong><br>
-                             <small>Bitte bestätigen Sie, dass Sie die Informationen zur Kenntnis genommen haben.</small>`
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
     `;
-    
-    // Setup Lesebestätigung-Button (für Bestelldaten, nicht Informationen)
-    leseBtn.style.display = einrichtung.read ? 'none' : 'block';
-    leseBtn.onclick = () => {
-        if (window.markiereAlsGelesenHandler) {
-            window.markiereAlsGelesenHandler(einrichtung.id, bestelldaten.year, bestelldaten.week);
-        }
-    };
 }
 
 /**
@@ -834,7 +1036,7 @@ function getGruppenDetail(einrichtung, tag) {
             if (daten && typeof daten.bestellungen === 'number' && daten.bestellungen > 0) {
                 gruppenBadges.push(`
                     <span class="gruppen-badge" title="${gruppe}: ${daten.bestellungen}">
-                        ${gruppe}: ${daten.bestellungen}
+                        ${gruppe}:\n${daten.bestellungen}
                     </span>
                 `);
             }
@@ -848,7 +1050,7 @@ function getGruppenDetail(einrichtung, tag) {
         if (Array.isArray(gruppenDetails)) {
             return gruppenDetails.map(g => `
                 <span class="gruppen-badge" title="${g.gruppe}: ${g.anzahl}">
-                    ${g.gruppe}: ${g.anzahl}
+                    ${g.gruppe}:\n${g.anzahl}
                 </span>
             `).join('');
         }
@@ -909,15 +1111,16 @@ function getInfoButtonStatus(einrichtungId) {
 }
 
 /**
- * Rendert die Smartphone-Ansicht mit Tages-Akkordeons (NEUES TABELLEN-DESIGN)
+ * Rendert die Smartphone-Ansicht mit Tages-Akkordeons (SICHERHEITS-OPTIMIERT)
  * @param {Object} bestelldaten - Die Bestelldaten für die Woche
  */
 function renderSmartphoneAnsicht(bestelldaten) {
-    console.log('📱 Rendere Smartphone-Ansicht (Tabellen-Layout)');
+    console.log('📱 Rendere SICHERE Smartphone-Ansicht (Validierte Daten)');
     
-    const container = document.getElementById('smartphone-container');
+    // FIX: Verwende zahlen-container anstatt smartphone-container
+    const container = document.getElementById('zahlen-container');
     if (!container) {
-        console.error('Smartphone-Container nicht gefunden');
+        console.error('Zahlen-Container nicht gefunden');
         return;
     }
 
@@ -944,11 +1147,11 @@ function renderSmartphoneAnsicht(bestelldaten) {
                 const tagesWert = getTagesWert(einrichtung, tag);
                 tagesGesamtsumme += tagesWert;
                 
-                // Einrichtungs-Daten für diesen Tag sammeln
+                // SICHERHEIT: Sanitisiere alle Ausgabedaten
                 const einrichtungsDaten = {
-                    id: einrichtung.id,
-                    name: einrichtung.name,
-                    typ: einrichtung.typ,
+                    id: sanitizeHTML(einrichtung.id),
+                    name: sanitizeHTML(einrichtung.name),
+                    typ: sanitizeHTML(einrichtung.typ),
                     tagesWert: tagesWert,
                     gruppenDetail: getGruppenDetail(einrichtung, tag),
                     infoStatus: getInfoButtonStatus(einrichtung.id)
@@ -961,26 +1164,29 @@ function renderSmartphoneAnsicht(bestelldaten) {
         const collapseId = `collapse-${tag}`;
         const tagesInfoStatus = getTagesInfoStatus(tagesEinrichtungen);
 
+        // SICHERHEIT: Alle Werte sanitisiert
         html += `
             <div class="mobile-accordion-item">
-                <!-- Header: Nur Wochentag + Datum (geschlossen) -->
+                <!-- Header: Wochentag + Datum + Gesamtzahl -->
                 <div class="mobile-accordion-header ${isFirst ? 'aktiv' : ''}" 
-                     data-bs-toggle="collapse" 
-                     data-bs-target="#${collapseId}" 
+                     data-accordion-target="${sanitizeHTML(collapseId)}"
+                     role="button"
+                     tabindex="0"
                      aria-expanded="${isFirst ? 'true' : 'false'}" 
-                     aria-controls="${collapseId}">
+                     aria-controls="${sanitizeHTML(collapseId)}">
                     
                     <div class="mobile-tag-header">
-                        <h6 class="mobile-tag-name">${tagName}</h6>
-                        <span class="mobile-tag-datum">${tagDatumFormatiert}</span>
+                        <h6 class="mobile-tag-name">${sanitizeHTML(tagName)}</h6>
+                        <span class="mobile-tag-datum">${sanitizeHTML(tagDatumFormatiert)}</span>
+                        <span class="mobile-tag-gesamtzahl">${tagesGesamtsumme || 0}</span>
                     </div>
                     
                     <!-- Info-Button (nur bei geöffnetem Akkordeon sichtbar) -->
-                    <button class="btn mobile-tag-info-btn info-btn-${tagesInfoStatus}" 
-                            data-tag="${tag}" 
+                    <button class="btn mobile-tag-info-btn info-btn-${sanitizeHTML(tagesInfoStatus)}" 
+                            data-tag="${sanitizeHTML(tag)}" 
                             data-bs-toggle="modal" 
                             data-bs-target="#info-modal" 
-                            title="Informationen für ${tagName}">
+                            title="Informationen für ${sanitizeHTML(tagName)}">
                         <i class="bi bi-info-circle"></i>
                     </button>
                     
@@ -988,19 +1194,19 @@ function renderSmartphoneAnsicht(bestelldaten) {
                 </div>
                 
                 <!-- Content: Tabellen-Layout -->
-                <div id="${collapseId}" 
-                     class="mobile-accordion-content collapse ${isFirst ? 'show' : ''}" 
-                     data-bs-parent="#smartphone-tage-accordion">
+                <div id="${sanitizeHTML(collapseId)}" 
+                     class="mobile-accordion-content ${isFirst ? 'show' : ''}"
+                     aria-labelledby="header-${sanitizeHTML(collapseId)}">
                     
                     <table class="mobile-einrichtungen-tabelle">
                         <tbody>`;
 
-        // Einrichtungs-Zeilen in Tabellenformat
+        // Einrichtungs-Zeilen in Tabellenformat (SICHERHEITS-VALIDIERT)
         tagesEinrichtungen.forEach(einrichtung => {
             const tagesWertKlasse = getTagesWertKlasse(einrichtung.tagesWert);
             const hauptwert = einrichtung.tagesWert || '-';
             
-            // Gruppen-Details als kleine Badges
+            // Gruppen-Details als kleine Badges (SANITISIERT)
             let gruppenHtml = '';
             if (einrichtung.gruppenDetail) {
                 // Extrahiere Gruppen-Info aus HTML und formatiere als kleine Badges
@@ -1008,7 +1214,8 @@ function renderSmartphoneAnsicht(bestelldaten) {
                 if (gruppenMatches) {
                     gruppenMatches.forEach(match => {
                         const gruppenInfo = match.replace('title="', '').replace('"', '');
-                        gruppenHtml += `<span class="mobile-gruppen-badge-klein">${gruppenInfo}</span>`;
+                        // SICHERHEIT: Sanitisiere Gruppen-Info
+                        gruppenHtml += `<span class="mobile-gruppen-badge-klein">${sanitizeHTML(gruppenInfo)}</span>`;
                     });
                 }
             }
@@ -1021,13 +1228,17 @@ function renderSmartphoneAnsicht(bestelldaten) {
                         <div class="mobile-einrichtung-typ">${einrichtung.typ}</div>
                     </td>
                     
-                    <!-- Spalte 2: Zahlen (Hauptwert + Gruppen) -->
+                    <!-- Spalte 2: Hauptwert -->
                     <td class="mobile-einrichtung-zahlen">
-                        <div class="mobile-hauptwert ${tagesWertKlasse}">${hauptwert}</div>
+                        <div class="mobile-hauptwert ${sanitizeHTML(tagesWertKlasse)}">${sanitizeHTML(String(hauptwert))}</div>
+                    </td>
+                    
+                    <!-- Spalte 3: Gruppen-Info + Info-Button -->
+                    <td class="mobile-gruppen-spalte">
                         <div class="mobile-gruppen-info">${gruppenHtml}</div>
                         
                         <!-- Info-Button für Einrichtung -->
-                        <button class="btn mobile-einrichtung-info-btn info-btn-${einrichtung.infoStatus}" 
+                        <button class="btn mobile-einrichtung-info-btn info-btn-${sanitizeHTML(einrichtung.infoStatus)}" 
                                 data-einrichtung-id="${einrichtung.id}" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#info-modal" 
@@ -1048,29 +1259,94 @@ function renderSmartphoneAnsicht(bestelldaten) {
     html += '</div>';
     container.innerHTML = html;
     
-    // Bootstrap Collapse Events für aktiv-Klasse
-    setupAccordionEvents();
+    // FIX: Verwende die ursprüngliche setupMobileAccordionEvents Funktion
+    setupMobileAccordionEvents();
 }
 
 /**
- * Setup für Akkordeon-Events (aktiv-Klasse Management)
+ * Rendert eine leere Mobile-Ansicht mit Datumsheadern (für Wochen ohne Daten)
+ * @param {HTMLElement} container - Container-Element
+ * @param {number} year - Jahr
+ * @param {number} week - Kalenderwoche
  */
-function setupAccordionEvents() {
-    const accordionHeaders = document.querySelectorAll('.mobile-accordion-header');
-    
-    accordionHeaders.forEach(header => {
-        const targetSelector = header.getAttribute('data-bs-target');
-        const targetElement = document.querySelector(targetSelector);
-        
-        if (targetElement) {
-            // Bootstrap Collapse Events
-            targetElement.addEventListener('show.bs.collapse', () => {
-                header.classList.add('aktiv');
-            });
-            
-            targetElement.addEventListener('hide.bs.collapse', () => {
-                header.classList.remove('aktiv');
-            });
-        }
+function renderEmptyMobileView(container, year, week) {
+    const wochentage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
+    const wochentageName = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+
+    let html = '<div id="smartphone-tage-accordion">';
+
+    wochentage.forEach((tag, index) => {
+        const tagName = wochentageName[index];
+        const tagDatum = getTagDatum(year, week, tag);
+        const tagDatumFormatiert = tagDatum.toLocaleDateString('de-DE', { 
+            day: '2-digit', 
+            month: '2-digit' 
+        });
+
+        const isFirst = index === 0;
+        const collapseId = `collapse-${tag}`;
+
+        // ✅ SICHERHEIT: Alle Werte sanitisiert
+        html += `
+            <div class="mobile-accordion-item">
+                <!-- Header: Wochentag + Datum -->
+                <div class="mobile-accordion-header ${isFirst ? 'aktiv' : ''}" 
+                     data-accordion-target="${sanitizeHTML(collapseId)}"
+                     role="button"
+                     tabindex="0"
+                     aria-expanded="${isFirst ? 'true' : 'false'}" 
+                     aria-controls="${sanitizeHTML(collapseId)}">
+                    
+                    <div class="mobile-tag-header">
+                        <h6 class="mobile-tag-name">${sanitizeHTML(tagName)}</h6>
+                        <span class="mobile-tag-datum">${sanitizeHTML(tagDatumFormatiert)}</span>
+                        <span class="mobile-tag-gesamtzahl">0</span>
+                    </div>
+                    
+                    <i class="bi bi-chevron-down mobile-chevron"></i>
+                </div>
+                
+                <!-- Content: Leere Nachricht -->
+                <div id="${sanitizeHTML(collapseId)}" 
+                     class="mobile-accordion-content ${isFirst ? 'show' : ''}"
+                     aria-labelledby="header-${sanitizeHTML(collapseId)}">
+                    
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-4 mb-2"></i>
+                        <p class="mb-0">Keine Bestelldaten für ${sanitizeHTML(tagName)}</p>
+                    </div>
+                </div>
+            </div>`;
     });
-} 
+
+    html += '</div>';
+    
+    // Füge eine allgemeine Info-Nachricht hinzu
+    html += `
+        <div class="alert alert-info mt-3 text-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Für KW ${week}/${year} liegen noch keine Bestelldaten vor.
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // Setup für OPTIMIERTE Akkordeon-Events (ohne DOM-Cloning)
+    setupMobileAccordionEvents();
+    
+    console.log(`✅ Leere Mobile-Ansicht mit Datumsheadern für KW ${week}/${year} gerendert`);
+}
+
+// Sammle alle UI-Funktionen in einem Objekt für einfachen Import
+export const zahlenUI = {
+    showLoading,
+    hideLoading,
+    showError,
+    renderBestelldaten,
+    renderDesktopTabelle,
+    renderMobileAkkordeon,
+    renderInfoModal,
+    toggleLoadingState,
+    showNoDatenState,
+    renderAlleAnsichten
+}; 

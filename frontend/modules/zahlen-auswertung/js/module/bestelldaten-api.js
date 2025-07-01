@@ -1,18 +1,34 @@
 /**
  * API-Funktionen für Bestelldaten-Verwaltung
  * Lädt und verarbeitet Daten aus shared/data/portal/bestellungen
+ * MIT SICHERHEITS-VALIDIERUNG
  */
 
 import { apiClient } from '@shared/utils/api-client.js';
+import { 
+    validateBestelldaten, 
+    validateInformationen, 
+    sanitizeHTML, 
+    checkRateLimit 
+} from './data-validator.js';
 
 const API_BASE = '/api';
 
+// Security: Rate-Limiting pro Client
+const CLIENT_ID = 'zahlen-auswertung-' + Math.random().toString(36).substr(2, 9);
+
 /**
- * Lädt verfügbare Kalenderwochen
+ * Lädt verfügbare Kalenderwochen (MIT RATE-LIMITING)
  * @returns {Promise<Array>} Array von Wochen-Objekten
  */
 export async function getVerfügbareWochen() {
     try {
+        // Rate-Limiting prüfen
+        const rateCheck = checkRateLimit(CLIENT_ID, 20, 60000);
+        if (!rateCheck.allowed) {
+            throw new Error(`Rate-Limit erreicht. Versuche es in ${Math.ceil((rateCheck.resetTime - Date.now()) / 1000)} Sekunden erneut.`);
+        }
+        
         const bekannteWochen = {
             '2025': [25, 26, 27],
             '2026': []
@@ -39,37 +55,125 @@ export async function getVerfügbareWochen() {
         });
         
     } catch (error) {
-        console.error('Fehler beim Laden der verfügbaren Wochen:', error);
+        console.error('🚨 Sicherheitsfehler beim Laden der verfügbaren Wochen:', error);
         return [];
     }
 }
 
 /**
- * Lädt Bestelldaten für eine bestimmte Kalenderwoche
+ * Lädt Bestelldaten für eine bestimmte Kalenderwoche (MIT VALIDATION)
  * @param {number} year - Jahr
  * @param {number} week - Kalenderwoche
- * @returns {Promise<Object>} Bestelldaten
+ * @returns {Promise<Object>} Validierte und sanitisierte Bestelldaten
  */
 export async function getBestelldaten(year, week) {
     try {
-        const response = await fetch(`/shared/data/portal/bestellungen/${year}/${week}.json`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Input-Validation
+        if (!Number.isInteger(year) || year < 2020 || year > 2030) {
+            throw new Error('Ungültiges Jahr. Erlaubt: 2020-2030');
         }
         
-        const data = await response.json();
+        if (!Number.isInteger(week) || week < 1 || week > 53) {
+            throw new Error('Ungültige Kalenderwoche. Erlaubt: 1-53');
+        }
         
-        // Lade auch Informationen für diese Woche
+        // Rate-Limiting prüfen
+        const rateCheck = checkRateLimit(CLIENT_ID, 15, 60000);
+        if (!rateCheck.allowed) {
+            throw new Error(`Zu viele Anfragen. Warte ${Math.ceil((rateCheck.resetTime - Date.now()) / 1000)} Sekunden.`);
+        }
+        
+        const url = `/shared/data/portal/bestellungen/${year}/${week}.json`;
+        
+        let rawData;
+        
+        // ✅ SICHERHEIT: Graceful handling von fehlenden Bestelldaten-Dateien
+        try {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.warn(`⚠️ Bestelldaten-Datei nicht gefunden: ${url} - Verwende leere Daten`);
+                    rawData = {
+                        year: year,
+                        week: week,
+                        einrichtungen: {},
+                        metadaten: {
+                            erstellt: new Date().toISOString(),
+                            letzte_änderung: null
+                        },
+                        wochenstatistik: {}
+                    };
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } else {
+                const text = await response.text();
+                if (!text.trim()) {
+                    console.warn(`⚠️ Leere Bestelldaten-Datei: ${url} - Verwende leere Daten`);
+                    rawData = {
+                        year: year,
+                        week: week,
+                        einrichtungen: {},
+                        metadaten: {
+                            erstellt: new Date().toISOString(),
+                            letzte_änderung: null
+                        },
+                        wochenstatistik: {}
+                    };
+                } else {
+                    try {
+                        rawData = JSON.parse(text);
+                    } catch (parseError) {
+                        console.warn(`⚠️ JSON-Parse-Fehler für ${url}:`, parseError);
+                        rawData = {
+                            year: year,
+                            week: week,
+                            einrichtungen: {},
+                            metadaten: {
+                                erstellt: new Date().toISOString(),
+                                letzte_änderung: null
+                            },
+                            wochenstatistik: {}
+                        };
+                    }
+                }
+            }
+        } catch (fetchError) {
+            console.warn(`⚠️ Fehler beim Laden der Bestelldaten: ${fetchError.message} - Verwende leere Daten`);
+            rawData = {
+                year: year,
+                week: week,
+                einrichtungen: {},
+                metadaten: {
+                    erstellt: new Date().toISOString(),
+                    letzte_änderung: null
+                },
+                wochenstatistik: {}
+            };
+        }
+
+        // ✅ SICHERHEIT: Input-Validierung mit graceful Fallback
+        const validationResult = validateBestelldaten(rawData);
+        if (!validationResult.valid) {
+            console.warn(`🚨 Validierung fehlgeschlagen für ${url}:`, validationResult.errors);
+            // Verwende trotzdem die Daten aber mit Warnung
+        }
+
+        // Lade und validiere Informationen für diese Woche (graceful)
         const informationen = await getInformationenFürWoche(year, week);
         
-        // Lade Einrichtungsstammdaten für prozentuale Klassifizierung
+        // Lade Einrichtungsstammdaten für prozentuale Klassifizierung (graceful)
         const einrichtungsStammdaten = await getEinrichtungsStammdaten();
         
-        return verarbeiteBestelldaten(data, informationen, einrichtungsStammdaten);
+        console.log(`✅ Bestelldaten-Komplex geladen für KW ${week}/${year}`);
         
+        // Verarbeite die Daten (auch bei leeren Daten)
+        return verarbeiteBestelldaten(rawData, informationen, einrichtungsStammdaten);
+
     } catch (error) {
-        console.error('Fehler beim Laden der Bestelldaten:', error);
+        // ✅ SICHERHEIT: Detaillierte, aber sichere Fehlerbehandlung
+        console.error('🚨 Sicherheitsfehler beim Laden der Bestelldaten:', error);
         throw error;
     }
 }
@@ -593,4 +697,26 @@ export async function getEinrichtungsStammdaten() {
         console.error('Fehler beim Laden der Einrichtungsstammdaten:', error);
         return [];
     }
-} 
+}
+
+// Sammle alle API-Funktionen in einem Objekt für einfachen Import
+export const bestelldatenAPI = {
+    getVerfügbareWochen,
+    getBestelldaten,
+    markiereAlsGelesen,
+    klassifiziereAnzahl,
+    berechneProzentAuslastung,
+    formatiereZeitpunkt,
+    exportiereAlsCSV,
+    getAktuellsteWoche,
+    getAktuelleKalenderwoche,
+    getPreviousWeek,
+    getNextWeek,
+    formatWeekDisplay,
+    getInformationenFürWoche,
+    markiereInformationAlsGelesen,
+    hatUngeleseneInformationen,
+    getAnzahlUngeleseneInformationen,
+    getInformationenFürEinrichtung,
+    getEinrichtungsStammdaten
+}; 

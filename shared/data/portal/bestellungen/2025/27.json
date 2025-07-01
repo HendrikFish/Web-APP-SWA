@@ -2,7 +2,7 @@
   "year": 2025,
   "week": 27,
   "erstellt_am": "2025-06-28T12:54:59.540Z",
-  "letzte_änderung": "2025-06-28T13:28:05.510Z",
+  "letzte_änderung": "2025-06-30T19:22:30.428Z",
   "einrichtungen": {
     "eb7cb99e-4d0e-46db-b36a-efadb0d1f3bd": {
       "info": {
@@ -47,7 +47,7 @@
             "anzahl": 23
           }
         ],
-        "letzte_aktualisierung": "2025-06-28T12:55:13.935Z"
+        "letzte_aktualisierung": "2025-06-30T19:21:55.360Z"
       },
       "tage": {
         "mittwoch": {
@@ -55,11 +55,51 @@
             "KR": 10,
             "KG": 3
           }
+        },
+        "montag": {
+          "hauptspeise": {
+            "KR": 5,
+            "KG": 5
+          }
+        },
+        "freitag": {
+          "hauptspeise": {
+            "KR": 10,
+            "KG": 13
+          }
         }
       },
       "wochenstatistik": {
-        "gesamt_bestellungen": 13,
-        "durchschnitt_pro_tag": 13,
+        "gesamt_bestellungen": 46,
+        "durchschnitt_pro_tag": 15.333333333333334,
+        "höchster_tag": "freitag",
+        "niedrigster_tag": "montag"
+      },
+      "bestellhistorie": []
+    },
+    "17cf0076-e28f-4a11-9b21-49ad01039650": {
+      "info": {
+        "id": "17cf0076-e28f-4a11-9b21-49ad01039650",
+        "name": "Volkschule Zell ",
+        "typ": "extern",
+        "gruppen": [
+          {
+            "name": "Kinder",
+            "anzahl": 23
+          }
+        ],
+        "letzte_aktualisierung": "2025-06-30T19:22:30.428Z"
+      },
+      "tage": {
+        "mittwoch": {
+          "hauptspeise": {
+            "Kinder": 23
+          }
+        }
+      },
+      "wochenstatistik": {
+        "gesamt_bestellungen": 23,
+        "durchschnitt_pro_tag": 23,
         "höchster_tag": "mittwoch",
         "niedrigster_tag": "mittwoch"
       },
@@ -67,11 +107,11 @@
     }
   },
   "wochenstatistik": {
-    "gesamt_einrichtungen": 2,
-    "gesamt_bestellungen": 21,
-    "durchschnitt_pro_einrichtung": 10.5,
+    "gesamt_einrichtungen": 3,
+    "gesamt_bestellungen": 77,
+    "durchschnitt_pro_einrichtung": 25.666666666666668,
     "einrichtungstypen": {
-      "extern": 2
+      "extern": 3
     }
   },
   "metadaten": {

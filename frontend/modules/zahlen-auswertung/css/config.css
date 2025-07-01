@@ -1,0 +1,245 @@
+/**
+ * CSS-Konfiguration für Zahlen-Auswertung Modul
+ * Zentrale Definition aller Breakpoints, Farben und Konstanten
+ */
+
+:root {
+    /* ===== RESPONSIVE BREAKPOINTS ===== */
+    --bp-mobile-max: 360px;
+    --bp-smartphone-max: 575.98px;
+    --bp-tablet-small-max: 767.98px;
+    --bp-tablet-max: 818px;
+    --bp-desktop-min: 819px;
+    --bp-desktop-large-min: 1170.98px;
+    
+    /* ===== ZAHLEN-KLASSIFIZIERUNG ===== */
+    --wert-niedrig-max: 10;
+    --wert-mittel-max: 25;
+    /* Werte > 25 = hoch */
+    
+    /* ===== FARBEN ===== */
+    --zahlen-primary: #007bff;
+    --zahlen-secondary: #6c757d;
+    --zahlen-success: #28a745;
+    --zahlen-warning: #ffc107;
+    --zahlen-danger: #dc3545;
+    --zahlen-info: #17a2b8;
+    --zahlen-light: #f8f9fa;
+    --zahlen-dark: #495057;
+    
+    /* Status-Farben */
+    --status-null: #6c757d;
+    --status-niedrig: #17a2b8;
+    --status-mittel: #ffc107;
+    --status-hoch: #28a745;
+    
+    /* Info-Button Farben */
+    --info-gelesen-bg: #28a745;
+    --info-gelesen-hover: #218838;
+    --info-ungelesen-bg: #dc3545;
+    --info-ungelesen-hover: #c82333;
+    
+    /* Gruppen-Badge Farben (UMGEDREHT: Rot=Schlecht, Grün=Gut) */
+    --badge-null-bg: #f8f9fa;
+    --badge-null-color: #6c757d;
+    --badge-null-border: #dee2e6;
+    
+    --badge-niedrig-bg: #f8d7da;    /* ROT - Geringe Auslastung ist problematisch */
+    --badge-niedrig-color: #721c24;
+    --badge-niedrig-border: #f5c2c7;
+    
+    --badge-mittel-bg: #fff3cd;     /* GELB - Mittlere Auslastung ist ok */
+    --badge-mittel-color: #664d03;
+    --badge-mittel-border: #ffda6a;
+    
+    --badge-hoch-bg: #d1e7dd;       /* GRÜN - Hohe Auslastung ist optimal! */
+    --badge-hoch-color: #0f5132;
+    --badge-hoch-border: #badbcc;
+    
+    /* ===== LAYOUT & SPACING ===== */
+    --zahlen-border-radius: 8px;
+    --zahlen-border-radius-small: 4px;
+    --zahlen-border-radius-large: 12px;
+    
+    --zahlen-transition: all 0.3s ease;
+    --zahlen-transition-fast: all 0.15s ease;
+    --zahlen-transition-slow: all 0.5s ease;
+    
+    --zahlen-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --zahlen-box-shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+    
+    /* Padding & Margins */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* ===== MOBILE ACCORDION ===== */
+    --accordion-header-padding: 1rem;
+    --accordion-content-transition: max-height 0.3s ease-out, padding 0.3s ease;
+    --accordion-chevron-size: 1rem;
+    
+    /* Mobile Button Größen */
+    --mobile-btn-size-xs: 32px;
+    --mobile-btn-size-sm: 36px;
+    --mobile-btn-size-md: 42px;
+    --mobile-btn-size-lg: 44px;
+    
+    /* ===== TABELLEN ===== */
+    --table-header-bg: var(--zahlen-light);
+    --table-row-hover: #f8f9fa;
+    --table-border-color: #dee2e6;
+    
+    /* Desktop Tabelle */
+    --desktop-table-padding: 0.75rem;
+    --desktop-table-font-size: 0.875rem;
+    
+    /* Mobile Tabelle */
+    --mobile-table-padding: 0.75rem;
+    --mobile-table-font-size: 0.7rem;
+    --mobile-table-col1-width: 40%;    /* Einrichtungsname */
+    --mobile-table-col2-width: 30%;    /* Hauptwert */
+    --mobile-table-col3-width: 30%;    /* Gruppen + Info-Button */
+    
+    /* ===== FONT SIZES ===== */
+    --font-size-xs: 0.65rem;
+    --font-size-sm: 0.75rem;
+    --font-size-base: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 1.8rem;
+    
+    /* ===== Z-INDEX MANAGEMENT ===== */
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+    
+    /* ===== PERFORMANCE OPTIMIERUNG ===== */
+    /* Für will-change und transform3d */
+    --gpu-acceleration: transform3d(0, 0, 0);
+    
+    /* ===== ACCESSIBILITY ===== */
+    --focus-ring-color: rgba(0, 123, 255, 0.5);
+    --focus-ring-width: 2px;
+    --focus-ring-style: solid;
+    
+    /* ===== ANIMATION TIMINGS ===== */
+    --animation-duration-fast: 150ms;
+    --animation-duration-normal: 300ms;
+    --animation-duration-slow: 500ms;
+    
+    /* Easing Functions */
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== RESPONSIVE HELPER CLASSES ===== */
+.hide-mobile {
+    display: block;
+}
+
+.hide-desktop {
+    display: none;
+}
+
+.show-mobile-only {
+    display: none;
+}
+
+/* ===== MEDIA QUERY MIXINS (via CSS Custom Properties) ===== */
+@media (max-width: 360px) {
+    :root {
+        --current-breakpoint: 'mobile';
+        --mobile-btn-default-size: var(--mobile-btn-size-xs);
+        --mobile-font-size-default: var(--font-size-xs);
+    }
+    
+    .hide-mobile {
+        display: none;
+    }
+    
+    .show-mobile-only {
+        display: block;
+    }
+}
+
+@media (max-width: 575.98px) {
+    :root {
+        --current-breakpoint: 'smartphone';
+        --mobile-btn-default-size: var(--mobile-btn-size-sm);
+        --mobile-font-size-default: var(--font-size-sm);
+    }
+}
+
+@media (max-width: 767.98px) {
+    :root {
+        --current-breakpoint: 'tablet-small';
+        --mobile-btn-default-size: var(--mobile-btn-size-md);
+    }
+}
+
+@media (max-width: 818px) {
+    :root {
+        --current-breakpoint: 'tablet';
+        --container-padding: var(--spacing-md);
+    }
+}
+
+@media (min-width: 819px) {
+    :root {
+        --current-breakpoint: 'desktop';
+        --container-padding: var(--spacing-lg);
+    }
+    
+    .hide-desktop {
+        display: none;
+    }
+    
+    .hide-mobile {
+        display: block;
+    }
+}
+
+@media (min-width: 1170.98px) {
+    :root {
+        --current-breakpoint: 'desktop-large';
+        --container-padding: var(--spacing-xl);
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-status-null { color: var(--status-null); }
+.text-status-niedrig { color: var(--status-niedrig); }
+.text-status-mittel { color: var(--status-mittel); }
+.text-status-hoch { color: var(--status-hoch); }
+
+.bg-status-null { background-color: var(--badge-null-bg); }
+.bg-status-niedrig { background-color: var(--badge-niedrig-bg); }
+.bg-status-mittel { background-color: var(--badge-mittel-bg); }
+.bg-status-hoch { background-color: var(--badge-hoch-bg); }
+
+.transition-fast { transition: var(--zahlen-transition-fast); }
+.transition-normal { transition: var(--zahlen-transition); }
+.transition-slow { transition: var(--zahlen-transition-slow); }
+
+.gpu-accelerated { will-change: transform; transform: var(--gpu-acceleration); }
+
+/* ===== DEBUG HELPERS (nur in Entwicklung) ===== */
+[data-debug="true"] * {
+    outline: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+[data-debug="true"] .mobile-accordion-header {
+    outline: 2px solid rgba(0, 255, 0, 0.5);
+}
+
+[data-debug="true"] .mobile-accordion-content {
+    outline: 2px solid rgba(0, 0, 255, 0.5);
+} 
