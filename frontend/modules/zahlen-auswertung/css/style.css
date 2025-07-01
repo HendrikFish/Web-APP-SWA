@@ -1060,7 +1060,9 @@
     
     /* Tablet-optimierte Desktop-Tabelle */
     .zahlen-tabelle .sticky-col {
-        min-width: 140px; /* Schmaler als Desktop (war 180px) */
+        width: 200px !important; /* Feste Breite für Tablets */
+        min-width: 180px;
+        max-width: 240px;
     }
     
     .zahlen-tabelle th,
@@ -1085,6 +1087,10 @@
     
     .zahlen-tabelle .einrichtung-typ {
         font-size: 0.75rem;
+    }
+    
+    .zahlen-tabelle .einrichtung-gruppen {
+        font-size: 0.75rem; /* Etwas größer für Tablets */
     }
 }
 

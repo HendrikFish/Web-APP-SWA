@@ -1,0 +1,722 @@
+/* Abwesenheiten & Kinderverteilung Modul - V2.0 */
+
+/* ========================================
+   🏠 SEITEN-LAYOUT & PADDING
+======================================== */
+
+/* Hauptcontainer mit seitlichem Padding */
+.container-fluid#app {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Responsive Padding-Anpassungen */
+@media (max-width: 768px) {
+    .container-fluid#app {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid#app {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+/* ========================================
+   🔧 AGGRESSIVE SPINNER-KONTROLLE
+======================================== */
+
+/* 🔧 AGGRESSIVE SPINNER-KONTROLLE - Überschreibt alle anderen Regeln */
+#loading-state {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+#main-content {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Verstecke alle Spinner-Elemente aggressiv */
+.spinner-border,
+[class*="spinner"],
+[id*="loading"],
+[class*="loading"] {
+    display: none !important;
+}
+
+/* Ausnahme: Erlaube Spinner nur in Buttons/Cards wenn explizit gewünscht */
+.btn .spinner-border,
+.card .spinner-border {
+    display: inline-block !important;
+}
+
+/* ========================================
+   📅 JAHR-BUTTON-AUSWAHL
+======================================== */
+
+.jahr-button {
+    min-width: 80px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.jahr-button:not(.active) {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.jahr-button.active {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+}
+
+.jahr-button:hover:not(.active) {
+    background-color: #e9ecef;
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+    transform: translateY(-1px);
+}
+
+/* ========================================
+   📅 JAHRESKALENDER STYLING
+======================================== */
+
+/* Hauptcontainer - soll die komplette Breite nutzen */
+#jahreskalender-container {
+    width: 100%;
+    height: 80vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* Einrichtungs-Container - nutzt komplette verfügbare Breite */
+.einrichtung-jahreskalender {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Das jahreskalender-monate Element wird zum Grid-Container für das 4x3 Layout */
+.jahreskalender-monate {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) !important; /* 4 gleichmäßige Spalten */
+    grid-template-rows: repeat(3, 1fr) !important; /* 3 gleichmäßige Zeilen */
+    gap: 0.5rem; /* Mehr Gap für bessere Abgrenzung der modernen Cards */
+    height: 100% !important; /* Nutzt komplette verfügbare Höhe */
+    width: 100% !important; /* Nutzt komplette verfügbare Breite */
+    padding: 0.25rem; /* Minimaler Padding für bessere Positionierung */
+    flex: 1; /* Nimmt den kompletten verfügbaren Raum */
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Fallback für den alten Container (falls noch verwendet) */
+.jahreskalender-container {
+    display: block; /* Resettet Grid falls noch vorhanden */
+    height: 100%;
+    width: 100%;
+    padding: 0;
+}
+
+.monatskalender {
+    border: 1px solid #e0e6ed; /* Subtiler Border */
+    border-radius: 0.75rem; /* Moderner Border-Radius */
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06); /* Moderner Multi-Layer Shadow */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth Transition */
+    height: 100%; /* Nutzt komplette verfügbare Grid-Zellen-Höhe */
+    width: 100%; /* Nutzt komplette verfügbare Grid-Zellen-Breite */
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Erlaubt Schrumpfung */
+    margin: 0.125rem; /* Minimaler Margin für bessere Abgrenzung */
+    position: relative; /* Für Hover-Effekt */
+}
+
+.monatskalender:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08); /* Verstärkter Hover-Shadow */
+    transform: translateY(-2px) scale(1.01); /* Sanfte Hover-Animation */
+    border-color: var(--bs-primary); /* Farbiger Border beim Hover */
+}
+
+.monatskalender-header {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #4f46e5 100%); /* Moderner Gradient */
+    color: white;
+    padding: 0.4rem 0.5rem; /* Mehr Padding für bessere Optik */
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.7rem; /* Leicht größere Schriftgröße */
+    flex-shrink: 0; /* Header soll nicht schrumpfen */
+    line-height: 1.3; /* Bessere Lesbarkeit */
+    border-radius: 0.75rem 0.75rem 0 0; /* Abgerundete obere Ecken */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtiler Schatten unter Header */
+}
+
+.monatskalender-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px; /* Mehr Gap zwischen den Zellen */
+    background: #f8f9fa; /* Hellerer Hintergrund */
+    flex: 1; /* Nimmt den kompletten restlichen verfügbaren Platz */
+    grid-template-rows: auto repeat(6, 1fr); /* Header + 6 flexible Zeilen */
+    min-height: 0; /* Erlaubt Schrumpfung */
+    padding: 0.25rem; /* Padding um das Grid */
+    border-radius: 0 0 0.75rem 0.75rem; /* Abgerundete untere Ecken */
+}
+
+.wochentag-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Moderner Gradient */
+    padding: 0.25rem 0.1rem; /* Mehr Padding */
+    text-align: center;
+    font-size: 0.6rem; /* Leicht größere Schriftgröße */
+    font-weight: 700; /* Kräftigere Schrift */
+    color: #495057; /* Dunklere Farbe für bessere Lesbarkeit */
+    line-height: 1.2; /* Bessere Lesbarkeit */
+    border-radius: 0.375rem; /* Abgerundete Ecken */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtiler Schatten */
+}
+
+.tag-zelle {
+    background: #f0fdf4; /* Moderneres hellgrün */
+    min-height: 24px; /* Mehr Höhe für bessere Klickbarkeit */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth Transition */
+    position: relative;
+    font-size: 0.7rem; /* Größere Schriftgröße */
+    font-weight: 600; /* Kräftigere Schrift */
+    border: 1px solid transparent;
+    line-height: 1.2; /* Bessere Lesbarkeit */
+    border-radius: 0.375rem; /* Abgerundete Ecken */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtiler Schatten */
+}
+
+.tag-zelle:hover {
+    background: #dcfce7; /* Moderneres hover-grün */
+    transform: translateY(-1px) scale(1.02); /* Sanfterer Hover-Effekt */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08); /* Schönerer Schatten */
+    border-color: var(--bs-primary); /* Farbiger Border beim Hover */
+    z-index: 2;
+}
+
+.tag-zelle.andere-monat {
+    color: #adb5bd;
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tag-zelle.heute {
+    font-weight: bold;
+    border: 2px solid var(--bs-primary); /* Dünner Border */
+    background: #cce5ff;
+    color: var(--bs-primary);
+    box-shadow: 0 0 4px rgba(13, 110, 253, 0.2); /* Kompakter Schatten */
+}
+
+/* Wochenend-Styling (Samstag=5, Sonntag=6) */
+.tag-zelle.wochenende {
+    background: #fff3cd; /* Wochenenden: hellgelb */
+    color: #664d03;
+}
+
+.tag-zelle.wochenende:hover {
+    background: #ffecb5;
+}
+
+.tag-zelle.wochenende.heute {
+    background: #ffe066;
+    border-color: #ffc107;
+    color: #664d03;
+}
+
+/* Feiertage (für zukünftige österreichische Feiertage) */
+.tag-zelle.feiertag {
+    background: #f8d7da;
+    color: #721c24;
+    font-weight: 600;
+}
+
+.tag-zelle.feiertag:hover {
+    background: #f1aeb5;
+}
+
+.tag-zelle.feiertag::after {
+    content: '🎉';
+    position: absolute;
+    top: 1px; /* Kompakter Abstand */
+    right: 1px;
+    font-size: 7px; /* Sehr kleine Icon-Größe für maximale Flächennutzung */
+}
+
+/* Status-Farben für Tage */
+.tag-zelle.status-normal {
+    background: #d1eddb; /* Hellgrün */
+    color: #0f5132;
+}
+
+.tag-zelle.status-ferien {
+    background: #f8d7da; /* Hellrot */
+    color: #721c24;
+}
+
+.tag-zelle.status-sonderbetrieb {
+    background: #fff3cd; /* Hellgelb */
+    color: #664d03;
+}
+
+.tag-zelle.status-ausflug {
+    background: #d1ecf1; /* Hellblau */
+    color: #055160;
+}
+
+.tag-zelle.hat-status::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+}
+
+/* ========================================
+   🔄 KINDERVERTEILUNG KW-ÜBERSICHT
+======================================== */
+
+.kw-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-primary) var(--bs-light);
+}
+
+.kw-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.kw-scroll-container::-webkit-scrollbar-track {
+    background: var(--bs-light);
+    border-radius: 4px;
+}
+
+.kw-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+    border-radius: 4px;
+}
+
+.kw-ubersicht {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    min-width: max-content;
+}
+
+.kw-spalte {
+    min-width: 300px;
+    width: 300px;
+    border: 2px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.kw-spalte-header {
+    background: var(--bs-primary);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.kw-spalte-header h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.kw-spalte-header small {
+    opacity: 0.9;
+}
+
+.kw-spalte-body {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 400px;
+}
+
+/* ========================================
+   🏢 EINRICHTUNGS-BOXEN IN KW-ÜBERSICHT
+======================================== */
+
+.einrichtung-box {
+    border: 2px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: grab;
+}
+
+.einrichtung-box:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.einrichtung-box.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    transform: rotate(5deg);
+}
+
+.einrichtung-box.drop-target {
+    border-color: var(--bs-success);
+    background: rgba(25, 135, 84, 0.1);
+}
+
+.einrichtung-box-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.einrichtung-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.einrichtung-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: auto;
+}
+
+.einrichtung-status.status-normal { background: #28a745; }
+.einrichtung-status.status-ferien { background: #dc3545; }
+.einrichtung-status.status-sonderbetrieb { background: #ffc107; }
+.einrichtung-status.status-ausflug { background: #17a2b8; }
+
+.einrichtung-gruppen {
+    font-size: 0.8rem;
+    color: var(--bs-secondary);
+}
+
+.einrichtung-anzahl {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--bs-primary);
+}
+
+/* Verknüpfungspunkte */
+.verknuepfung-punkt {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--bs-primary);
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.verknuepfung-punkt:hover {
+    background: var(--bs-success);
+    transform: scale(1.2);
+}
+
+.verknuepfung-punkt.links {
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.verknuepfung-punkt.rechts {
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.verknuepfung-punkt.aktiv {
+    background: var(--bs-success);
+    box-shadow: 0 0 10px rgba(25, 135, 84, 0.5);
+}
+
+/* Verbindungslinien zwischen Einrichtungen */
+.verbindung-linie {
+    position: absolute;
+    height: 3px;
+    background: var(--bs-success);
+    z-index: 5;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.verbindung-linie::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    color: var(--bs-success);
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* ========================================
+   📊 STATUS-LEGENDE
+======================================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 2px solid;
+}
+
+.status-badge.status-normal {
+    background: #d1eddb;
+    color: #0f5132;
+    border-color: #28a745;
+}
+
+.status-badge.status-ferien {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #dc3545;
+}
+
+.status-badge.status-sonderbetrieb {
+    background: #fff3cd;
+    color: #664d03;
+    border-color: #ffc107;
+}
+
+.status-badge.status-ausflug {
+    background: #d1ecf1;
+    color: #055160;
+    border-color: #17a2b8;
+}
+
+/* ========================================
+   📱 RESPONSIVE DESIGN
+======================================== */
+
+/* Große Tablets: 3 Spalten, 4 Zeilen - modernes responsives Design */
+@media (max-width: 1200px) {
+    .jahreskalender-monate {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 0.4rem; /* Angepasster Gap für moderne Cards */
+        padding: 0.2rem;
+    }
+    
+    .monatskalender {
+        margin: 0.1rem; /* Reduzierter Margin */
+        border-radius: 0.625rem; /* Leicht kleinerer Radius */
+    }
+    
+    .tag-zelle {
+        min-height: 20px;
+        font-size: 0.65rem;
+        border-radius: 0.25rem; /* Kleinerer Radius */
+    }
+    
+    .monatskalender-header {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.65rem;
+        border-radius: 0.625rem 0.625rem 0 0;
+    }
+    
+    .wochentag-header {
+        padding: 0.2rem 0.05rem;
+        font-size: 0.55rem;
+        border-radius: 0.25rem;
+    }
+    
+    .monatskalender-grid {
+        padding: 0.2rem;
+        border-radius: 0 0 0.625rem 0.625rem;
+    }
+}
+
+/* Mittlere Tablets: 2 Spalten, 6 Zeilen - modernes responsives Design */
+@media (max-width: 900px) {
+    .jahreskalender-monate {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        gap: 0.3rem; /* Angepasster Gap */
+        padding: 0.15rem;
+    }
+    
+    .monatskalender {
+        margin: 0.05rem;
+        border-radius: 0.5rem;
+    }
+    
+    .tag-zelle {
+        min-height: 18px;
+        font-size: 0.6rem;
+        border-radius: 0.25rem;
+    }
+    
+    .monatskalender-header {
+        padding: 0.25rem 0.3rem;
+        font-size: 0.6rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .wochentag-header {
+        padding: 0.15rem 0.05rem;
+        font-size: 0.5rem;
+        border-radius: 0.25rem;
+    }
+    
+    .monatskalender-grid {
+        padding: 0.15rem;
+        border-radius: 0 0 0.5rem 0.5rem;
+        gap: 1.5px;
+    }
+}
+
+/* Mobile: 1 Spalte, 12 Zeilen - modernes responsives Design */
+@media (max-width: 600px) {
+    .jahreskalender-monate {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(12, 1fr);
+        gap: 0.25rem; /* Moderater Gap auch auf Mobile */
+        padding: 0.1rem;
+    }
+    
+    .monatskalender {
+        margin: 0.03rem;
+        border-radius: 0.375rem;
+    }
+    
+    .tag-zelle {
+        min-height: 16px;
+        font-size: 0.55rem;
+        border-radius: 0.2rem;
+    }
+    
+    .monatskalender-header {
+        padding: 0.2rem 0.25rem;
+        font-size: 0.55rem;
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+    
+    .wochentag-header {
+        padding: 0.1rem 0.03rem;
+        font-size: 0.45rem;
+        border-radius: 0.2rem;
+    }
+    
+    .monatskalender-grid {
+        padding: 0.1rem;
+        border-radius: 0 0 0.375rem 0.375rem;
+        gap: 1px;
+    }
+}
+
+/* Sehr kleine Bildschirme: 1 Spalte, kompakte moderne Darstellung */
+@media (max-width: 400px) {
+    .jahreskalender-monate {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(12, 1fr);
+        gap: 0.2rem; /* Minimaler aber sichtbarer Gap */
+        padding: 0.05rem;
+    }
+    
+    .monatskalender {
+        margin: 0.02rem;
+        border-radius: 0.25rem;
+    }
+    
+    .tag-zelle {
+        min-height: 14px;
+        font-size: 0.5rem;
+        border-radius: 0.15rem;
+    }
+    
+    .monatskalender-header {
+        padding: 0.15rem 0.2rem;
+        font-size: 0.5rem;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+    
+    .wochentag-header {
+        padding: 0.05rem 0.02rem;
+        font-size: 0.4rem;
+        border-radius: 0.15rem;
+    }
+    
+    .monatskalender-grid {
+        padding: 0.05rem;
+        border-radius: 0 0 0.25rem 0.25rem;
+        gap: 1px;
+    }
+}
+
+/* ========================================
+   🎨 ANIMATIONEN & TRANSITIONS
+======================================== */
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Smooth scrolling für KW-Navigation */
+.kw-scroll-container {
+    scroll-behavior: smooth;
+}
+
+/* ========================================
+   🔧 UTILITY CLASSES
+======================================== */
+
+.cursor-grab { cursor: grab; }
+.cursor-grabbing { cursor: grabbing; }
+.pointer-events-none { pointer-events: none; }
+.select-none { user-select: none; } 
