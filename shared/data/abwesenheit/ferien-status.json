@@ -1,0 +1,50 @@
+[
+  {
+    "kw": 31,
+    "einrichtung": "ER",
+    "status": "geschlossen",
+    "grund": "Sommerferien"
+  },
+  {
+    "kw": 31,
+    "einrichtung": "Lim",
+    "status": "geöffnet",
+    "grund": ""
+  },
+  {
+    "kw": 31,
+    "einrichtung": "LH",
+    "status": "geöffnet", 
+    "grund": ""
+  },
+  {
+    "kw": 31,
+    "einrichtung": "ST",
+    "status": "geschlossen",
+    "grund": "Betriebsferien"
+  },
+  {
+    "kw": 32,
+    "einrichtung": "ER",
+    "status": "geschlossen",
+    "grund": "Sommerferien"
+  },
+  {
+    "kw": 32,
+    "einrichtung": "Lim",
+    "status": "geöffnet",
+    "grund": ""
+  },
+  {
+    "kw": 32,
+    "einrichtung": "LH",
+    "status": "geöffnet",
+    "grund": ""
+  },
+  {
+    "kw": 32,
+    "einrichtung": "ST",
+    "status": "geöffnet",
+    "grund": ""
+  }
+] 

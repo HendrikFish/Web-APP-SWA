@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abwesenheiten & Kinderverteilung - SmartWorkArt</title>
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css?v=2.0.0">
+</head>
+<body>
+    <!-- Breadcrumb-Navigation -->
+    <div id="breadcrumb-navbar-container"></div>
+
+    <!-- Hauptinhalt -->
+    <div class="container-fluid" id="app">
+        <!-- Loading State -->
+        <div id="loading-state" class="d-flex justify-content-center align-items-center min-vh-100">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Lädt...</span>
+                </div>
+                <p class="mt-3 text-muted">Lade Abwesenheitsdaten...</p>
+            </div>
+        </div>
+
+        <!-- Hauptinhalt (initial versteckt) -->
+        <div id="main-content" style="display: none;">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col">
+                    <h1 class="h2 text-primary">
+                        <i class="bi bi-calendar-x me-2"></i>
+                        Abwesenheiten & Kinderverteilung
+                    </h1>
+                    <p class="text-muted">Verwalten Sie Ferien, Sonderbetrieb und Kinderverteilungen zwischen Einrichtungen</p>
+                </div>
+            </div>
+
+            <!-- Jahr-Auswahl als Buttons -->
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-calendar-year me-2"></i>
+                                        Jahr auswählen
+                                    </h5>
+                                    <small class="text-muted">Klicken Sie auf ein Jahr um die Daten zu laden</small>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="Jahr-Auswahl" id="jahr-button-group">
+                                    <!-- Dynamisch generierte Jahr-Buttons -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs mb-4" id="abwesenheit-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ferien-tab" data-bs-toggle="tab" data-bs-target="#ferien-pane" 
+                            type="button" role="tab" aria-controls="ferien-pane" aria-selected="true">
+                        <i class="bi bi-calendar-month me-2"></i>
+                        Ferienverwaltung
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="verteilung-tab" data-bs-toggle="tab" data-bs-target="#verteilung-pane" 
+                            type="button" role="tab" aria-controls="verteilung-pane" aria-selected="false">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        Kinderverteilung
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="abwesenheit-tab-content">
+                
+                <!-- Ferienverwaltung Tab -->
+                <div class="tab-pane fade show active" id="ferien-pane" role="tabpanel" aria-labelledby="ferien-tab">
+                    
+                    <!-- Einrichtungen-Auswahl für User -->
+                    <div id="einrichtung-selector" class="row mb-4" style="display: none;">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <label for="einrichtung-select" class="form-label mb-0">
+                                                <i class="bi bi-building me-1"></i>
+                                                Einrichtung:
+                                            </label>
+                                        </div>
+                                        <div class="col">
+                                            <select id="einrichtung-select" class="form-select">
+                                                <!-- Dynamisch gefüllt -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status-Legende -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-palette me-2"></i>
+                                        Status-Legende
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="status-legende" class="d-flex flex-wrap gap-3">
+                                        <!-- Dynamisch gefüllt -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jahreskalender -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-calendar-range me-2"></i>
+                                        Jahreskalender <span id="kalender-jahr">2025</span>
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="jahreskalender-container" class="jahreskalender-container">
+                                        <!-- Dynamisch generierte Monatskalender -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kinderverteilung Tab -->
+                <div class="tab-pane fade" id="verteilung-pane" role="tabpanel" aria-labelledby="verteilung-tab">
+                    
+                    <!-- KW-Navigation -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title mb-0">
+                                                <i class="bi bi-calendar-week me-2"></i>
+                                                Kalenderwochen-Übersicht
+                                            </h5>
+                                            <small class="text-muted">3 Wochen sichtbar | Horizontaler Scroll</small>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary" id="kw-prev">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" id="kw-current">
+                                                Aktuelle Woche
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" id="kw-next">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KW-Übersicht mit horizontalem Scroll -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="kw-scroll-container">
+                                        <div id="kw-ubersicht" class="kw-ubersicht">
+                                            <!-- Dynamisch generierte KW-Spalten -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status-Änderungs-Modal -->
+    <div class="modal fade" id="status-modal" tabindex="-1" aria-labelledby="status-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="status-modal-label">
+                        <i class="bi bi-calendar-x me-2"></i>
+                        Status ändern
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="modal-datum" class="form-label">Datum:</label>
+                        <input type="text" id="modal-datum" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-einrichtung" class="form-label">Einrichtung:</label>
+                        <input type="text" id="modal-einrichtung" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-status-select" class="form-label">Status:</label>
+                        <select id="modal-status-select" class="form-select">
+                            <!-- Dynamisch gefüllt -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-grund-input" class="form-label">Grund (optional):</label>
+                        <input type="text" id="modal-grund-input" class="form-control" 
+                               placeholder="z.B. Sommerferien, Personalschulung, Zoobesuch...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Abbrechen
+                    </button>
+                    <button type="button" id="modal-save-btn" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>
+                        Speichern
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sofortige Spinner-Kontrolle -->
+    <script>
+        // Mehrfacher Ansatz: Sofort, nach DOM-Load und mit Timeout
+        function hideSpinnerAggressive() {
+            console.log('🔧 Aggressive Spinner-Kontrolle gestartet');
+            
+            // Alle möglichen Loading-Elemente finden und verstecken
+            const loadingElements = [
+                document.getElementById('loading-state'),
+                ...document.querySelectorAll('[id*="loading"]'),
+                ...document.querySelectorAll('[class*="spinner"]'),
+                ...document.querySelectorAll('[class*="loading"]')
+            ];
+            
+            loadingElements.forEach((element, index) => {
+                if (element) {
+                    element.style.display = 'none';
+                    element.style.visibility = 'hidden';
+                    element.style.opacity = '0';
+                    element.style.height = '0';
+                    element.style.overflow = 'hidden';
+                    element.setAttribute('aria-hidden', 'true');
+                    console.log(`✅ Element ${index} versteckt:`, element.id || element.className);
+                }
+            });
+            
+            // Main-Content aggressiv anzeigen
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.style.display = 'block';
+                mainContent.style.visibility = 'visible';
+                mainContent.style.opacity = '1';
+                mainContent.removeAttribute('aria-hidden');
+                console.log('✅ Main-Content aggressiv angezeigt');
+            }
+            
+            // Auch das app-Container sicherstellen
+            const appContainer = document.getElementById('app');
+            if (appContainer) {
+                appContainer.style.display = 'block';
+                appContainer.style.visibility = 'visible';
+                console.log('✅ App-Container gesichert');
+            }
+        }
+        
+        // Sofort ausführen
+        hideSpinnerAggressive();
+        
+        // Nach DOM-Ready
+        document.addEventListener('DOMContentLoaded', hideSpinnerAggressive);
+        
+        // Sicherheits-Timeout nach 100ms
+        setTimeout(hideSpinnerAggressive, 100);
+        
+        // Noch ein Timeout nach 500ms für langsame Browser
+        setTimeout(hideSpinnerAggressive, 500);
+    </script>
+
+    <!-- Bootstrap JS für Modal-Funktionalität -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script -->
+    <script type="module" src="js/script.js?t=1751356505459"></script>
+</body>
+</html> 

@@ -1,0 +1,108 @@
+{
+  "jahr": 2025,
+  "erstellt": "2025-01-27T00:00:00Z",
+  "aktualisiert": "2025-01-27T00:00:00Z",
+  "einrichtungen": {
+    "ER": {
+      "name": "Hendrik Fischer",
+      "kuerzel": "ER",
+      "tage": {
+        "2025-08-01": { "status": "ferien", "grund": "Sommerferien", "kw": 31 },
+        "2025-08-02": { "status": "ferien", "grund": "Sommerferien", "kw": 31 },
+        "2025-08-03": { "status": "ferien", "grund": "Sommerferien", "kw": 31 },
+        "2025-08-04": { "status": "ferien", "grund": "Sommerferien", "kw": 31 },
+        "2025-08-05": { "status": "ferien", "grund": "Sommerferien", "kw": 31 },
+        "2025-08-08": { "status": "ferien", "grund": "Sommerferien", "kw": 32 },
+        "2025-08-09": { "status": "ferien", "grund": "Sommerferien", "kw": 32 },
+        "2025-08-10": { "status": "ferien", "grund": "Sommerferien", "kw": 32 },
+        "2025-08-11": { "status": "ferien", "grund": "Sommerferien", "kw": 32 },
+        "2025-08-12": { "status": "ferien", "grund": "Sommerferien", "kw": 32 }
+      }
+    },
+    "Lim": {
+      "name": "Limberg",
+      "kuerzel": "Lim", 
+      "tage": {
+        "2025-08-15": { "status": "sonderbetrieb", "grund": "Personalschulung ohne Essen", "kw": 33 },
+        "2025-09-05": { "status": "ausflug", "grund": "Zoobesuch ohne Essen", "kw": 36 }
+      }
+    },
+    "LH": {
+      "name": "Hendrik Fischer LH",
+      "kuerzel": "LH",
+      "tage": {}
+    },
+    "ST": {
+      "name": "St. Stephan", 
+      "kuerzel": "ST",
+      "tage": {
+        "2025-08-01": { "status": "ferien", "grund": "Betriebsferien", "kw": 31 },
+        "2025-08-02": { "status": "ferien", "grund": "Betriebsferien", "kw": 31 },
+        "2025-08-03": { "status": "ferien", "grund": "Betriebsferien", "kw": 31 },
+        "2025-08-04": { "status": "ferien", "grund": "Betriebsferien", "kw": 31 },
+        "2025-08-05": { "status": "ferien", "grund": "Betriebsferien", "kw": 31 }
+      }
+    }
+  },
+  "kinderverteilung": {
+    "2025-31": {
+      "kw": 31,
+      "jahr": 2025,
+      "verteilungen": [
+        {
+          "von": "ER",
+          "nach": "Lim",
+          "gruppen": ["Schüler"],
+          "anzahl": 8,
+          "grund": "Sommerferien"
+        },
+        {
+          "von": "ST", 
+          "nach": "LH",
+          "gruppen": ["Erwachsene"],
+          "anzahl": 12,
+          "grund": "Betriebsferien"
+        }
+      ]
+    },
+    "2025-32": {
+      "kw": 32,
+      "jahr": 2025,
+      "verteilungen": [
+        {
+          "von": "ER",
+          "nach": "LH", 
+          "gruppen": ["Schüler"],
+          "anzahl": 8,
+          "grund": "Sommerferien"
+        }
+      ]
+    }
+  },
+  "status_definitionen": {
+    "normal": {
+      "label": "Normal", 
+      "farbe": "#28a745",
+      "icon": "🟩",
+      "essen": true
+    },
+    "ferien": {
+      "label": "Ferien",
+      "farbe": "#dc3545", 
+      "icon": "🟥",
+      "essen": false
+    },
+    "sonderbetrieb": {
+      "label": "Sonderbetrieb (ohne Essen)",
+      "farbe": "#ffc107",
+      "icon": "🟨", 
+      "essen": false
+    },
+    "ausflug": {
+      "label": "Ausflug (ohne Essen)",
+      "farbe": "#17a2b8",
+      "icon": "🟦",
+      "essen": false
+    }
+  }
+} 
