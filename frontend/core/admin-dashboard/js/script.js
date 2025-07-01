@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 import adminFeaturesConfig from '@shared/config/admin-features-config.json';
 import { renderAdminNavigation } from './features/admin-navigation/admin-navigation-ui.js';
 
@@ -365,7 +365,8 @@ function isMobileView() {
  */
 async function initializeAdminDashboard() {
     try {
-        const user = await initializeHeader();
+        // Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
         if (!user || !user.role.includes('admin')) {
             window.location.href = '/core/dashboard/index.html';
             return;

@@ -198,19 +198,104 @@ rules:
       - **Regel:** Wenn wir mit solchen Komponenten interagieren, müssen wir deren Lebenszyklus respektieren. Aktionen, die nach einer Animation stattfinden sollen (z.B. das Neuladen von Daten nach dem Schließen eines Modals), müssen an die von der Bibliothek bereitgestellten Events gekoppelt werden (z.B. `hidden.bs.modal` für Bootstrap). Das verhindert, dass wir einer Komponente "den Boden unter den Füßen wegziehen".
 
   - title: "Umgang mit trügerischen Werkzeugen (Vite Watcher)"
+
+  - title: "MCP-Server Integration (KI-Assistenz-Erweiterung)"
+    content: |
+      Das SmartWorkArt-Projekt nutzt **Model Context Protocol (MCP) Server** zur Erweiterung der KI-Assistenz-Fähigkeiten. Diese Server bieten strukturierte Denkprozesse, aktuelle Dokumentation und erweiterte Entwicklungsunterstützung.
+      
+      **Verfügbare MCP-Server:**
+      1.  **Sequential Thinking:** Strukturiertes, schrittweises Problemlösen für komplexe Architektur-Entscheidungen.
+      2.  **Context7:** Aktuelle, versionsspezifische Bibliotheks-Dokumentation direkt in Prompts.
+      3.  **Memory:** Persistenter Wissens-Graph für Projekt-spezifische Informationen.
+      4.  **Browser Tools:** Performance-Audits, Accessibility-Tests und Web-Qualitätssicherung.
+      5.  **Filesystem:** Dateisystem-Navigation und Projektstruktur-Analyse.
+      6.  **Git:** Repository-Management und Versionskontrolle.
+      
+      **Aktivierung durch explizite Prompts:**
+      - Sequential Thinking: `"Nutze Sequential Thinking: [Problem/Aufgabe]"`
+      - Context7: `"[Aufgabe]. use context7"` oder `"Nutze Context7 für [Bibliothek]"`
+      - Memory: `"Speichere im Memory: [Information]"` oder `"Suche im Memory nach [Begriff]"`
+      - Browser Tools: `"Mache einen Screenshot"` oder `"Führe Performance-Audit durch"`
+      
+      **Blueprint-Konformität:** Alle MCP-Nutzung muss den deutschen Projektrichtlinien, der Blueprint-Struktur und dem Regressionsschutz-Prinzip folgen.
+      
+             **Dokumentation:** Siehe `MCP-INTEGRATION.md` für vollständige Anleitung und Workflows.
+
+  - title: "Umgang mit trügerischen Werkzeugen (Vite Watcher)"
     content: |
       Manche Fehler werden nicht durch den eigenen Code, sondern durch die Konfiguration der Entwicklungswerkzeuge verursacht.
       - **Regel:** Wenn nach einer Dateiänderung ein unerklärlicher, kompletter Seiten-Reload auftritt, ist der erste Verdächtige immer die `watch`-Konfiguration des Entwicklungsservers (z.B. `vite.config.js`).
       - **Anweisung:** Alle Daten-Dateien (wie `.json`), die von der Anwendung selbst zur Laufzeit geändert werden, müssen von der Überwachung explizit ausgeschlossen werden (`server.watch.ignored`), da der Server sonst einen unnötigen Reload erzwingt.
 
+  - title: "MCP Browser Tools für Qualitätssicherung"
+    content: |
+      Für die Entwicklung der Seniorenheim-Webseiten ist die Nutzung der MCP Browser Tools obligatorisch, um höchste Qualitäts- und Zugänglichkeitsstandards zu gewährleisten.
+      
+      **🎯 Primäre Anwendungsbereiche:**
+      1. **Barrierefreiheitsprüfungen:** Aufgrund der Zielgruppe (Senioren, Pflegepersonal) sind WCAG-konforme Interfaces essentiell.
+         - Befehl: *"Führe ein Barrierefreiheits-Audit durch"*
+         - Prüfung auf Kontraste, Tastaturnavigation, Screenreader-Kompatibilität
+      
+      2. **Performance-Optimierung:** Einfache Bedienung erfordert schnelle Ladezeiten.
+         - Befehl: *"Analysiere die Performance dieser Seite"*
+         - Identifikation von render-blocking Ressourcen, übermäßiger DOM-Größe
+      
+      3. **SEO & Auffindbarkeit:** Bessere Sichtbarkeit für Seniorenheime.
+         - Befehl: *"Führe ein SEO-Audit durch"*
+         - Überprüfung von Metadaten, Strukturierung, Link-Hierarchie
+      
+      4. **Debugging & Screenshots:** Entwicklungsunterstützung.
+         - Befehle: *"Mache einen Screenshot"*, *"Zeige Console-Logs"*, *"Führe Debugger-Modus aus"*
+      
+      **📋 Setup-Voraussetzungen:**
+      - Chrome Extension installiert und verbunden
+      - Browser Tools Server läuft (`npx @agentdeskai/browser-tools-server@latest`)
+      - MCP-Konfiguration in Cursor korrekt eingerichtet
+      
+      **🔄 Entwicklungsworkflow:**
+      Vor jedem größeren Feature-Release sollten mindestens die drei Kern-Audits durchgeführt werden:
+      ```
+      1. "Führe ein Barrierefreiheits-Audit durch"
+      2. "Analysiere die Performance dieser Seite"  
+      3. "Prüfe die Best Practices dieser Seite"
+      ```
+      
+             **💡 Pro-Tipp:** Bei komplexen Problemen den *"Audit-Modus"* verwenden - dieser führt alle verfügbaren Analysen automatisch nacheinander aus.
+
   - title: "Historische Datenintegrität (Snapshot-Prinzip)"
     content: |
-      Bei historischen Daten (wie Menüplänen) ist es entscheidend, dass einmal gespeicherte Informationen unveränderlich bleiben, um die Datenintegrität zu gewährleisten.
-      - **Neue Dokumente:** Beim ersten Speichern wird automatisch ein "Snapshot" der aktuellen Stammdaten (z.B. Einrichtungseinstellungen) in das Dokument eingebettet.
-      - **Bestehende Dokumente:** Der ursprüngliche Snapshot darf NIEMALS automatisch überschrieben werden, da dies die historische Genauigkeit zerstören würde.
-      - **Explizite Updates:** Änderungen an Snapshots dürfen nur durch bewusste Benutzeraktionen erfolgen (z.B. "Einrichtungen aktualisieren"-Button).
-      - **Rendering-Logik:** Die UI-Darstellung muss **vorhandene Snapshots bevorzugen** gegenüber aktuellen Stammdaten, um historische Korrektheit zu garantieren.
-      - **Fehlerprävention:** Automatisches Neuladen von Plänen nach Snapshot-Updates ist zu vermeiden - stattdessen nur die betroffenen UI-Komponenten neu rendern.
+      Für die Entwicklung der Seniorenheim-Webseiten ist die Nutzung der MCP Browser Tools obligatorisch, um höchste Qualitäts- und Zugänglichkeitsstandards zu gewährleisten.
+      
+      **🎯 Primäre Anwendungsbereiche:**
+      1. **Barrierefreiheitsprüfungen:** Aufgrund der Zielgruppe (Senioren, Pflegepersonal) sind WCAG-konforme Interfaces essentiell.
+         - Befehl: *"Führe ein Barrierefreiheits-Audit durch"*
+         - Prüfung auf Kontraste, Tastaturnavigation, Screenreader-Kompatibilität
+      
+      2. **Performance-Optimierung:** Einfache Bedienung erfordert schnelle Ladezeiten.
+         - Befehl: *"Analysiere die Performance dieser Seite"*
+         - Identifikation von render-blocking Ressourcen, übermäßiger DOM-Größe
+      
+      3. **SEO & Auffindbarkeit:** Bessere Sichtbarkeit für Seniorenheime.
+         - Befehl: *"Führe ein SEO-Audit durch"*
+         - Überprüfung von Metadaten, Strukturierung, Link-Hierarchie
+      
+      4. **Debugging & Screenshots:** Entwicklungsunterstützung.
+         - Befehle: *"Mache einen Screenshot"*, *"Zeige Console-Logs"*, *"Führe Debugger-Modus aus"*
+      
+      **📋 Setup-Voraussetzungen:**
+      - Chrome Extension installiert und verbunden
+      - Browser Tools Server läuft (`npx @agentdeskai/browser-tools-server@latest`)
+      - MCP-Konfiguration in Cursor korrekt eingerichtet
+      
+      **🔄 Entwicklungsworkflow:**
+      Vor jedem größeren Feature-Release sollten mindestens die drei Kern-Audits durchgeführt werden:
+      ```
+      1. "Führe ein Barrierefreiheits-Audit durch"
+      2. "Analysiere die Performance dieser Seite"  
+      3. "Prüfe die Best Practices dieser Seite"
+      ```
+      
+      **💡 Pro-Tipp:** Bei komplexen Problemen den *"Audit-Modus"* verwenden - dieser führt alle verfügbaren Analysen automatisch nacheinander aus.
 
 ### 📜 Neue Regel: Clean & Focused UI
 
@@ -2106,3 +2191,160 @@ Bei Fragen oder Problemen:
 2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
 
 3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine schlechte User Experience.
+    -   **Regel:** Für die Auswahl mehrerer Optionen (wie z.B. Allergene) müssen anstelle von Checkboxen klickbare Buttons (`<button type="button">`) verwendet werden. Der Zustand der Auswahl wird über eine `.active`-Klasse gesteuert. Dies bietet eine größere, benutzerfreundlichere Zielfläche. Die Anordnung sollte in einem flexiblen Grid erfolgen, um den Platz optimal zu nutzen.
+
+#### Datenmanagement & Struktur
+
+1.  **Daten-Struktur: Verschachtelte Objekte für Klarheit**
+    -   **Regel:** Bei der Strukturierung von Datenmodellen sollten verschachtelte Objekte verwendet werden, um die Beziehungen und Hierarchien klar darzustellen.
+    -   **Anwendungsbeispiel:** Wenn ein Rezept mehrere Zutaten enthält, können diese als verschachtelte Objekte in einem Array oder als verschachtelte Objekte innerhalb eines Objekts strukturiert werden.
+
+2.  **Werte-Normalisierung:** Bei der Zuweisung von Daten an UI-Elemente (z.B. `select`-Dropdowns) müssen die Werte normalisiert werden (z.B. Umwandlung in Kleinbuchstaben, Abgleich von Vollnamen und Abkürzungen), um eine korrekte Zuordnung zu gewährleisten.
+
+3.  **Mobile-First-UI: Buttons statt Checkboxen für Mehrfachauswahl**
+    -   **Problem:** Kleine Checkboxen sind auf Touch-Geräten schwer zu treffen und bieten eine sch

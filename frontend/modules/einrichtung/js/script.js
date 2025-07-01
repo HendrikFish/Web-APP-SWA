@@ -3,19 +3,24 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '@shared/styles/layout.css';
 import '../css/style.css';
 
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 
 // Importiere die Sub-Module
 import { initEinrichtungForm } from './module/einrichtung-form-ui.js';
 import { initEinrichtungListe } from './module/einrichtung-liste-ui.js';
 
-// Initialisiert den Header sofort, damit er sichtbar ist, während der Rest lädt.
-initializeHeader();
-
 /**
  * Initialisiert die Modul-spezifischen Funktionen, sobald das DOM vollständig geladen ist.
  */
-document.addEventListener('DOMContentLoaded', () => {
-    initEinrichtungForm();
-    initEinrichtungListe();
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
+        
+        // Module initialisieren
+        initEinrichtungForm();
+        initEinrichtungListe();
+    } catch (error) {
+        console.error('Fehler bei der Initialisierung:', error);
+    }
 }); 

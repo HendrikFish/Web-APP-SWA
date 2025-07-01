@@ -18,11 +18,53 @@
 
 /* ===== Desktop-Tabelle ===== */
 .zahlen-tabelle {
+    
     font-size: 0.9rem;
     table-layout: fixed; /* Ermöglicht gleichmäßige Spaltenbreiten */
+    width: 100%; /* Tabelle nutzt volle Breite */
 }
 
-/* Gleichmäßige Spaltenbreiten für Wochentage MO-SO, Gesamt und Info */
+/* Desktop-Container mit seitlichem Padding für bessere Optik */
+@media (min-width: 819px) {
+    #desktop-container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    
+    /* Titel-Sektion bekommt gleiches Padding */
+    .mb-4 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* Bei sehr großen Bildschirmen noch mehr Padding */
+@media (min-width: 1400px) {
+    #desktop-container {
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+    
+    /* Titel-Sektion bekommt gleiches Padding */
+    .mb-4 {
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+}
+
+/* Automatische prozentuale Spaltenbreiten - alle Spalten auf dem Bildschirm */
+.zahlen-tabelle .sticky-col {
+    position: sticky;
+    left: 0;
+    background-color: var(--bs-body-bg);
+    z-index: 10;
+    width: 25%; /* Einrichtungs-Spalte */
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* Wochentage MO-SO - gleichmäßig aufgeteilt */
 .zahlen-tabelle th:nth-child(2),  /* MO */
 .zahlen-tabelle th:nth-child(3),  /* DI */
 .zahlen-tabelle th:nth-child(4),  /* MI */
@@ -30,31 +72,27 @@
 .zahlen-tabelle th:nth-child(6),  /* FR */
 .zahlen-tabelle th:nth-child(7),  /* SA */
 .zahlen-tabelle th:nth-child(8),  /* SO */
-.zahlen-tabelle th:nth-child(9),  /* Gesamt */
-.zahlen-tabelle th:nth-child(10), /* Info */
 .zahlen-tabelle td:nth-child(2),  /* MO */
 .zahlen-tabelle td:nth-child(3),  /* DI */
 .zahlen-tabelle td:nth-child(4),  /* MI */
 .zahlen-tabelle td:nth-child(5),  /* DO */
 .zahlen-tabelle td:nth-child(6),  /* FR */
 .zahlen-tabelle td:nth-child(7),  /* SA */
-.zahlen-tabelle td:nth-child(8),  /* SO */
-.zahlen-tabelle td:nth-child(9),  /* Gesamt */
-.zahlen-tabelle td:nth-child(10)  /* Info */ {
-    width: 120px;
+.zahlen-tabelle td:nth-child(8)   /* SO */ {
+    width: 9%; /* 7 Spalten × 9% = 63% */
 }
 
-.zahlen-tabelle .sticky-col {
-    position: sticky;
-    left: 0;
-    background-color: var(--bs-body-bg);
-    z-index: 10;
-    width: auto;
-    min-width: 160px;
-    max-width: 220px;
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+/* Gesamt-Spalte */
+.zahlen-tabelle th:nth-child(9),
+.zahlen-tabelle td:nth-child(9) {
+    width: 10%; /* Gesamt-Spalte */
+}
+
+/* Info-Spalte - wieder schöner und größer */
+.zahlen-tabelle th:nth-child(10),
+.zahlen-tabelle td:nth-child(10) {
+    width: 10%; /* Info-Button schön groß */
+    min-width: 80px; /* Mindestbreite für Button */
 }
 
 .zahlen-tabelle thead .sticky-col {
@@ -173,15 +211,11 @@
     text-align: center;
     font-weight: 600;
     min-width: 80px;
+    vertical-align: top !important; /* Hauptzahl immer am oberen Rand positionieren */
+    padding-top: 8px !important;    /* Etwas Abstand vom oberen Zellenrand */
 }
 
-/* Gesamt und Info Spalten gleiche Breite wie Wochentage */
-.zahlen-tabelle th:nth-child(9),
-.zahlen-tabelle th:nth-child(10),
-.zahlen-tabelle td:nth-child(9),
-.zahlen-tabelle td:nth-child(10) {
-    width: 120px;
-}
+
 
 .zahlen-zelle.null {
     background-color: transparent;  /* Neutral */
@@ -268,11 +302,20 @@
     border-left: 3px solid var(--zahlen-primary);
 }
 
-/* Info-Button */
+/* Info-Button - Original Styling (VOR Verbesserungen) */
 .info-btn {
-    border: none;
+    border: 2px solid #6f42c1 !important; /* Indigo Border 2px */
     transition: all 0.3s ease;
     position: relative;
+    padding: 0.375rem 0.75rem; /* Standard Bootstrap Button Padding */
+    border-radius: 0.375rem; /* Standard Bootstrap Radius */
+    font-size: 0.875rem; /* Standard Bootstrap Font-Size */
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
 }
 
 /* Gelesen-Status: Grün */
@@ -358,7 +401,7 @@
 }
 
 .mobile-accordion-header {
-    background-color: var(--zahlen-light);
+    background-color: var(--zahlen-info);
     padding: 1rem;
     cursor: pointer;
     transition: var(--zahlen-transition);
@@ -370,13 +413,13 @@
 }
 
 .mobile-accordion-header.aktiv {
-    background-color: var(--zahlen-primary);
-    color: white;
+    background-color: var(--zahlen-info);
+    color: rgb(45, 4, 231);
 }
 
 .mobile-einrichtung-header {
     display: flex;
-    justify-content-between;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -397,17 +440,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.mobile-accordion-content {
-    padding: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-}
-
-.mobile-accordion-content.aktiv {
-    max-height: 1000px;
 }
 
 .mobile-tage-grid {
@@ -432,9 +464,9 @@
 }
 
 .mobile-tag-name {
-    font-size: 0.8rem;
+    font-size: 1.8rem;
     font-weight: 600;
-    color: var(--zahlen-secondary);
+    color: var(--zahlen-light);
     text-transform: uppercase;
     margin-bottom: 0.5rem;
 }
@@ -657,8 +689,38 @@
         grid-template-columns: 1fr;
     }
     
-    .d-flex.gap-2 {
+    .d-flex.gap-2:not(.week-navigation-compact .d-flex) {
         flex-direction: column;
+    }
+    
+    /* Wochennavigation bleibt immer horizontal */
+    .week-navigation-compact .d-flex.gap-2,
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    
+    .week-navigation-compact .d-flex.gap-2 .btn,
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 .btn {
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        min-width: 34px !important;
+        max-width: 34px !important;
+        height: 34px !important;
+        padding: 0.25rem !important;
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+    }
+    
+    .week-navigation-compact .d-flex.gap-2 #current-week,
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 #current-week {
+        min-width: 50px !important;
+        max-width: 50px !important;
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.65rem !important;
     }
     
     .input-group {
@@ -765,11 +827,33 @@
     
     .week-navigation-compact .d-flex {
         justify-content: center !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .week-navigation-compact .btn {
-        width: 40px;
-        height: 40px;
+        padding: 0.3rem 0.4rem !important;
+        font-size: 0.75rem !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        white-space: nowrap !important;
+    }
+    
+    /* "Heute"-Button auch bei sehr kleinen Bildschirmen optimiert */
+    #current-week {
+        min-width: 55px !important;
+        max-width: 55px !important;
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
     }
 }
 
@@ -810,13 +894,21 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 0.5rem;
+    gap: 1rem;
 }
 
 .information-titel {
     display: flex;
     align-items: center;
+    width: 100%;
+    flex-grow: 1;
     flex-wrap: wrap;
     gap: 0.5rem;
+}
+
+.information-titel > strong {
+    margin-right: auto;
+    padding-right: 1rem;
 }
 
 .information-inhalt {
@@ -870,8 +962,14 @@
     }
     
     .information-actions {
-        text-align: left;
+        text-align: right; /* Button immer rechts ausrichten */
     }
+}
+
+/* Im Modal: Kein eigenes Scrollen für die Nachrichtenliste, alles anzeigen */
+#info-modal .informationen-liste {
+    max-height: none;
+    overflow-y: visible;
 }
 
 /* Print Styles */
@@ -1071,10 +1169,23 @@
         font-size: 0.9rem;
     }
     
+    /* Tablet: Gruppen-Badges zweizeilig und kompakter */
     .zahlen-tabelle .gruppen-badge {
-        font-size: 0.75rem;
-        padding: 2px 5px;
-        margin: 1px;
+        font-size: 0.65rem !important;
+        padding: 3px 4px !important;
+        min-width: 45px !important;
+        max-width: 55px !important;
+        white-space: pre-line !important;
+        line-height: 1.1 !important;
+        height: auto !important;
+        display: inline-block !important;
+        text-align: center !important;
+        margin: 1px !important;
+    }
+    
+    /* Tablet: Doppelpunkt in Badges durch Zeilenwechsel ersetzen */
+    .zahlen-tabelle .gruppen-badge {
+        position: relative;
     }
     
     .zahlen-tabelle .zahlen-hauptwert {
@@ -1102,7 +1213,40 @@
     }
     
     .card-body {
-        padding: 0.75rem;
+        padding: 1rem;
+    }
+
+    .week-navigation-compact {
+        margin-bottom: 1rem;
+    }
+    
+    .week-navigation-compact .d-flex {
+        justify-content: center !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+    
+    .week-navigation-compact .btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        white-space: nowrap !important;
+    }
+    
+    /* "Heute"-Button für 818px Breakpoint */
+    #current-week {
+        min-width: 68px !important;
+        max-width: 68px !important;
+        padding: 0.5rem 0.8rem !important;
     }
 }
 
@@ -1137,18 +1281,25 @@
     }
     
     .week-navigation-compact .d-flex {
-        justify-content: center;
-        gap: 8px;
+        justify-content: center !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: 100% !important;
     }
     
     .week-navigation-compact .btn {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
-        min-width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        white-space: nowrap !important;
     }
     
     /* Akkordeon-Container */
@@ -1189,9 +1340,8 @@
     }
     
     .mobile-accordion-header.aktiv {
-        background: #007bff;
-        color: white;
-        border-bottom-color: #007bff;
+        background-color: var(--zahlen-info);
+        color: rgb(45, 4, 231);
     }
     
     /* Header-Content (nur Tag + Datum) */
@@ -1213,6 +1363,17 @@
         opacity: 0.8;
     }
     
+    .mobile-tag-gesamtzahl {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--zahlen-primary);
+        margin-left: auto;
+        margin-right: 16px;
+        display: block;
+        text-align: right;
+        min-width: 40px;
+    }
+    
     /* Info-Button (nur im geöffneten Zustand sichtbar) */
     .mobile-tag-info-btn {
         opacity: 0;
@@ -1229,6 +1390,7 @@
         border: 1px solid rgba(255,255,255,0.3);
         color: white;
         font-size: 0.8rem;
+        will-change: opacity, transform;
     }
     
     .mobile-accordion-header.aktiv .mobile-tag-info-btn {
@@ -1236,11 +1398,12 @@
         transform: translateX(0);
     }
     
-    /* Chevron */
+    /* Chevron Animation verbessern */
     .mobile-chevron {
         font-size: 1rem;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, color 0.2s ease;
         color: currentColor;
+        will-change: transform;
     }
     
     .mobile-accordion-header.aktiv .mobile-chevron {
@@ -1252,13 +1415,13 @@
         background: white;
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s ease;
+        transition: max-height 0.3s ease-out, padding 0.3s ease;
         padding: 0;
     }
     
     .mobile-accordion-content.show {
-        max-height: 500px;
         padding: 0;
+        transition: max-height 0.3s ease-in, padding 0.3s ease;
     }
     
     /* Tabellen-Layout für Einrichtungen */
@@ -1280,93 +1443,99 @@
         border-bottom: none;
     }
     
-    /* Spalte 1: Einrichtungsname */
+    /* Spalte 1: Einrichtungsname (40%) */
     .mobile-einrichtung-name {
         padding: 0.75rem;
         vertical-align: top;
-        width: 50%;
+        width: 40%;
     }
     
     .mobile-einrichtung-name h6 {
-        margin: 0 0 4px 0;
         font-size: 0.9rem;
         font-weight: 600;
-        color: #495057;
-        line-height: 1.2;
+        margin-bottom: 0;
+        color: var(--zahlen-dark);
     }
     
     .mobile-einrichtung-typ {
         font-size: 0.75rem;
-        color: #6c757d;
+        color: var(--zahlen-secondary);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
     }
     
-    /* Spalte 2: Zahlen */
+    /* Spalte 2: Hauptwert + Info-Button (30%) */
     .mobile-einrichtung-zahlen {
-        padding: 0.75rem;
-        vertical-align: top;
-        width: 40%;
         text-align: right;
-        position: relative;
+        font-weight: 600;
+        padding-right: 0.5rem; /* Etwas Abstand zu den Gruppen */
+        vertical-align: middle; /* Vertikal zentrieren */
+        width: 60px; /* Feste Breite für die Hauptzahl */
     }
     
     .mobile-hauptwert {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #007bff;
-        line-height: 1;
-        margin-bottom: 6px;
+        font-size: 1.2rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--zahlen-border-radius);
+        display: inline-block;
     }
     
     .mobile-hauptwert.null {
-        color: #6c757d;
+        color: var(--zahlen-secondary);
     }
-    
     .mobile-hauptwert.niedrig {
-        color: #17a2b8;
+        color: var(--zahlen-dark);
     }
-    
     .mobile-hauptwert.mittel {
-        color: #ffc107;
+        color: var(--zahlen-dark);
+    }
+    .mobile-hauptwert.hoch {
+        font-weight: 700;
+        color: var(--zahlen-dark);
     }
     
-    .mobile-hauptwert.hoch {
-        color: #28a745;
+    /* Spalte 3: Gruppen-Info + Info-Button (30%) */
+    .mobile-gruppen-spalte {
+        display: flex; /* Flexbox für horizontale Anordnung */
+        align-items: center; /* Vertikal zentrieren */
+        justify-content: space-between; /* Elemente verteilen */
+        gap: 0.5rem;
+        padding-left: 0; /* Kein linker Abstand */
+        width: auto; /* Automatische Breite */
     }
     
     .mobile-gruppen-info {
-        font-size: 0.7rem;
-        color: #6c757d;
-        line-height: 1.3;
+        display: flex;
+        flex-direction: column; /* Jetzt untereinander */
+        align-items: flex-start;
+        gap: 0.3rem;
+        flex-wrap: nowrap;
     }
     
     .mobile-gruppen-badge-klein {
-        display: inline-block;
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 1px 4px;
-        margin: 1px;
-        font-size: 0.65rem;
-        color: #495057;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        background-color: var(--zahlen-light);
+        border: 1px solid #dee2e6;
+        color: var(--zahlen-secondary);
+        white-space: nowrap;
+        font-weight: 500;
     }
     
-    /* Info-Button in Tabelle */
+    /* Info-Button in 3. Spalte - Desktop Style */
     .mobile-einrichtung-info-btn {
-        padding: 0.25rem;
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        position: absolute;
-        top: 50%;
-        right: 8px;
-        transform: translateY(-50%);
+        align-self: center;
+        margin-top: auto;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 0.375rem;
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        width: auto;
+        height: auto;
+        min-width: auto;
+        max-width: none;
     }
     
     /* Touch-Optimierungen */
@@ -1440,11 +1609,216 @@
         }
         
         .week-navigation-compact .btn {
-            padding: 0.4rem 0.6rem;
-            font-size: 0.8rem;
-            min-width: 40px;
-            height: 40px;
+            padding: 0.3rem 0.4rem !important;
+            font-size: 0.75rem !important;
+            min-width: 36px !important;
+            height: 36px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* "Heute"-Button auch bei sehr kleinen Bildschirmen optimiert */
+        #current-week {
+            min-width: 55px !important;
+            max-width: 55px !important;
+            padding: 0.3rem 0.6rem !important;
+            font-size: 0.7rem !important;
         }
     }
+}
+
+/* ===== ZUSÄTZLICHE MOBILE BUTTON-SICHERHEIT ===== */
+/* Diese Regeln haben höchste Priorität und stellen sicher, dass Buttons nebeneinander bleiben */
+
+@media (max-width: 768px) {
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 {
+        justify-content: center !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 .btn {
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        min-width: 38px !important;
+        max-width: 38px !important;
+        height: 38px !important;
+        padding: 0.3rem 0.4rem !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 #current-week {
+        min-width: 58px !important;
+        max-width: 58px !important;
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 {
+        gap: 4px !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 .btn {
+        min-width: 36px !important;
+        max-width: 36px !important;
+        height: 36px !important;
+        padding: 0.25rem 0.3rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 #current-week {
+        min-width: 54px !important;
+        max-width: 54px !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 {
+        gap: 3px !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 .btn {
+        min-width: 34px !important;
+        max-width: 34px !important;
+        height: 34px !important;
+        padding: 0.2rem 0.25rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .week-navigation-compact .d-flex.align-items-center.justify-content-md-end.gap-2 #current-week {
+        min-width: 50px !important;
+        max-width: 50px !important;
+        padding: 0.2rem 0.4rem !important;
+        font-size: 0.65rem !important;
+    }
+}
+
+/* ===== ULTIMATIVE BUTTON-NAVIGATION SICHERHEIT ===== */
+/* Diese Regeln haben höchste Spezifität und überschreiben ALLES andere */
+
+/* Für alle Bildschirmgrößen unter 768px */
+@media (max-width: 767.98px) {
+    /* Direkte Selektion der Button-Container */
+    .week-navigation-compact > div.d-flex,
+    .week-navigation-compact div[class*="d-flex"],
+    .week-navigation-compact .d-flex[class*="gap-2"],
+    .col-md-6 .week-navigation-compact .d-flex {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 6px !important;
+        width: 100% !important;
+    }
+    
+    /* Alle Buttons in der Navigation */
+    .week-navigation-compact > div.d-flex .btn,
+    .week-navigation-compact div[class*="d-flex"] .btn,
+    .week-navigation-compact .d-flex[class*="gap-2"] .btn,
+    .col-md-6 .week-navigation-compact .d-flex .btn {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        min-width: 38px !important;
+        max-width: 38px !important;
+        height: 38px !important;
+        padding: 0.3rem 0.4rem !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+    }
+    
+    /* "Heute" Button */
+    .week-navigation-compact > div.d-flex #current-week,
+    .week-navigation-compact div[class*="d-flex"] #current-week,
+    .week-navigation-compact .d-flex[class*="gap-2"] #current-week,
+    .col-md-6 .week-navigation-compact .d-flex #current-week {
+        min-width: 58px !important;
+        max-width: 58px !important;
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Für sehr kleine Bildschirme */
+@media (max-width: 480px) {
+    .week-navigation-compact > div.d-flex,
+    .week-navigation-compact div[class*="d-flex"],
+    .week-navigation-compact .d-flex[class*="gap-2"],
+    .col-md-6 .week-navigation-compact .d-flex {
+        gap: 4px !important;
+    }
+    
+    .week-navigation-compact > div.d-flex .btn,
+    .week-navigation-compact div[class*="d-flex"] .btn,
+    .week-navigation-compact .d-flex[class*="gap-2"] .btn,
+    .col-md-6 .week-navigation-compact .d-flex .btn {
+        min-width: 36px !important;
+        max-width: 36px !important;
+        height: 36px !important;
+        padding: 0.25rem 0.3rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .week-navigation-compact > div.d-flex #current-week,
+    .week-navigation-compact div[class*="d-flex"] #current-week,
+    .week-navigation-compact .d-flex[class*="gap-2"] #current-week,
+    .col-md-6 .week-navigation-compact .d-flex #current-week {
+        min-width: 54px !important;
+        max-width: 54px !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+}
+
+/* Header Touch/Click Feedback */
+.mobile-accordion-header {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-accordion-header:active {
+    transform: scale(0.98);
+}
+
+.week-navigation-row {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  gap: 1rem;
+}
+
+#current-week-display .fw-bold {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+#auto-refresh-timer {
+    min-width: 80px; /* Genug Platz für "XXs" und Icons */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 

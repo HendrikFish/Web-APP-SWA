@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["context7", "--serve"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt"],
+      "env": {}
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "YOUR_BRAVE_API_KEY_HERE"
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt"],
+      "env": {}
+    },
+    "browser-tools": {
+      "command": "node",
+      "args": ["C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt\\browser-tools-mcp\\browser-tools-mcp\\mcp-server.ts"],
+      "env": {}
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {}
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/smartworkart"],
+      "env": {}
+    }
+  }
+} 

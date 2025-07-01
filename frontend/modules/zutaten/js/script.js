@@ -13,14 +13,14 @@ import {
     getCurrentlyEditingId
 } from './module/zutaten-ui.js';
 
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 
 
 async function initializeApp() {
     try {
-        // Zuerst den Header laden
-        await initializeHeader();
+        // Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
 
         // Dann die Stammdaten holen
         const stammdaten = await getZutatenStammdaten();

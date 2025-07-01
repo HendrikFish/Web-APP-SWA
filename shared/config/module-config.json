@@ -89,5 +89,18 @@
             "co-admin",
             "Koch"
         ]
+    },
+    {
+        "id": "abwesenheit",
+        "name": "Abwesenheiten",
+        "description": "Verwaltung von Ferien, Fenstertagen und Schließzeiten der Einrichtungen mit Kinderverteilung.",
+        "icon": "bi-calendar-x",
+        "path": "/modules/abwesenheit/index.html",
+        "roles": [
+            "admin",
+            "co-admin",
+            "Koch",
+            "Service"
+        ]
     }
 ]

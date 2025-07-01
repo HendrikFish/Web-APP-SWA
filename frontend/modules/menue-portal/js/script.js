@@ -10,7 +10,7 @@ import '@shared/styles/layout.css';
 import '../css/style.css';
 
 // Module imports
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 import { initMenuePortalAPI } from './module/menue-portal-api.js';
 import { initMenuePortalUI } from './module/menue-portal-ui.js';
@@ -43,20 +43,20 @@ async function initMenuePortal() {
         
         // Bewertungs-Buttons sind jetzt standardmäßig sichtbar
         
-        // 1. Header zuerst initialisieren und auf Promise warten
-        const user = await initializeHeader();
+        // 1. Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
         
-        // 2. Authentifizierung prüfen und Einrichtungen laden
+        // 3. Authentifizierung prüfen und Einrichtungen laden
         const authResult = await initMenuePortalAuth();
         if (!authResult.success) {
             showError(authResult.message);
             return;
         }
         
-        // 3. API-Module initialisieren
+        // 4. API-Module initialisieren
         initMenuePortalAPI();
         
-        // 4. UI-Module initialisieren mit dem User vom Header
+        // 5. UI-Module initialisieren mit dem User vom Header
         await initMenuePortalUI(user, authResult.einrichtungen);
         
         console.log('✅ Menü-Portal erfolgreich initialisiert');

@@ -266,7 +266,7 @@ div[id="jahreskalender-container"] {
     
     /* CARD-BODY Design */
     background: #f8fafc;
-    padding: 8px;
+    padding: 20px;
     min-height: 0; /* Wichtig für Flexbox-Shrinking */
     max-height: 100%; /* Begrenzt Wachstum */
     margin: 0;

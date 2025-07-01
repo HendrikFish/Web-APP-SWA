@@ -219,7 +219,6 @@
     margin-left: 1rem;
     margin-right: 1rem;
     margin-bottom: 1rem;
-    margin-top: 58px; /* Platz für fixed Header */
     padding: 2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }

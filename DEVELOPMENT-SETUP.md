@@ -106,6 +106,79 @@ Die Tests laufen automatisch bei jedem Push und Pull Request:
 - Integration-Tests
 - Security-Scans
 
+## 🤖 **MCP-Server Setup (KI-Assistenz)**
+
+Das SmartWorkArt-Projekt nutzt **Model Context Protocol (MCP) Server** für erweiterte KI-Assistenz.
+
+### **MCP-Server installieren**
+
+```bash
+# Context7 MCP Server (global installiert)
+npm install -g @upstash/context7-mcp
+
+# Andere Server werden automatisch über npx geladen
+```
+
+### **MCP-Konfiguration (mcp-config-final.json)**
+
+Die MCP-Server sind bereits konfiguriert in `mcp-config-final.json`:
+
+```json
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "context7": {
+      "command": "context7-mcp",
+      "args": [],
+      "enabled": true
+    },
+    "memory": {
+      "command": "npx", 
+      "args": ["@modelcontextprotocol/server-memory"],
+      "enabled": true
+    }
+  }
+}
+```
+
+### **MCP-Server testen**
+
+```bash
+# Context7 testen
+context7-mcp --help
+
+# Sequential Thinking testen  
+npx -y @modelcontextprotocol/server-sequential-thinking
+
+# Memory-Server ist automatisch verfügbar
+```
+
+### **MCP-Integration nutzen**
+
+**Prompt-Beispiele für sofortigen Start:**
+
+```bash
+# Sequential Thinking
+"Nutze Sequential Thinking: Plane die Implementierung eines neuen Moduls"
+
+# Context7  
+"Erstelle moderne Bootstrap Komponenten. use context7"
+
+# Memory
+"Speichere im Memory: SmartWorkArt nutzt Blueprint-Struktur für alle Module"
+
+# Browser Tools
+"Mache einen Performance-Audit der Menü-Portal Seite"
+```
+
+**Vollständige Dokumentation:** Siehe `MCP-INTEGRATION.md`
+
+---
+
 ## 🛠️ **Entwickler-Tools**
 
 ### **Empfohlene VS Code Extensions**

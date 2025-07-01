@@ -4,7 +4,7 @@
  * und sonst den Seiteninhalt überdecken würde.
  */
 body {
-    padding-top: 80px;
+    padding-top: 0px;
 }
 
 /**

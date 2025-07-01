@@ -4,5 +4,5 @@
 
 body {
     /* Fügt einen oberen Abstand hinzu, um Platz für die fixe Navbar zu schaffen (Standardhöhe ist 56px) */
-    padding-top: 56px;
+    padding-top: 0px;
 } 

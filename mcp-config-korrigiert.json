@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["context7", "--serve"],
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "enabled": true
+    },
+    "browser-tools": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt\\browser-tools-mcp\\browser-tools-mcp\\dist\\mcp-server.js"
+      ],
+      "enabled": true
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt"],
+      "env": {},
+      "enabled": true
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "C:\\Users\\MrHen\\OneDrive\\Desktop\\projekt\\SmartWorkArt"],
+      "env": {},
+      "enabled": true
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {},
+      "enabled": true
+    }
+  }
+} 

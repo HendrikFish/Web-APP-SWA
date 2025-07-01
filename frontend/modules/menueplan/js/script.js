@@ -12,18 +12,18 @@ import '../css/style.css';
 // Importiert die notwendige Polyfill-Bibliothek für Drag & Drop auf Touch-Geräten
 import 'drag-drop-touch';
 
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 import { initMenueplanUI } from './module/menueplan-ui.js';
 import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 
 // Korrekter Blueprint-Lebenszyklus
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1. Header zuerst initialisieren und auf Promise warten
-        const user = await initializeHeader();
+        // 1. Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
         
-        // 2. Erst nach erfolgreichem Header-Load das Modul initialisieren
-        console.log('Header geladen, Menüplan-UI wird initialisiert...');
+        // 2. Erst nach erfolgreichem Breadcrumb-Load das Modul initialisieren
+        console.log('Breadcrumb-Navigation geladen, Menüplan-UI wird initialisiert...');
         await initMenueplanUI(user);
         
         // 3. Erfolgs-Feedback

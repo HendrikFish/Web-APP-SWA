@@ -640,7 +640,7 @@ async function loadInformationenForSpecificWeek(year, week, einrichtungId) {
     } catch (error) {
         console.error('❌ Fehler beim Laden der Informationen-Daten:', error);
         return {};
-    }
+        }
 }
 
 /**

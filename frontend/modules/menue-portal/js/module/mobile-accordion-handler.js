@@ -298,10 +298,10 @@ function renderMobileDayContent(dayData, categories, dayKey, currentEinrichtung,
             <div class="category-section mb-4" data-day="${dayKey}" data-category="${categoryKey}">
                 <div class="category-header d-flex justify-content-between align-items-center mb-3">
                     <div class="category-info">
-                        <h6 class="category-title mb-0">
-                            <span class="category-icon me-2">${categoryInfo.icon}</span>
-                            ${categoryInfo.name}
-                        </h6>
+                    <h6 class="category-title mb-0">
+                        <span class="category-icon me-2">${categoryInfo.icon}</span>
+                        ${categoryInfo.name}
+                    </h6>
                     </div>
                     <div class="category-actions">
                         ${renderMobileInformationButton(dayKey, categoryKey, dayDate, currentEinrichtung, window.currentInformationenData || {})}

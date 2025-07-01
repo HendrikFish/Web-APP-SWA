@@ -5,7 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '@shared/styles/layout.css';
 import '../css/style.css';
 
-import { initializeHeader } from '@shared/components/header/header.js';
+import { initializeBreadcrumbNavbar } from '@shared/components/breadcrumb-navbar/breadcrumb-navbar.js';
 import { showToast } from '@shared/components/toast-notification/toast-notification.js';
 import { createRezept, fetchRezepte, fetchRezeptStammdaten, fetchAlleZutaten, deleteRezept, updateRezept } from './module/rezept-api.js';
 import { initRezeptListe, updateRezeptListe } from './module/rezept-liste-ui.js';
@@ -367,7 +367,8 @@ function getStandardDurchschnittsgewicht(zutat) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await initializeHeader();
+        // Breadcrumb-Navbar initialisieren (enthält bereits User-Management)
+        const user = await initializeBreadcrumbNavbar();
         await initializeRezeptModul();
         showToast('Rezept-Modul erfolgreich geladen!', 'success');
     } catch (error) {

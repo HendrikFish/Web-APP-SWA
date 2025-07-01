@@ -194,7 +194,75 @@ const data = await fetch('/api/rezepte');
 
 ---
 
+## 🤖 **Die neuen "Super-KI-Tools" (MCP-Server)**
+
+Du hast jetzt **6 Super-KI-Assistenten** die dir beim Programmieren helfen:
+
+### 🧠 **Sequential Thinking** - Der Planer
+```
+Was es macht: Denkt strukturiert über komplexe Probleme nach
+Wann nutzen: "Nutze Sequential Thinking: Wie soll ich das neue Modul planen?"
+```
+
+### 📚 **Context7** - Der Dokumentations-Experte  
+```
+Was es macht: Holt dir die neueste Dokumentation für Bibliotheken
+Wann nutzen: "Erstelle ein Bootstrap Formular. use context7"
+```
+
+### 💾 **Memory** - Das Projekt-Gedächtnis
+```
+Was es macht: Merkt sich wichtige Projekt-Infos
+Wann nutzen: "Speichere im Memory: Alle Module verwenden Error-Boundary"
+```
+
+### 🌐 **Browser Tools** - Der Qualitätsprüfer
+```
+Was es macht: Testet Performance und Barrierefreiheit
+Wann nutzen: "Mache einen Screenshot der Menü-Portal Seite"
+```
+
+### 📁 **Filesystem** - Der Datei-Navigator
+```
+Was es macht: Navigiert durch Projektdateien
+Wann nutzen: "Zeige mir alle Module im frontend/modules Ordner"
+```
+
+### 📋 **Git** - Der Versions-Manager
+```
+Was es macht: Verwaltet Git-Commits und Änderungen
+Wann nutzen: "Zeige die letzten 5 Commits des Projekts"
+```
+
+---
+
 ## 🎯 **Deine nächsten Schritte**
+
+## 🚀 **MCP-Tools sofort ausprobieren**
+
+### **Quick-Tests (kopiere diese Befehle):**
+
+#### **1. Sequential Thinking testen:**
+```
+"Nutze Sequential Thinking: Wie plane ich ein neues Bewohner-Verwaltungsmodul für das Seniorenheim?"
+```
+
+#### **2. Context7 testen:**
+```
+"Erstelle ein modernes Bootstrap 5 Akkordeon. use context7"
+```
+
+#### **3. Memory testen:**
+```
+"Speichere im Memory: Das SmartWorkArt-Projekt verwendet Bootstrap-First Design und Error-Boundary System"
+```
+
+#### **4. Browser Tools testen:**
+```
+"Mache einen Screenshot der aktuellen Seite"
+```
+
+---
 
 ### **Level 1: Verstehen**
 1. Server starten: `npm start`
