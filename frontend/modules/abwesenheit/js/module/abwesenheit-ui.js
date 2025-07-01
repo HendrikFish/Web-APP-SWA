@@ -298,10 +298,11 @@ async function loadFerienTab() {
         // WICHTIG: Container selbst zum Grid machen - CARD-LAYOUT für 12 MONATE!
         container.style.display = 'grid';
         container.style.gridTemplateColumns = 'repeat(4, 1fr)';
-        container.style.gridTemplateRows = 'repeat(3, 1fr)';
+        container.style.gridTemplateRows = 'repeat(3, minmax(280px, 1fr))'; // Mindesthöhe pro Zeile
         container.style.gap = '16px'; // Perfekte Abstände zwischen Cards
-        container.style.height = '75vh'; // Passt perfekt in Viewport
-        container.style.maxHeight = '75vh'; // Verhindert Overflow
+        container.style.height = 'max(90vh, 920px)'; // Dynamische Höhe
+        container.style.minHeight = 'calc((280px * 3) + (16px * 2) + (16px * 2))'; // 920px minimum
+        container.style.maxHeight = '95vh'; // Max für sehr große Bildschirme
         container.style.padding = '16px'; // Mehr Padding um Container
         container.style.overflow = 'hidden'; // Kein Scroll
         container.style.background = '#f1f5f9'; // Hintergrund für Card-Kontrast

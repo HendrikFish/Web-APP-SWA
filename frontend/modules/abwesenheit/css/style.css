@@ -133,13 +133,14 @@ div[id="jahreskalender-container"] {
     /* AGGRESSIVE CSS Grid - verhindert Überlappung */
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    grid-template-rows: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(3, minmax(280px, 1fr)) !important;
     gap: 16px !important; /* Perfekte Card-Abstände */
     
-    /* Container Größe */
-    height: 75vh !important; /* Passt perfekt in Viewport */
+    /* Container Größe - DYNAMISCH BERECHNET */
+    height: max(90vh, 920px) !important; /* Mindestens 920px oder 90vh */
     width: 100% !important;
-    max-height: 75vh !important;
+    min-height: calc((280px * 3) + (16px * 2) + (16px * 2)) !important; /* 920px */
+    max-height: 95vh !important;
     
     /* Spacing */
     padding: 16px !important; /* Card-Container Padding */
@@ -162,7 +163,8 @@ div[id="jahreskalender-container"] {
     flex-direction: column;
     height: 100%;
     width: 100%;
-    min-height: 0; /* Wichtig für Grid */
+    min-height: 280px; /* Mindesthöhe für Kalender-Inhalt */
+    max-height: 100%; /* Passt sich an Grid-Cell an */
     min-width: 0; /* Wichtig für Grid */
     
     /* CARD-DESIGN - Klar abgegrenzt */
@@ -258,19 +260,21 @@ div[id="jahreskalender-container"] {
     /* Layout */
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: auto repeat(6, 1fr);
+    grid-template-rows: auto repeat(6, minmax(18px, 1fr));
     flex: 1;
     gap: 2px;
     
     /* CARD-BODY Design */
     background: #f8fafc;
     padding: 8px;
-    min-height: 0;
+    min-height: 0; /* Wichtig für Flexbox-Shrinking */
+    max-height: 100%; /* Begrenzt Wachstum */
     margin: 0;
     
     /* Innere Struktur */
     border: 1px solid #e2e8f0;
     border-top: none; /* Verbindung zum Header */
+    overflow: hidden; /* Verhindert Kalender-Overflow */
 }
 
 /* ===== WOCHENTAG HEADER - MODERN ===== */
